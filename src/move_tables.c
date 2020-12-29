@@ -7,8 +7,24 @@
 cube_cubie **build_move_table() {
     cube_cubie **move_table = malloc(sizeof(cube_cubie *) * 18);
 
+    cube_cubie *moves[6];
+    moves[0] = build_basic_move(MOVE_U1);
+    moves[1] = build_basic_move(MOVE_R1);
+    moves[2] = build_basic_move(MOVE_F1);
+    moves[3] = build_basic_move(MOVE_D1);
+    moves[4] = build_basic_move(MOVE_L1);
+    moves[5] = build_basic_move(MOVE_B1);
+
     for (int i = 0; i < 18; i++) {
         move_table[i] = init_cubie_cube();
+    }
+
+    for (int i = 0; i < 6; i++) {
+        for (int j = 0; j < 3; j++) {
+            for (int jj = 0; jj < j; jj++) {
+                multiply_cube_cubie(move_table[3 * i + j], moves[i]);
+            }
+        }
     }
 
     return move_table;

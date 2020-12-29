@@ -15,5 +15,8 @@ typedef struct {
 } cube_cubie;
 
 cube_cubie *init_cubie_cube();
+void        multiply_cube_cubie(cube_cubie *cube1, cube_cubie *cube2);
+void        multiply_cube_cubie_edges(cube_cubie *cube1, cube_cubie *cube2);
+void        multiply_cube_cubie_corners(cube_cubie *cube1, cube_cubie *cube2);
 
 #endif /* end of include guard */
