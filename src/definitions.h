@@ -1,14 +1,12 @@
 #ifndef _DEFINITIONS
 #define _DEFINITIONS
 
-
 typedef enum {
     ROT_URF3 = 0,
-    ROT_F2 = 1,
-    ROT_U4 = 2,
+    ROT_F2   = 1,
+    ROT_U4   = 2,
     MIRR_LR2 = 3,
 } base_symmetry;
-
 
 typedef enum {
     CORNER_URF = 0,
@@ -20,7 +18,6 @@ typedef enum {
     CORNER_DBL = 6,
     CORNER_DRB = 7,
 } corner;
-
 
 typedef enum {
     EDGE_UR = 0,
@@ -37,29 +34,27 @@ typedef enum {
     EDGE_BR = 11,
 } edge;
 
-
 typedef enum {
-    MOVE_U1 = 0,
-    MOVE_U2 = 1,
-    MOVE_U3 = 2,
-    MOVE_R1 = 3,
-    MOVE_R2 = 4,
-    MOVE_R3 = 5,
-    MOVE_F1 = 6,
-    MOVE_F2 = 7,
-    MOVE_F3 = 8,
-    MOVE_D1 = 9,
-    MOVE_D2 = 10,
-    MOVE_D3 = 11,
-    MOVE_L1 = 12,
-    MOVE_L2 = 13,
-    MOVE_L3 = 14,
-    MOVE_B1 = 15,
-    MOVE_B2 = 16,
-    MOVE_B3 = 17,
+    MOVE_U1   = 0,
+    MOVE_U2   = 1,
+    MOVE_U3   = 2,
+    MOVE_R1   = 3,
+    MOVE_R2   = 4,
+    MOVE_R3   = 5,
+    MOVE_F1   = 6,
+    MOVE_F2   = 7,
+    MOVE_F3   = 8,
+    MOVE_D1   = 9,
+    MOVE_D2   = 10,
+    MOVE_D3   = 11,
+    MOVE_L1   = 12,
+    MOVE_L2   = 13,
+    MOVE_L3   = 14,
+    MOVE_B1   = 15,
+    MOVE_B2   = 16,
+    MOVE_B3   = 17,
     MOVE_NULL = 18,
 } move;
-
 
 typedef enum {
     FACELET_U1 = 0,
