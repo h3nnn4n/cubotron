@@ -1,9 +1,11 @@
 TARGET = $(notdir $(CURDIR))
 BUILDDIR = $(abspath $(CURDIR)/build)
+TESTDIR = $(abspath $(CURDIR)/test)
 
-OPTIONS = -DIMGUI_IMPL_API="extern \"C\"" \
+OPTIONS =
 
-INCLUDES = -Isrc
+INCLUDES = -Isrc \
+           -Ideps/Unity/src
 
 LINKS = -Ldeps/
 
@@ -11,8 +13,9 @@ override CFLAGS += -Wall -Wextra -pedantic -std=gnu11 $(OPTIMIZATION) $(OPTIONS)
 
 OPTIMIZATION=-O0
 
-LDFLAGS =
+LDFLAGS = -Wl,-Ldeps/Unity/build/
 
+#LIBS = -lunity
 LIBS =
 
 BLACKLIST = -O0 -O1 -O2 -O3 -Os
@@ -29,9 +32,12 @@ endif
 CC = gcc
 
 C_FILES := $(wildcard src/*.c)
+C_FILES_TEST := $(wildcard test/*.c)
 
 SOURCES := $(C_FILES:.c=.o)
+SOURCES_TEST := $(C_FILES_TEST:.c=.o)
 OBJS := $(foreach src,$(SOURCES), $(BUILDDIR)/$(src))
+OBJS_TEST := $(foreach test,$(SOURCES_TEST), $(BUILDDIR)/$(test))
 
 all: build
 
@@ -45,24 +51,30 @@ run: $(TARGET)
 gdb: $(TARGET)
 	gdb $(CURDIR)/$(TARGET)
 
+test: $(OBJS) $(OBJS_TEST)
+	@echo $(ECHOFLAGS) "[LD]\t$@"
+	$(CC) $(LDFLAGS) -o "$@" $(OBJS) $(LIBS)
+
 $(BUILDDIR)/%.o: %.c
-	@echo $(ECHOFLAGS) "[CC]\t$<"
+	@echo $(ECHOFLAGS) "[CC]\t$<" hah
 	@mkdir -p "$(dir $@)"
-	@$(CC) $(CFLAGS) -o "$@" -c "$<"
+	$(CC) $(CFLAGS) -o "$@" -c "$<"
 
-$(TARGET).o: $(OBJS) $(LDSCRIPT)
+$(TARGET).o: $(OBJS)
 	@echo $(ECHOFLAGS) "[LD]\t$@"
-	@$(CC) $(LDFLAGS) -o "$@" $(OBJS) $(LIBS)
+	$(CC) $(LDFLAGS) -o "$@" $(OBJS) $(LIBS)
 
-$(TARGET): $(OBJS) $(LDSCRIPT)
+$(TARGET): $(OBJS)
 	@echo $(ECHOFLAGS) "[LD]\t$@"
-	@$(CC) $(LDFLAGS) -o "$@" $(OBJS) $(LIBS)
+	$(CC) $(LDFLAGS) -o "$@" $(OBJS) $(LIBS)
 
 -include $(OBJS:.o=.d)
 
 clean:
 	@echo Cleaning...
 	@rm -rf "$(BUILDDIR)/src/"
+	@rm -rf "$(BUILDDIR)/test/"
+	@rm -rf "$(BUILDDIR)/deps/"
 	@rm -f "$(TARGET).o"
 
 superclean:
