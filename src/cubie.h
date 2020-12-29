@@ -15,7 +15,5 @@ typedef struct {
 } cube_cubie;
 
 cube_cubie *init_cubie_cube();
-cube_cubie *build_cubie_cube(move base_move);
-void        apply_basic_move(cube_cubie *cube, corner cp[], edge ep[], int co[], int eo[]);
 
 #endif /* end of include guard */

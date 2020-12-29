@@ -1,7 +1,12 @@
 #ifndef _MOVE_TABLES
 #define _MOVE_TABLES
 
+#include "cubie.h"
 #include "definitions.h"
+
+cube_cubie **build_move_table();
+cube_cubie * build_basic_move(move base_move);
+void         apply_basic_move_raw(cube_cubie *cube, corner cp[], edge ep[], int co[], int eo[]);
 
 extern corner corner_permutation_U[];
 extern int    corner_orientation_U[];
