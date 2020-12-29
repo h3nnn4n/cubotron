@@ -57,6 +57,7 @@ typedef enum {
     MOVE_B1 = 15,
     MOVE_B2 = 16,
     MOVE_B3 = 17,
+    MOVE_NULL = 18,
 } move;
 
 
