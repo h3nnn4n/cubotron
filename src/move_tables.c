@@ -1,11 +1,22 @@
+#include <assert.h>
 #include <stdlib.h>
 
 #include "cubie.h"
 #include "definitions.h"
 #include "move_tables.h"
 
-cube_cubie **build_move_table() {
-    cube_cubie **move_table = malloc(sizeof(cube_cubie *) * 18);
+static cube_cubie **move_table = NULL;
+
+void apply_move(cube_cubie *cube, move move_to_apply) {
+    if (move_to_apply == MOVE_NULL)
+        return;
+
+    assert(move_table != NULL);
+    multiply_cube_cubie(cube, move_table[move_to_apply]);
+}
+
+void build_move_table() {
+    move_table = malloc(sizeof(cube_cubie *) * 18);
 
     cube_cubie *moves[6];
     moves[0] = build_basic_move(MOVE_U1);
@@ -26,8 +37,6 @@ cube_cubie **build_move_table() {
             }
         }
     }
-
-    return move_table;
 }
 
 cube_cubie *build_basic_move(move base_move) {
