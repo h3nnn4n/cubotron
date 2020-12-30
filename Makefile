@@ -1,7 +1,7 @@
 TARGET = $(notdir $(CURDIR))
 BUILDDIR = $(abspath $(CURDIR)/build)
 
-TEST_TARGET = $(BUILDDIR)/test/runner
+TEST_TARGETS := $(basename $(foreach src,$(wildcard test/test_*.c), $(BUILDDIR)/$(src)))
 TESTDIR = $(abspath $(CURDIR)/test)
 
 OPTIONS =
@@ -33,14 +33,16 @@ endif
 CC = gcc
 
 C_FILES := $(wildcard src/*.c)
-C_FILES_TEST := $(wildcard test/*.c) \
-                $(wildcard deps/Unity/src/*.c)
+C_FILES_TEST := $(wildcard test/*.c)
+C_FILES_TEST_DEPS := $(wildcard deps/Unity/src/*.c)
 
 SOURCES := $(C_FILES:.c=.o)
 SOURCES_TEST := $(C_FILES_TEST:.c=.o)
+SOURCES_TEST_DEPS := $(C_FILES_TEST_DEPS:.c=.o)
 OBJS := $(foreach src,$(SOURCES), $(BUILDDIR)/$(src))
-OBJS_TEST := $(foreach src,$(SOURCES_TEST), $(BUILDDIR)/$(src)) \
-             $(filter-out %main.o, $(OBJS))
+OBJS_TEST := $(foreach src,$(SOURCES_TEST), $(BUILDDIR)/$(src))
+OBJS_NO_MAIN := $(filter-out %main.o, $(OBJS)) \
+                $(C_FILES_TEST_DEPS)
 
 .PHONY: test
 .PHONY: clean
@@ -59,12 +61,12 @@ run: $(TARGET)
 gdb: $(TARGET)
 	gdb $(CURDIR)/$(TARGET)
 
-test: $(TEST_TARGET)
-	$(TEST_TARGET)
+test: $(TEST_TARGETS)
+	$(foreach var,$(TEST_TARGETS),$(var);)
 
-$(TEST_TARGET): $(OBJS_TEST)
+$(TEST_TARGETS): $(OBJS_NO_MAIN) $(OBJS_TEST)
 	@echo $(ECHOFLAGS) "[LD]\t$<"
-	@$(CC) $(LDFLAGS) -o "$@" $^ $(LIBS)
+	$(CC) $(LDFLAGS) -o "$@" $@.o $(OBJS_NO_MAIN) $(LIBS)
 
 $(BUILDDIR)/%.o: %.c
 	@echo $(ECHOFLAGS) "[CC]\t$<"

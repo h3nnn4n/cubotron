@@ -24,7 +24,13 @@ void test_init_cubie_edge_orientations() {
     free(cube);
 }
 
-void cubie_runner() {
+void setUp(void) {}
+
+void tearDown(void) {}
+
+int main() {
+    UNITY_BEGIN();
     RUN_TEST(test_init_cubie_corner_orientations);
     RUN_TEST(test_init_cubie_edge_orientations);
+    return UNITY_END();
 }

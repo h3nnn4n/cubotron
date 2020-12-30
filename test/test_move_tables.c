@@ -33,7 +33,13 @@ void test_build_basic_move_u_edges() {
     }
 }
 
-void move_tables_runner() {
+void setUp(void) {}
+
+void tearDown(void) {}
+
+int main() {
+    UNITY_BEGIN();
     RUN_TEST(test_build_basic_move_u_edges);
     RUN_TEST(test_build_basic_move_u_corner);
+    return UNITY_END();
 }
