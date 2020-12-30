@@ -35,7 +35,7 @@ void build_move_table() {
 
     for (int i = 0; i < 6; i++) {
         for (int j = 0; j < 3; j++) {
-            for (int jj = 0; jj < j; jj++) {
+            for (int jj = 0; jj <= j; jj++) {
                 multiply_cube_cubie(move_table[3 * i + j], moves[i]);
             }
         }

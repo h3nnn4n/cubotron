@@ -128,5 +128,6 @@ int main() {
 
     RUN_TEST(test_multiply_cube_cubie_corners_u2_is_not_identity);
     RUN_TEST(test_multiply_cube_cubie_corners_u4_is_identity);
+
     return UNITY_END();
 }
