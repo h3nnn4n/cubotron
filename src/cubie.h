@@ -11,7 +11,7 @@ typedef struct {
     edge   edge_permutations[12];
 
     int corner_orientations[8];
-    int edge_orientations[8];
+    int edge_orientations[12];
 } cube_cubie;
 
 cube_cubie *init_cubie_cube();

@@ -1,5 +1,7 @@
 TARGET = $(notdir $(CURDIR))
 BUILDDIR = $(abspath $(CURDIR)/build)
+
+TEST_TARGET = $(BUILDDIR)/test/runner
 TESTDIR = $(abspath $(CURDIR)/test)
 
 OPTIONS =
@@ -37,7 +39,11 @@ C_FILES_TEST := $(wildcard test/*.c)
 SOURCES := $(C_FILES:.c=.o)
 SOURCES_TEST := $(C_FILES_TEST:.c=.o)
 OBJS := $(foreach src,$(SOURCES), $(BUILDDIR)/$(src))
-OBJS_TEST := $(foreach test,$(SOURCES_TEST), $(BUILDDIR)/$(test))
+OBJS_TEST := $(foreach src,$(SOURCES_TEST), $(BUILDDIR)/$(src)) \
+             $(filter-out %main.o, $(OBJS))
+
+.PHONY: test
+.PHONY: clean
 
 all: build
 
@@ -45,30 +51,29 @@ build: $(TARGET)
 
 rebuild: clean $(TARGET)
 
+retest: clean test
+
 run: $(TARGET)
 	$(CURDIR)/$(TARGET)
 
 gdb: $(TARGET)
 	gdb $(CURDIR)/$(TARGET)
 
-test: $(OBJS) $(OBJS_TEST)
-	@echo $(ECHOFLAGS) "[LD]\t$@"
-	$(CC) $(LDFLAGS) -o "$@" $(OBJS) $(LIBS)
+test: $(TEST_TARGET)
+	$(TEST_TARGET)
+
+$(TEST_TARGET): $(OBJS_TEST)
+	@echo $(ECHOFLAGS) "[LD]\t$<"
+	@$(CC) $(LDFLAGS) -o "$@" $^ $(LIBS)
 
 $(BUILDDIR)/%.o: %.c
-	@echo $(ECHOFLAGS) "[CC]\t$<" hah
+	@echo $(ECHOFLAGS) "[CC]\t$<"
 	@mkdir -p "$(dir $@)"
-	$(CC) $(CFLAGS) -o "$@" -c "$<"
-
-$(TARGET).o: $(OBJS)
-	@echo $(ECHOFLAGS) "[LD]\t$@"
-	$(CC) $(LDFLAGS) -o "$@" $(OBJS) $(LIBS)
+	@$(CC) $(CFLAGS) -o "$@" -c "$<"
 
 $(TARGET): $(OBJS)
-	@echo $(ECHOFLAGS) "[LD]\t$@"
-	$(CC) $(LDFLAGS) -o "$@" $(OBJS) $(LIBS)
-
--include $(OBJS:.o=.d)
+	@echo $(ECHOFLAGS) "[LD]\t$<"
+	@$(CC) $(LDFLAGS) -o "$@" $^ $(LIBS)
 
 clean:
 	@echo Cleaning...
@@ -76,8 +81,4 @@ clean:
 	@rm -rf "$(BUILDDIR)/test/"
 	@rm -rf "$(BUILDDIR)/deps/"
 	@rm -f "$(TARGET).o"
-
-superclean:
-	@echo Activating clean slate protocol
-	@rm -rf "$(BUILDDIR)"
-	@rm -f "$(TARGET).o"
+	@rm -f "$(TARGET)"
