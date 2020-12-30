@@ -16,6 +16,9 @@ void apply_move(cube_cubie *cube, move move_to_apply) {
 }
 
 void build_move_table() {
+    if (move_table != NULL)
+        return;
+
     move_table = malloc(sizeof(cube_cubie *) * 18);
 
     cube_cubie *moves[6];
