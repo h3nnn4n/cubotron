@@ -7,8 +7,8 @@
 
 void test_build_basic_move_u_corner() {
     cube_cubie *cube_1 = build_basic_move(MOVE_U1);
-    cube_cubie *cube_2 = build_basic_move(MOVE_U1);
-    cube_cubie *cube_3 = build_basic_move(MOVE_U1);
+    cube_cubie *cube_2 = build_basic_move(MOVE_U2);
+    cube_cubie *cube_3 = build_basic_move(MOVE_U3);
 
     for (int i = 0; i < 8; i++) {
         TEST_ASSERT_EQUAL_INT(cube_1->corner_permutations[i], cube_2->corner_permutations[i]);
@@ -21,8 +21,8 @@ void test_build_basic_move_u_corner() {
 
 void test_build_basic_move_u_edges() {
     cube_cubie *cube_1 = build_basic_move(MOVE_U1);
-    cube_cubie *cube_2 = build_basic_move(MOVE_U1);
-    cube_cubie *cube_3 = build_basic_move(MOVE_U1);
+    cube_cubie *cube_2 = build_basic_move(MOVE_U2);
+    cube_cubie *cube_3 = build_basic_move(MOVE_U3);
 
     for (int i = 0; i < 12; i++) {
         TEST_ASSERT_EQUAL_INT(cube_1->edge_permutations[i], cube_2->edge_permutations[i]);
