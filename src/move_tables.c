@@ -7,7 +7,7 @@
 
 static cube_cubie **move_table = NULL;
 
-void apply_move(cube_cubie *cube, move move_to_apply) {
+void apply_move(cube_cubie *cube, move_t move_to_apply) {
     if (move_to_apply == MOVE_NULL)
         return;
 
@@ -42,7 +42,7 @@ void build_move_table() {
     }
 }
 
-cube_cubie *build_basic_move(move base_move) {
+cube_cubie *build_basic_move(move_t base_move) {
     cube_cubie *cube = init_cubie_cube();
 
     switch (base_move) {
@@ -94,7 +94,7 @@ cube_cubie *build_basic_move(move base_move) {
     return cube;
 }
 
-void apply_basic_move_raw(cube_cubie *cube, corner cp[], edge ep[], int co[], int eo[]) {
+void apply_basic_move_raw(cube_cubie *cube, corner_t cp[], edge_t ep[], int co[], int eo[]) {
     for (int i = 0; i < 8; i++) {
         cube->corner_permutations[i] = cp[i];
         cube->corner_orientations[i] = co[i];
@@ -107,49 +107,37 @@ void apply_basic_move_raw(cube_cubie *cube, corner cp[], edge ep[], int co[], in
 }
 
 // Up
-corner corner_permutation_U[] = {CORNER_UBR, CORNER_URF, CORNER_UFL, CORNER_ULB,
-                                 CORNER_DFR, CORNER_DLF, CORNER_DBL, CORNER_DRB};
-int    corner_orientation_U[] = {0, 0, 0, 0, 0, 0, 0, 0};
-edge   edge_permutation_U[]   = {EDGE_UB, EDGE_UR, EDGE_UF, EDGE_UL, EDGE_DR, EDGE_DF,
-                             EDGE_DL, EDGE_DB, EDGE_FR, EDGE_FL, EDGE_BL, EDGE_BR};
-int    edge_orientation_U[]   = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+corner_t corner_permutation_U[] = {UBR, URF, UFL, ULB, DFR, DLF, DBL, DRB};
+int      corner_orientation_U[] = {0, 0, 0, 0, 0, 0, 0, 0};
+edge_t   edge_permutation_U[]   = {UB, UR, UF, UL, DR, DF, DL, DB, FR, FL, BL, BR};
+int      edge_orientation_U[]   = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 // Right;
-corner corner_permutation_R[] = {CORNER_DFR, CORNER_UFL, CORNER_ULB, CORNER_URF,
-                                 CORNER_DRB, CORNER_DLF, CORNER_DBL, CORNER_UBR};
-int    corner_orientation_R[] = {2, 0, 0, 1, 1, 0, 0, 2};
-edge   edge_permutation_R[]   = {EDGE_FR, EDGE_UF, EDGE_UL, EDGE_UB, EDGE_BR, EDGE_DF,
-                             EDGE_DL, EDGE_DB, EDGE_DR, EDGE_FL, EDGE_BL, EDGE_UR};
-int    edge_orientation_R[]   = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+corner_t corner_permutation_R[] = {DFR, UFL, ULB, URF, DRB, DLF, DBL, UBR};
+int      corner_orientation_R[] = {2, 0, 0, 1, 1, 0, 0, 2};
+edge_t   edge_permutation_R[]   = {FR, UF, UL, UB, BR, DF, DL, DB, DR, FL, BL, UR};
+int      edge_orientation_R[]   = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 // Front;
-corner corner_permutation_F[] = {CORNER_UFL, CORNER_DLF, CORNER_ULB, CORNER_UBR,
-                                 CORNER_URF, CORNER_DFR, CORNER_DBL, CORNER_DRB};
-int    corner_orientation_F[] = {1, 2, 0, 0, 2, 1, 0, 0};
-edge   edge_permutation_F[]   = {EDGE_UR, EDGE_FL, EDGE_UL, EDGE_UB, EDGE_DR, EDGE_FR,
-                             EDGE_DL, EDGE_DB, EDGE_UF, EDGE_DF, EDGE_BL, EDGE_BR};
-int    edge_orientation_F[]   = {0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0};
+corner_t corner_permutation_F[] = {UFL, DLF, ULB, UBR, URF, DFR, DBL, DRB};
+int      corner_orientation_F[] = {1, 2, 0, 0, 2, 1, 0, 0};
+edge_t   edge_permutation_F[]   = {UR, FL, UL, UB, DR, FR, DL, DB, UF, DF, BL, BR};
+int      edge_orientation_F[]   = {0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0};
 
 // Down;
-corner corner_permutation_D[] = {CORNER_URF, CORNER_UFL, CORNER_ULB, CORNER_UBR,
-                                 CORNER_DLF, CORNER_DBL, CORNER_DRB, CORNER_DFR};
-int    corner_orientation_D[] = {0, 0, 0, 0, 0, 0, 0, 0};
-edge   edge_permutation_D[]   = {EDGE_UR, EDGE_UF, EDGE_UL, EDGE_UB, EDGE_DF, EDGE_DL,
-                             EDGE_DB, EDGE_DR, EDGE_FR, EDGE_FL, EDGE_BL, EDGE_BR};
-int    edge_orientation_D[]   = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+corner_t corner_permutation_D[] = {URF, UFL, ULB, UBR, DLF, DBL, DRB, DFR};
+int      corner_orientation_D[] = {0, 0, 0, 0, 0, 0, 0, 0};
+edge_t   edge_permutation_D[]   = {UR, UF, UL, UB, DF, DL, DB, DR, FR, FL, BL, BR};
+int      edge_orientation_D[]   = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 // Left;
-corner corner_permutation_L[] = {CORNER_URF, CORNER_ULB, CORNER_DBL, CORNER_UBR,
-                                 CORNER_DFR, CORNER_UFL, CORNER_DLF, CORNER_DRB};
-int    corner_orientation_L[] = {0, 1, 2, 0, 0, 2, 1, 0};
-edge   edge_permutation_L[]   = {EDGE_UR, EDGE_UF, EDGE_BL, EDGE_UB, EDGE_DR, EDGE_DF,
-                             EDGE_FL, EDGE_DB, EDGE_FR, EDGE_UL, EDGE_DL, EDGE_BR};
-int    edge_orientation_L[]   = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+corner_t corner_permutation_L[] = {URF, ULB, DBL, UBR, DFR, UFL, DLF, DRB};
+int      corner_orientation_L[] = {0, 1, 2, 0, 0, 2, 1, 0};
+edge_t   edge_permutation_L[]   = {UR, UF, BL, UB, DR, DF, FL, DB, FR, UL, DL, BR};
+int      edge_orientation_L[]   = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 // Back;
-corner corner_permutation_B[] = {CORNER_URF, CORNER_UFL, CORNER_UBR, CORNER_DRB,
-                                 CORNER_DFR, CORNER_DLF, CORNER_ULB, CORNER_DBL};
-int    corner_orientation_B[] = {0, 0, 1, 2, 0, 0, 2, 1};
-edge   edge_permutation_B[]   = {EDGE_UR, EDGE_UF, EDGE_UL, EDGE_BR, EDGE_DR, EDGE_DF,
-                             EDGE_DL, EDGE_BL, EDGE_FR, EDGE_FL, EDGE_UB, EDGE_DB};
-int    edge_orientation_B[]   = {0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1};
+corner_t corner_permutation_B[] = {URF, UFL, UBR, DRB, DFR, DLF, ULB, DBL};
+int      corner_orientation_B[] = {0, 0, 1, 2, 0, 0, 2, 1};
+edge_t   edge_permutation_B[]   = {UR, UF, UL, BR, DR, DF, DL, BL, FR, FL, UB, DB};
+int      edge_orientation_B[]   = {0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1};

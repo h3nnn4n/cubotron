@@ -25,8 +25,8 @@ void multiply_cube_cubie(cube_cubie *cube1, cube_cubie *cube2) {
 }
 
 void multiply_cube_cubie_edges(cube_cubie *cube1, cube_cubie *cube2) {
-    edge ep[12];
-    int  eo[12];
+    edge_t ep[12];
+    int    eo[12];
 
     for (int i = 0; i < 12; i++) {
         ep[i] = cube1->edge_permutations[cube2->edge_permutations[i]];
@@ -40,8 +40,8 @@ void multiply_cube_cubie_edges(cube_cubie *cube1, cube_cubie *cube2) {
 }
 
 void multiply_cube_cubie_corners(cube_cubie *cube1, cube_cubie *cube2) {
-    corner cp[8];
-    int    co[8];
+    corner_t cp[8];
+    int      co[8];
 
     for (int i = 0; i < 8; i++) {
         cp[i] = cube1->corner_permutations[cube2->corner_permutations[i]];

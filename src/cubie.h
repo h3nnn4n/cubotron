@@ -7,8 +7,8 @@
 
 // Represents the cube at the cubie level, as a series of permutations
 typedef struct {
-    corner corner_permutations[8];
-    edge   edge_permutations[12];
+    corner_t corner_permutations[8];
+    edge_t   edge_permutations[12];
 
     int corner_orientations[8];
     int edge_orientations[12];
