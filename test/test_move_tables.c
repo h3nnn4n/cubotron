@@ -1,7 +1,8 @@
+#include <unity.h>
+
 #include <definitions.h>
 #include <move_tables.h>
 
-#include "unity.h"
 
 void test_build_basic_move_u_corner() {
     cube_cubie *cube_1 = build_basic_move(MOVE_U1);

@@ -17,7 +17,6 @@ OPTIMIZATION=-O0
 
 LDFLAGS = -Wl,-Ldeps/Unity/build/
 
-#LIBS = -lunity
 LIBS =
 
 BLACKLIST = -O0 -O1 -O2 -O3 -Os
@@ -34,7 +33,8 @@ endif
 CC = gcc
 
 C_FILES := $(wildcard src/*.c)
-C_FILES_TEST := $(wildcard test/*.c)
+C_FILES_TEST := $(wildcard test/*.c) \
+                $(wildcard deps/Unity/src/*.c)
 
 SOURCES := $(C_FILES:.c=.o)
 SOURCES_TEST := $(C_FILES_TEST:.c=.o)

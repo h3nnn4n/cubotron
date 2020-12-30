@@ -1,5 +1,6 @@
+#include <unity.h>
+
 #include "test_move_tables.h"
-#include "unity.h"
 
 void setUp(void) {}
 
