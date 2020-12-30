@@ -3,6 +3,7 @@
 #include <definitions.h>
 #include <move_tables.h>
 
+#include "test_move_tables.h"
 
 void test_build_basic_move_u_corner() {
     cube_cubie *cube_1 = build_basic_move(MOVE_U1);
@@ -30,4 +31,9 @@ void test_build_basic_move_u_edges() {
         TEST_ASSERT_EQUAL_INT(cube_1->edge_orientations[i], cube_2->edge_orientations[i]);
         TEST_ASSERT_EQUAL_INT(cube_1->edge_orientations[i], cube_3->edge_orientations[i]);
     }
+}
+
+void move_tables_runner() {
+    RUN_TEST(test_build_basic_move_u_edges);
+    RUN_TEST(test_build_basic_move_u_corner);
 }
