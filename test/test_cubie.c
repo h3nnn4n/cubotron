@@ -3,8 +3,8 @@
 #include <unity.h>
 
 #include <cubie_cube.h>
+#include <cubie_move_table.h>
 #include <definitions.h>
-#include <move_tables.h>
 #include <utils.h>
 
 static pcg32_random_t rng;
@@ -51,7 +51,7 @@ void test_init_cubie_edge_orientations() {
 
 void test_multiply_cube_cubie_edges_u2_is_not_identity() {
     cube_cubie_t *cube         = init_cubie_cube();
-    cube_cubie_t *cube_u1_move = build_basic_move(MOVE_U1);
+    cube_cubie_t *cube_u1_move = cubie_build_basic_move(MOVE_U1);
 
     multiply_cube_cubie_edges(cube, cube_u1_move);
     multiply_cube_cubie_edges(cube, cube_u1_move);
@@ -69,7 +69,7 @@ void test_multiply_cube_cubie_edges_u2_is_not_identity() {
 
 void test_multiply_cube_cubie_edges_u4_is_identity() {
     cube_cubie_t *cube         = init_cubie_cube();
-    cube_cubie_t *cube_u1_move = build_basic_move(MOVE_U1);
+    cube_cubie_t *cube_u1_move = cubie_build_basic_move(MOVE_U1);
 
     for (int i = 0; i < 4; i++) {
         multiply_cube_cubie_edges(cube, cube_u1_move);
@@ -85,7 +85,7 @@ void test_multiply_cube_cubie_edges_u4_is_identity() {
 
 void test_multiply_cube_cubie_corners_u2_is_not_identity() {
     cube_cubie_t *cube         = init_cubie_cube();
-    cube_cubie_t *cube_u1_move = build_basic_move(MOVE_U1);
+    cube_cubie_t *cube_u1_move = cubie_build_basic_move(MOVE_U1);
 
     multiply_cube_cubie_corners(cube, cube_u1_move);
     multiply_cube_cubie_corners(cube, cube_u1_move);
@@ -103,7 +103,7 @@ void test_multiply_cube_cubie_corners_u2_is_not_identity() {
 
 void test_multiply_cube_cubie_corners_u4_is_identity() {
     cube_cubie_t *cube         = init_cubie_cube();
-    cube_cubie_t *cube_u1_move = build_basic_move(MOVE_U1);
+    cube_cubie_t *cube_u1_move = cubie_build_basic_move(MOVE_U1);
 
     for (int i = 0; i < 4; i++) {
         multiply_cube_cubie_corners(cube, cube_u1_move);
@@ -149,7 +149,7 @@ void test_get_corner_and_set_corner_orientations() {
     // Take 10k cubes and suffle them with 30 moves
     for (int i = 0; i < 10000; i++) {
         for (int j = 0; j < 30; j++)
-            apply_move(cube1, pcg32_boundedrand_r(&rng, 18));
+            cubie_apply_move(cube1, pcg32_boundedrand_r(&rng, 18));
 
         int orientation = get_corner_orientations(cube1);
         set_corner_orientations(cube2, orientation);
@@ -196,7 +196,7 @@ void test_get_edge_and_set_edge_orientations() {
     // Take 10k cubes and suffle them with 30 moves
     for (int i = 0; i < 10000; i++) {
         for (int j = 0; j < 30; j++)
-            apply_move(cube1, pcg32_boundedrand_r(&rng, 18));
+            cubie_apply_move(cube1, pcg32_boundedrand_r(&rng, 18));
 
         int orientation = get_edge_orientations(cube1);
         set_edge_orientations(cube2, orientation);
@@ -211,7 +211,7 @@ void test_get_edge_and_set_edge_orientations() {
     free(cube2);
 }
 
-void setUp(void) { build_move_table(); }
+void setUp(void) { cubie_build_move_table(); }
 
 void tearDown(void) {}
 

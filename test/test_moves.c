@@ -1,7 +1,7 @@
 #include <unity.h>
 
+#include <cubie_move_table.h>
 #include <definitions.h>
-#include <move_tables.h>
 #include <utils.h>
 
 void test_double_turn_moves_have_diameter_2() {
@@ -12,9 +12,9 @@ void test_double_turn_moves_have_diameter_2() {
     for (int j = 0; j < N_COLORS; j++) {
         cube_cubie_t *cube = init_cubie_cube();
 
-        apply_move(cube, moves[j]);
+        cubie_apply_move(cube, moves[j]);
         TEST_ASSERT_FALSE(is_solved(cube));
-        apply_move(cube, moves[j]);
+        cubie_apply_move(cube, moves[j]);
         TEST_ASSERT_TRUE(is_solved(cube));
 
         free(cube);
@@ -30,11 +30,11 @@ void test_half_turn_moves_have_diameter_4() {
         cube_cubie_t *cube = init_cubie_cube();
 
         for (int i = 0; i < 3; i++) {
-            apply_move(cube, moves[j]);
+            cubie_apply_move(cube, moves[j]);
             TEST_ASSERT_FALSE(is_solved(cube));
         }
 
-        apply_move(cube, moves[j]);
+        cubie_apply_move(cube, moves[j]);
 
         TEST_ASSERT_TRUE(is_solved(cube));
 
@@ -51,15 +51,15 @@ void test_half_turn_moves_inverses() {
         cube_cubie_t *cube = init_cubie_cube();
 
         // Tests that U3 undoes U1
-        apply_move(cube, moves[j]);
+        cubie_apply_move(cube, moves[j]);
         TEST_ASSERT_FALSE(is_solved(cube));
-        apply_move(cube, moves[j] + 2); // U1 is 0 and U3 is U1 + 2, and so on
+        cubie_apply_move(cube, moves[j] + 2); // U1 is 0 and U3 is U1 + 2, and so on
         TEST_ASSERT_TRUE(is_solved(cube));
 
         // Tests that U1 undoes U3
-        apply_move(cube, moves[j] + 2);
+        cubie_apply_move(cube, moves[j] + 2);
         TEST_ASSERT_FALSE(is_solved(cube));
-        apply_move(cube, moves[j]);
+        cubie_apply_move(cube, moves[j]);
         TEST_ASSERT_TRUE(is_solved(cube));
 
         free(cube);
@@ -85,7 +85,7 @@ void test_move_sequences_diameter() {
 
         for (int sequence_index = 0; sequence_index < 6; sequence_index++) {
             for (int move_index = 0; move_index < 4; move_index++) {
-                apply_move(cube, move_book[move_book_index][move_index]);
+                cubie_apply_move(cube, move_book[move_book_index][move_index]);
             }
 
             if (sequence_index < 5) { // It gets solved on the last iteration
@@ -124,7 +124,7 @@ void test_move_sequences_diameter_2() {
 
         for (int sequence_index = 0; sequence_index < 2; sequence_index++) {
             for (int move_index = 0; move_index < 16; move_index++) {
-                apply_move(cube, move_book[move_book_index][move_index]);
+                cubie_apply_move(cube, move_book[move_book_index][move_index]);
             }
         }
 
@@ -134,7 +134,7 @@ void test_move_sequences_diameter_2() {
     }
 }
 
-void setUp(void) { build_move_table(); }
+void setUp(void) { cubie_build_move_table(); }
 
 void tearDown(void) {}
 
