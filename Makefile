@@ -14,8 +14,6 @@ override CFLAGS += -Wall -Wextra -pedantic -std=gnu11 $(OPTIMIZATION) $(OPTIONS)
 
 OPTIMIZATION=-O0
 
-LDFLAGS = -lpcg_random -Wl,-Ldeps/Unity/build/,-Ldeps/pcg-c/src/
-
 LIBS =
 
 BLACKLIST = -O0 -O1 -O2 -O3 -Os
@@ -24,9 +22,11 @@ LIBS := $(filter-out $(BLACKLIST), $(LIBS))
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
   ECHOFLAGS = -e
+  LDFLAGS = -lpcg_random -Wl,-Ldeps/Unity/build/,-Ldeps/pcg-c/src/
 endif
 ifeq ($(UNAME_S),Darwin)
   CFLAGS += -Wno-unused-command-line-argument
+  LDFLAGS = -lpcg_random -Wl,-Ldeps/Unity/build/ -Wl,-Bstatic -Ldeps/pcg-c/src/
 endif
 
 CC = gcc
