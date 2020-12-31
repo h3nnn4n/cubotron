@@ -4,3 +4,6 @@
 [submodule "deps/clang-format-hooks"]
 	path = deps/clang-format-hooks
 	url = https://github.com/barisione/clang-format-hooks
+[submodule "deps/pcg-c"]
+	path = deps/pcg-c
+	url = https://github.com/imneme/pcg-c/

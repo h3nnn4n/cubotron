@@ -61,8 +61,11 @@ run: $(TARGET)
 gdb: $(TARGET)
 	gdb $(CURDIR)/$(TARGET)
 
-test: $(TEST_TARGETS)
+test: pcg $(TEST_TARGETS)
 	$(foreach var,$(TEST_TARGETS),$(var) && ) echo $(ECHOFLAGS) "Everything in order"
+
+pcg:
+	$(MAKE) -C deps/pcg-c/src/
 
 $(TEST_TARGETS): $(OBJS_NO_MAIN) $(OBJS_TEST)
 	@echo $(ECHOFLAGS) "[LD]\t$<"
