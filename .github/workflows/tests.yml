@@ -1,0 +1,14 @@
+name: Unit Tests
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+        with:
+          fetch-depth: 1
+          submodules: true
+      - name: Run Makefile
+        run: make test
