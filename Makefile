@@ -14,11 +14,6 @@ override CFLAGS += -Wall -Wextra -pedantic -std=gnu11 $(OPTIMIZATION) $(OPTIONS)
 
 OPTIMIZATION=-O0
 
-LIBS =
-
-BLACKLIST = -O0 -O1 -O2 -O3 -Os
-LIBS := $(filter-out $(BLACKLIST), $(LIBS))
-
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
   ECHOFLAGS = -e
@@ -68,8 +63,7 @@ pcg:
 
 $(TEST_TARGETS): $(OBJS_NO_MAIN) $(OBJS_TEST)
 	@echo $(ECHOFLAGS) "[LD]\t$<"
-	$(CC) $(LDFLAGS) -o "$@" $@.o $(OBJS_NO_MAIN) $(LIBS)
-
+	$(CC) $(LDFLAGS) -o "$@" $@.o $(OBJS_NO_MAIN)
 $(BUILDDIR)/%.o: %.c
 	@echo $(ECHOFLAGS) "[CC]\t$<"
 	@mkdir -p "$(dir $@)"
@@ -77,8 +71,7 @@ $(BUILDDIR)/%.o: %.c
 
 $(TARGET): $(OBJS)
 	@echo $(ECHOFLAGS) "[LD]\t$<"
-	@$(CC) $(LDFLAGS) -o "$@" $^ $(LIBS)
-
+	@$(CC) $(LDFLAGS) -o "$@" $^
 clean:
 	@echo Cleaning...
 	@rm -rf "$(BUILDDIR)/src/"
