@@ -99,6 +99,41 @@ void test_move_sequences_diameter() {
     }
 }
 
+void test_move_sequences_diameter_2() {
+    move_t move_book[4][16] = {
+        {MOVE_R3, MOVE_U1, MOVE_R1, MOVE_U3, MOVE_R2, MOVE_F3, MOVE_U3, MOVE_F1, MOVE_U1, MOVE_R1, MOVE_F1, MOVE_R3,
+         MOVE_F3, MOVE_R2, MOVE_U3, MOVE_NULL}, // F perm
+
+        {MOVE_R1, MOVE_U1, MOVE_R3, MOVE_U3, MOVE_R3, MOVE_F1, MOVE_R2, MOVE_U3, MOVE_R3, MOVE_U3, MOVE_R1, MOVE_U1,
+         MOVE_R3, MOVE_F3, MOVE_NULL, MOVE_NULL}, // T perm
+
+        {MOVE_R3, MOVE_U1, MOVE_R3, MOVE_U3, MOVE_B3, MOVE_R3, MOVE_B2, MOVE_U3, MOVE_B3, MOVE_U1, MOVE_B3, MOVE_R1,
+         MOVE_B1, MOVE_R1, MOVE_NULL, MOVE_NULL}, // V perm
+
+        {MOVE_F2, MOVE_D1, MOVE_R2, MOVE_U1, MOVE_R2, MOVE_D3, MOVE_R3, MOVE_U3, MOVE_R1, MOVE_F2, MOVE_R3, MOVE_U1,
+         MOVE_R1, MOVE_NULL, MOVE_NULL, MOVE_NULL} // Y perm
+    };
+
+    for (int move_book_index = 0; move_book_index < 4; move_book_index++) {
+        char buffer[256] = "";
+        for (int move_index = 0; move_index < 16; move_index++)
+            sprintf(buffer, "%s %s", buffer, move_to_str(move_book[move_book_index][move_index]));
+        TEST_MESSAGE(buffer);
+
+        cube_cubie *cube = init_cubie_cube();
+
+        for (int sequence_index = 0; sequence_index < 2; sequence_index++) {
+            for (int move_index = 0; move_index < 16; move_index++) {
+                apply_move(cube, move_book[move_book_index][move_index]);
+            }
+        }
+
+        TEST_ASSERT_TRUE(is_solved(cube));
+
+        free(cube);
+    }
+}
+
 void setUp(void) { build_move_table(); }
 
 void tearDown(void) {}
@@ -110,6 +145,7 @@ int main() {
     RUN_TEST(test_double_turn_moves_have_diameter_2);
     RUN_TEST(test_half_turn_moves_inverses);
     RUN_TEST(test_move_sequences_diameter);
+    RUN_TEST(test_move_sequences_diameter_2);
 
     return UNITY_END();
 }
