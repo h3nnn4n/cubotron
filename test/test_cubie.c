@@ -3,6 +3,7 @@
 
 #include <definitions.h>
 #include <move_tables.h>
+#include <utils.h>
 
 void test_init_cubie_corner_permutations() {
     cube_cubie *cube = init_cubie_cube();
@@ -112,6 +113,31 @@ void test_multiply_cube_cubie_corners_u4_is_identity() {
     free(cube);
 }
 
+void test_set_corner_orientations_only_makes_valid_cubes() {
+    cube_cubie *cube = init_cubie_cube();
+
+    for (int i = 0; i < 2187; i++) {
+        set_corner_orientations(cube, i);
+
+        TEST_ASSERT_TRUE(is_valid(cube));
+    }
+
+    free(cube);
+}
+
+void test_set_corner_and_get_corner_orientations() {
+    cube_cubie *cube = init_cubie_cube();
+
+    for (int i = 0; i < 2187; i++) {
+        set_corner_orientations(cube, i);
+        int orientation = get_corner_orientations(cube);
+
+        TEST_ASSERT_EQUAL_INT(i, orientation);
+    }
+
+    free(cube);
+}
+
 void setUp(void) {}
 
 void tearDown(void) {}
@@ -128,6 +154,9 @@ int main() {
 
     RUN_TEST(test_multiply_cube_cubie_corners_u2_is_not_identity);
     RUN_TEST(test_multiply_cube_cubie_corners_u4_is_identity);
+
+    RUN_TEST(test_set_corner_orientations_only_makes_valid_cubes);
+    RUN_TEST(test_set_corner_and_get_corner_orientations);
 
     return UNITY_END();
 }

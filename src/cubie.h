@@ -19,4 +19,7 @@ void        multiply_cube_cubie(cube_cubie *cube1, cube_cubie *cube2);
 void        multiply_cube_cubie_edges(cube_cubie *cube1, cube_cubie *cube2);
 void        multiply_cube_cubie_corners(cube_cubie *cube1, cube_cubie *cube2);
 
+void set_corner_orientations(cube_cubie *cube, int orientations);
+int  get_corner_orientations(cube_cubie *cube);
+
 #endif /* end of include guard */

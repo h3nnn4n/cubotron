@@ -21,6 +21,30 @@ cube_cubie *init_cubie_cube() {
     return cube;
 }
 
+void set_corner_orientations(cube_cubie *cube, int orientations) {
+    int parity = 0;
+
+    for (int i = 6; i >= 0; i--) {
+        cube->corner_orientations[i] = orientations % 3;
+        parity += orientations % 3;
+        orientations /= 3;
+    }
+
+    // The last corner parity is a function of the other 7
+    cube->corner_orientations[7] = (3 - parity % 3) % 3;
+
+    assert(is_valid(cube));
+}
+
+int get_corner_orientations(cube_cubie *cube) {
+    int orientations = 0;
+
+    for (int i = 0; i < 7; i++)
+        orientations = 3 * orientations + cube->corner_orientations[i];
+
+    return orientations;
+}
+
 void multiply_cube_cubie(cube_cubie *cube1, cube_cubie *cube2) {
     assert(is_valid(cube1));
     assert(is_valid(cube2));
