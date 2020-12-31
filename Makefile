@@ -17,7 +17,7 @@ OPTIMIZATION=-O0
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
   ECHOFLAGS = -e
-  LDFLAGS = -lpcg_random -Wl,-Ldeps/Unity/build/ -Wl,-Bstatic -Ldeps/pcg-c/src/
+  LDFLAGS = -lpcg_random -Wl,-Ldeps/Unity/build/,-Ldeps/pcg-c/src/
 endif
 ifeq ($(UNAME_S),Darwin)
   CFLAGS += -Wno-unused-command-line-argument
@@ -63,7 +63,8 @@ pcg:
 
 $(TEST_TARGETS): $(OBJS_NO_MAIN) $(OBJS_TEST)
 	@echo $(ECHOFLAGS) "[LD]\t$<"
-	$(CC) $(LDFLAGS) -o "$@" $@.o $(OBJS_NO_MAIN)
+	$(CC) -o "$@" $@.o $(OBJS_NO_MAIN) $(LDFLAGS)
+
 $(BUILDDIR)/%.o: %.c
 	@echo $(ECHOFLAGS) "[CC]\t$<"
 	@mkdir -p "$(dir $@)"
@@ -71,7 +72,8 @@ $(BUILDDIR)/%.o: %.c
 
 $(TARGET): $(OBJS)
 	@echo $(ECHOFLAGS) "[LD]\t$<"
-	@$(CC) $(LDFLAGS) -o "$@" $^
+	@$(CC) -o "$@" $^
+
 clean:
 	@echo Cleaning...
 	@rm -rf "$(BUILDDIR)/src/"
