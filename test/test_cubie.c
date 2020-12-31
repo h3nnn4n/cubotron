@@ -138,6 +138,31 @@ void test_set_corner_and_get_corner_orientations() {
     free(cube);
 }
 
+void test_set_edge_orientations_only_makes_valid_cubes() {
+    cube_cubie *cube = init_cubie_cube();
+
+    for (int i = 0; i < N_EDGE_ORIENTATIONS; i++) {
+        set_edge_orientations(cube, i);
+
+        TEST_ASSERT_TRUE(is_valid(cube));
+    }
+
+    free(cube);
+}
+
+void test_set_edge_and_get_edge_orientations() {
+    cube_cubie *cube = init_cubie_cube();
+
+    for (int i = 0; i < N_EDGE_ORIENTATIONS; i++) {
+        set_edge_orientations(cube, i);
+        int orientation = get_edge_orientations(cube);
+
+        TEST_ASSERT_EQUAL_INT(i, orientation);
+    }
+
+    free(cube);
+}
+
 void setUp(void) {}
 
 void tearDown(void) {}
@@ -157,6 +182,9 @@ int main() {
 
     RUN_TEST(test_set_corner_orientations_only_makes_valid_cubes);
     RUN_TEST(test_set_corner_and_get_corner_orientations);
+
+    RUN_TEST(test_set_edge_orientations_only_makes_valid_cubes);
+    RUN_TEST(test_set_edge_and_get_edge_orientations);
 
     return UNITY_END();
 }

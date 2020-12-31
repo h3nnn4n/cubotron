@@ -47,6 +47,32 @@ int get_corner_orientations(cube_cubie *cube) {
     return orientations;
 }
 
+void set_edge_orientations(cube_cubie *cube, int orientations) {
+    int parity = 0;
+
+    // Start from the second to last edge
+    for (int i = BR - 1; i >= UR; i--) {
+        cube->edge_orientations[i] = orientations % 2;
+        parity += orientations % 2;
+        orientations /= 2;
+    }
+
+    // The last edge parity is a function of the other 11
+    cube->edge_orientations[BR] = (2 - parity % 2) % 2;
+
+    assert(is_valid(cube));
+}
+
+int get_edge_orientations(cube_cubie *cube) {
+    int orientations = 0;
+
+    // This intentionaly skips the last one (BR), since it is a funcion of the other 11 edges
+    for (int i = UR; i < BR; i++)
+        orientations = 2 * orientations + cube->edge_orientations[i];
+
+    return orientations;
+}
+
 void multiply_cube_cubie(cube_cubie *cube1, cube_cubie *cube2) {
     assert(is_valid(cube1));
     assert(is_valid(cube2));
