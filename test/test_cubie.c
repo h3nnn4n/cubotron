@@ -1,9 +1,12 @@
+#include <pcg_variants.h>
 #include <stdlib.h>
 #include <unity.h>
 
 #include <definitions.h>
 #include <move_tables.h>
 #include <utils.h>
+
+static pcg32_random_t rng;
 
 void test_init_cubie_corner_permutations() {
     cube_cubie *cube = init_cubie_cube();
@@ -138,6 +141,28 @@ void test_set_corner_and_get_corner_orientations() {
     free(cube);
 }
 
+void test_get_corner_and_set_corner_orientations() {
+    cube_cubie *cube1 = init_cubie_cube();
+    cube_cubie *cube2 = init_cubie_cube();
+
+    // Take 10k cubes and suffle them with 30 moves
+    for (int i = 0; i < 10000; i++) {
+        for (int j = 0; j < 30; j++)
+            apply_move(cube1, pcg32_boundedrand_r(&rng, 18));
+
+        int orientation = get_corner_orientations(cube1);
+        set_corner_orientations(cube2, orientation);
+        int orientation2 = get_corner_orientations(cube2);
+
+        // Assert that the corner orientations are copied over from cube1 to cube2
+        TEST_ASSERT_EQUAL_INT_ARRAY(cube1->corner_orientations, cube2->corner_orientations, N_CORNERS);
+        TEST_ASSERT_EQUAL_INT(orientation, orientation2);
+    }
+
+    free(cube1);
+    free(cube2);
+}
+
 void test_set_edge_orientations_only_makes_valid_cubes() {
     cube_cubie *cube = init_cubie_cube();
 
@@ -163,12 +188,37 @@ void test_set_edge_and_get_edge_orientations() {
     free(cube);
 }
 
-void setUp(void) {}
+void test_get_edge_and_set_edge_orientations() {
+    cube_cubie *cube1 = init_cubie_cube();
+    cube_cubie *cube2 = init_cubie_cube();
+
+    // Take 10k cubes and suffle them with 30 moves
+    for (int i = 0; i < 10000; i++) {
+        for (int j = 0; j < 30; j++)
+            apply_move(cube1, pcg32_boundedrand_r(&rng, 18));
+
+        int orientation = get_edge_orientations(cube1);
+        set_edge_orientations(cube2, orientation);
+        int orientation2 = get_edge_orientations(cube2);
+
+        // Assert that the edge orientations are copied over from cube1 to cube2
+        TEST_ASSERT_EQUAL_INT_ARRAY(cube1->edge_orientations, cube2->edge_orientations, N_EDGES);
+        TEST_ASSERT_EQUAL_INT(orientation, orientation2);
+    }
+
+    free(cube1);
+    free(cube2);
+}
+
+void setUp(void) { build_move_table(); }
 
 void tearDown(void) {}
 
 int main() {
+    pcg32_srandom_r(&rng, 42u, 54u);
+
     UNITY_BEGIN();
+
     RUN_TEST(test_init_cubie_corner_permutations);
     RUN_TEST(test_init_cubie_edge_permutations);
     RUN_TEST(test_init_cubie_corner_orientations);
@@ -182,9 +232,11 @@ int main() {
 
     RUN_TEST(test_set_corner_orientations_only_makes_valid_cubes);
     RUN_TEST(test_set_corner_and_get_corner_orientations);
+    RUN_TEST(test_get_corner_and_set_corner_orientations);
 
     RUN_TEST(test_set_edge_orientations_only_makes_valid_cubes);
     RUN_TEST(test_set_edge_and_get_edge_orientations);
+    RUN_TEST(test_get_edge_and_set_edge_orientations);
 
     return UNITY_END();
 }

@@ -7,15 +7,14 @@ TESTDIR = $(abspath $(CURDIR)/test)
 OPTIONS =
 
 INCLUDES = -Isrc \
-           -Ideps/Unity/src
-
-LINKS = -Ldeps/
+           -Ideps/Unity/src \
+           -Ideps/pcg-c/include
 
 override CFLAGS += -Wall -Wextra -pedantic -std=gnu11 $(OPTIMIZATION) $(OPTIONS) $(INCLUDES)
 
 OPTIMIZATION=-O0
 
-LDFLAGS = -Wl,-Ldeps/Unity/build/
+LDFLAGS = -lpcg_random -Wl,-Ldeps/Unity/build/,-Ldeps/pcg-c/src/
 
 LIBS =
 
