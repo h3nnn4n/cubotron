@@ -62,7 +62,7 @@ gdb: $(TARGET)
 	gdb $(CURDIR)/$(TARGET)
 
 test: $(TEST_TARGETS)
-	$(foreach var,$(TEST_TARGETS),$(var);)
+	$(foreach var,$(TEST_TARGETS),$(var) && ) echo $(ECHOFLAGS) "Everything in order"
 
 $(TEST_TARGETS): $(OBJS_NO_MAIN) $(OBJS_TEST)
 	@echo $(ECHOFLAGS) "[LD]\t$<"
