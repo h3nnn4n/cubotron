@@ -61,6 +61,9 @@ test: pcg $(TEST_TARGETS)
 pcg:
 	$(MAKE) -C deps/pcg-c/src/
 
+pcg_clean:
+	@$(MAKE) clean -C deps/pcg-c/src/ > /dev/null
+
 $(TEST_TARGETS): $(OBJS_NO_MAIN) $(OBJS_TEST)
 	@echo $(ECHOFLAGS) "[LD]\t$<"
 	$(CC) -o "$@" $@.o $(OBJS_NO_MAIN) $(LDFLAGS)
