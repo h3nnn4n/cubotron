@@ -4,6 +4,7 @@
 #include "cubie.h"
 #include "definitions.h"
 #include "move_tables.h"
+#include "utils.h"
 
 static cube_cubie **move_table = NULL;
 
@@ -13,6 +14,8 @@ void apply_move(cube_cubie *cube, move_t move_to_apply) {
 
     assert(move_table != NULL);
     multiply_cube_cubie(cube, move_table[move_to_apply]);
+
+    assert(is_valid(cube));
 }
 
 void build_move_table() {
@@ -91,6 +94,7 @@ cube_cubie *build_basic_move(move_t base_move) {
         case MOVE_NULL: break;
     }
 
+    assert(is_valid(cube));
     return cube;
 }
 
@@ -104,6 +108,8 @@ void apply_basic_move_raw(cube_cubie *cube, corner_t cp[], edge_t ep[], int co[]
         cube->edge_permutations[i] = ep[i];
         cube->edge_orientations[i] = eo[i];
     }
+
+    assert(is_valid(cube));
 }
 
 // Up

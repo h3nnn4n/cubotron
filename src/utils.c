@@ -37,3 +37,36 @@ char *move_to_str(move_t move) {
 
     return _move_t_to_str[move];
 }
+
+int is_valid(cube_cubie *cube) {
+    int edge_count[12]     = {0};
+    int corner_count[8]    = {0};
+    int edge_orientation   = 0;
+    int corner_orientation = 0;
+
+    for (int i = 0; i < 12; i++) {
+        edge_count[cube->edge_permutations[i]]++;
+        edge_orientation += cube->edge_orientations[i];
+    }
+
+    for (int i = 0; i < 12; i++)
+        if (edge_count[i] != 1)
+            return 0;
+
+    if (edge_orientation % 2 != 0)
+        return 0;
+
+    for (int i = 0; i < 8; i++) {
+        corner_count[cube->corner_permutations[i]]++;
+        corner_orientation += cube->corner_orientations[i];
+    }
+
+    for (int i = 0; i < 8; i++)
+        if (corner_count[i] != 1)
+            return 0;
+
+    if (corner_orientation % 3 != 0)
+        return 0;
+
+    return 1;
+}

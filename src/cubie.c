@@ -1,7 +1,9 @@
-#include "cubie.h"
+#include <assert.h>
 
+#include "cubie.h"
 #include "definitions.h"
 #include "move_tables.h"
+#include "utils.h"
 
 cube_cubie *init_cubie_cube() {
     cube_cubie *cube = (cube_cubie *)malloc(sizeof(cube_cubie));
@@ -20,8 +22,13 @@ cube_cubie *init_cubie_cube() {
 }
 
 void multiply_cube_cubie(cube_cubie *cube1, cube_cubie *cube2) {
+    assert(is_valid(cube1));
+    assert(is_valid(cube2));
+
     multiply_cube_cubie_edges(cube1, cube2);
     multiply_cube_cubie_corners(cube1, cube2);
+
+    assert(is_valid(cube1));
 }
 
 void multiply_cube_cubie_edges(cube_cubie *cube1, cube_cubie *cube2) {
