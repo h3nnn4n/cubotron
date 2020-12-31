@@ -3,8 +3,6 @@
 #include <definitions.h>
 #include <move_tables.h>
 
-#include "test_move_tables.h"
-
 void test_solved(cube_cubie *cube) {
     for (int i = 0; i < 8; i++) {
         TEST_ASSERT_EQUAL_INT(i, cube->corner_permutations[i]);
