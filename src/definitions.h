@@ -1,6 +1,15 @@
 #ifndef _DEFINITIONS
 #define _DEFINITIONS
 
+#define N_CORNER_ORIENTATIONS 2187
+#define N_EDGE_ORIENTATIONS   2048
+
+#define N_CORNERS 8
+#define N_EDGES   12
+
+#define N_COLORS   6
+#define N_FACELETS 54
+
 typedef enum {
     ROT_URF3 = 0,
     ROT_F2   = 1,

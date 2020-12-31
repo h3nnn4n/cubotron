@@ -9,7 +9,7 @@ void test_double_turn_moves_have_diameter_2() {
         MOVE_U2, MOVE_R2, MOVE_F2, MOVE_D2, MOVE_L2, MOVE_B2,
     };
 
-    for (int j = 0; j < 6; j++) {
+    for (int j = 0; j < N_COLORS; j++) {
         cube_cubie *cube = init_cubie_cube();
 
         apply_move(cube, moves[j]);
@@ -47,7 +47,7 @@ void test_half_turn_moves_inverses() {
         MOVE_U1, MOVE_R1, MOVE_F1, MOVE_D1, MOVE_L1, MOVE_B1,
     };
 
-    for (int j = 0; j < 6; j++) {
+    for (int j = 0; j < N_COLORS; j++) {
         cube_cubie *cube = init_cubie_cube();
 
         // Tests that U3 undoes U1

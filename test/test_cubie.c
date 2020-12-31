@@ -8,7 +8,7 @@
 void test_init_cubie_corner_permutations() {
     cube_cubie *cube = init_cubie_cube();
 
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < N_CORNERS; i++) {
         TEST_ASSERT_EQUAL_INT(i, cube->corner_permutations[i]);
     }
 
@@ -18,7 +18,7 @@ void test_init_cubie_corner_permutations() {
 void test_init_cubie_corner_orientations() {
     cube_cubie *cube = init_cubie_cube();
 
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < N_CORNERS; i++) {
         TEST_ASSERT_EQUAL_INT(0, cube->corner_orientations[i]);
     }
 
@@ -28,7 +28,7 @@ void test_init_cubie_corner_orientations() {
 void test_init_cubie_edge_permutations() {
     cube_cubie *cube = init_cubie_cube();
 
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < N_EDGES; i++) {
         TEST_ASSERT_EQUAL_INT(i, cube->edge_permutations[i]);
     }
 
@@ -38,7 +38,7 @@ void test_init_cubie_edge_permutations() {
 void test_init_cubie_edge_orientations() {
     cube_cubie *cube = init_cubie_cube();
 
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < N_EDGES; i++) {
         TEST_ASSERT_EQUAL_INT(0, cube->edge_orientations[i]);
     }
 
@@ -53,7 +53,7 @@ void test_multiply_cube_cubie_edges_u2_is_not_identity() {
     multiply_cube_cubie_edges(cube, cube_u1_move);
 
     int off_count = 0;
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < N_EDGES; i++) {
         if (i != (int)cube->edge_permutations[i])
             off_count++;
     }
@@ -71,7 +71,7 @@ void test_multiply_cube_cubie_edges_u4_is_identity() {
         multiply_cube_cubie_edges(cube, cube_u1_move);
     }
 
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < N_EDGES; i++) {
         TEST_ASSERT_EQUAL_INT(i, cube->edge_permutations[i]);
         TEST_ASSERT_EQUAL_INT(0, cube->edge_orientations[i]);
     }
@@ -87,7 +87,7 @@ void test_multiply_cube_cubie_corners_u2_is_not_identity() {
     multiply_cube_cubie_corners(cube, cube_u1_move);
 
     int off_count = 0;
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < N_CORNERS; i++) {
         if (i != (int)cube->corner_permutations[i])
             off_count++;
     }
@@ -105,7 +105,7 @@ void test_multiply_cube_cubie_corners_u4_is_identity() {
         multiply_cube_cubie_corners(cube, cube_u1_move);
     }
 
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < N_CORNERS; i++) {
         TEST_ASSERT_EQUAL_INT(i, cube->corner_permutations[i]);
         TEST_ASSERT_EQUAL_INT(0, cube->corner_orientations[i]);
     }
@@ -116,7 +116,7 @@ void test_multiply_cube_cubie_corners_u4_is_identity() {
 void test_set_corner_orientations_only_makes_valid_cubes() {
     cube_cubie *cube = init_cubie_cube();
 
-    for (int i = 0; i < 2187; i++) {
+    for (int i = 0; i < N_CORNER_ORIENTATIONS; i++) {
         set_corner_orientations(cube, i);
 
         TEST_ASSERT_TRUE(is_valid(cube));
@@ -128,7 +128,7 @@ void test_set_corner_orientations_only_makes_valid_cubes() {
 void test_set_corner_and_get_corner_orientations() {
     cube_cubie *cube = init_cubie_cube();
 
-    for (int i = 0; i < 2187; i++) {
+    for (int i = 0; i < N_CORNER_ORIENTATIONS; i++) {
         set_corner_orientations(cube, i);
         int orientation = get_corner_orientations(cube);
 
