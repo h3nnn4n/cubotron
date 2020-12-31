@@ -5,9 +5,9 @@
 #include <utils.h>
 
 void test_build_basic_move_u_corner() {
-    cube_cubie *cube_1 = build_basic_move(MOVE_U1);
-    cube_cubie *cube_2 = build_basic_move(MOVE_U2);
-    cube_cubie *cube_3 = build_basic_move(MOVE_U3);
+    cube_cubie_t *cube_1 = build_basic_move(MOVE_U1);
+    cube_cubie_t *cube_2 = build_basic_move(MOVE_U2);
+    cube_cubie_t *cube_3 = build_basic_move(MOVE_U3);
 
     for (int i = 0; i < N_CORNERS; i++) {
         TEST_ASSERT_EQUAL_INT(cube_1->corner_permutations[i], cube_2->corner_permutations[i]);
@@ -19,9 +19,9 @@ void test_build_basic_move_u_corner() {
 }
 
 void test_build_basic_move_u_edges() {
-    cube_cubie *cube_1 = build_basic_move(MOVE_U1);
-    cube_cubie *cube_2 = build_basic_move(MOVE_U2);
-    cube_cubie *cube_3 = build_basic_move(MOVE_U3);
+    cube_cubie_t *cube_1 = build_basic_move(MOVE_U1);
+    cube_cubie_t *cube_2 = build_basic_move(MOVE_U2);
+    cube_cubie_t *cube_3 = build_basic_move(MOVE_U3);
 
     for (int i = 0; i < N_EDGES; i++) {
         TEST_ASSERT_EQUAL_INT(cube_1->edge_permutations[i], cube_2->edge_permutations[i]);
@@ -33,7 +33,7 @@ void test_build_basic_move_u_edges() {
 }
 
 void test_apply_move_null_does_nothing() {
-    cube_cubie *cube = init_cubie_cube();
+    cube_cubie_t *cube = init_cubie_cube();
 
     apply_move(cube, MOVE_NULL);
 
@@ -43,7 +43,7 @@ void test_apply_move_null_does_nothing() {
 }
 
 void test_apply_move_U1_times_four_is_identity() {
-    cube_cubie *cube = init_cubie_cube();
+    cube_cubie_t *cube = init_cubie_cube();
 
     apply_move(cube, MOVE_U1);
     apply_move(cube, MOVE_U1);
@@ -56,7 +56,7 @@ void test_apply_move_U1_times_four_is_identity() {
 }
 
 void test_apply_move_U3_times_four_is_identity() {
-    cube_cubie *cube = init_cubie_cube();
+    cube_cubie_t *cube = init_cubie_cube();
 
     apply_move(cube, MOVE_U3);
     apply_move(cube, MOVE_U3);
@@ -69,7 +69,7 @@ void test_apply_move_U3_times_four_is_identity() {
 }
 
 void test_apply_move_U2_times_two_is_identity() {
-    cube_cubie *cube = init_cubie_cube();
+    cube_cubie_t *cube = init_cubie_cube();
 
     apply_move(cube, MOVE_U2);
     apply_move(cube, MOVE_U2);
@@ -80,7 +80,7 @@ void test_apply_move_U2_times_two_is_identity() {
 }
 
 void test_apply_move_U1_is_inverse_of_U3() {
-    cube_cubie *cube = init_cubie_cube();
+    cube_cubie_t *cube = init_cubie_cube();
 
     apply_move(cube, MOVE_U1);
     apply_move(cube, MOVE_U3);

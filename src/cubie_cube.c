@@ -1,12 +1,12 @@
 #include <assert.h>
 
-#include "cubie.h"
+#include "cubie_cube.h"
 #include "definitions.h"
 #include "move_tables.h"
 #include "utils.h"
 
-cube_cubie *init_cubie_cube() {
-    cube_cubie *cube = (cube_cubie *)malloc(sizeof(cube_cubie));
+cube_cubie_t *init_cubie_cube() {
+    cube_cubie_t *cube = (cube_cubie_t *)malloc(sizeof(cube_cubie_t));
 
     for (int i = 0; i < N_CORNERS; i++) {
         cube->corner_permutations[i] = i;
@@ -21,7 +21,7 @@ cube_cubie *init_cubie_cube() {
     return cube;
 }
 
-void set_corner_orientations(cube_cubie *cube, int orientations) {
+void set_corner_orientations(cube_cubie_t *cube, int orientations) {
     int parity = 0;
 
     // Start from the second to last corner
@@ -37,7 +37,7 @@ void set_corner_orientations(cube_cubie *cube, int orientations) {
     assert(is_valid(cube));
 }
 
-int get_corner_orientations(cube_cubie *cube) {
+int get_corner_orientations(cube_cubie_t *cube) {
     int orientations = 0;
 
     // This intentionaly skips the last one (DRB), since it is a funcion of the other 7 corners
@@ -47,7 +47,7 @@ int get_corner_orientations(cube_cubie *cube) {
     return orientations;
 }
 
-void set_edge_orientations(cube_cubie *cube, int orientations) {
+void set_edge_orientations(cube_cubie_t *cube, int orientations) {
     int parity = 0;
 
     // Start from the second to last edge
@@ -63,7 +63,7 @@ void set_edge_orientations(cube_cubie *cube, int orientations) {
     assert(is_valid(cube));
 }
 
-int get_edge_orientations(cube_cubie *cube) {
+int get_edge_orientations(cube_cubie_t *cube) {
     int orientations = 0;
 
     // This intentionaly skips the last one (BR), since it is a funcion of the other 11 edges
@@ -73,7 +73,7 @@ int get_edge_orientations(cube_cubie *cube) {
     return orientations;
 }
 
-void multiply_cube_cubie(cube_cubie *cube1, cube_cubie *cube2) {
+void multiply_cube_cubie(cube_cubie_t *cube1, cube_cubie_t *cube2) {
     assert(is_valid(cube1));
     assert(is_valid(cube2));
 
@@ -83,7 +83,7 @@ void multiply_cube_cubie(cube_cubie *cube1, cube_cubie *cube2) {
     assert(is_valid(cube1));
 }
 
-void multiply_cube_cubie_edges(cube_cubie *cube1, cube_cubie *cube2) {
+void multiply_cube_cubie_edges(cube_cubie_t *cube1, cube_cubie_t *cube2) {
     edge_t ep[N_EDGES];
     int    eo[N_EDGES];
 
@@ -98,7 +98,7 @@ void multiply_cube_cubie_edges(cube_cubie *cube1, cube_cubie *cube2) {
     }
 }
 
-void multiply_cube_cubie_corners(cube_cubie *cube1, cube_cubie *cube2) {
+void multiply_cube_cubie_corners(cube_cubie_t *cube1, cube_cubie_t *cube2) {
     corner_t cp[N_CORNERS];
     int      co[N_CORNERS];
 

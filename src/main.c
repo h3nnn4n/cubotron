@@ -1,4 +1,4 @@
-#include "cubie.h"
+#include "cubie_cube.h"
 #include "definitions.h"
 #include "move_tables.h"
 

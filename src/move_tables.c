@@ -1,14 +1,14 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#include "cubie.h"
+#include "cubie_cube.h"
 #include "definitions.h"
 #include "move_tables.h"
 #include "utils.h"
 
-static cube_cubie **move_table = NULL;
+static cube_cubie_t **move_table = NULL;
 
-void apply_move(cube_cubie *cube, move_t move_to_apply) {
+void apply_move(cube_cubie_t *cube, move_t move_to_apply) {
     if (move_to_apply == MOVE_NULL)
         return;
 
@@ -22,9 +22,9 @@ void build_move_table() {
     if (move_table != NULL)
         return;
 
-    move_table = malloc(sizeof(cube_cubie *) * 18);
+    move_table = malloc(sizeof(cube_cubie_t *) * 18);
 
-    cube_cubie *moves[6];
+    cube_cubie_t *moves[6];
     moves[0] = build_basic_move(MOVE_U1);
     moves[1] = build_basic_move(MOVE_R1);
     moves[2] = build_basic_move(MOVE_F1);
@@ -45,8 +45,8 @@ void build_move_table() {
     }
 }
 
-cube_cubie *build_basic_move(move_t base_move) {
-    cube_cubie *cube = init_cubie_cube();
+cube_cubie_t *build_basic_move(move_t base_move) {
+    cube_cubie_t *cube = init_cubie_cube();
 
     switch (base_move) {
         case MOVE_U1:
@@ -98,7 +98,7 @@ cube_cubie *build_basic_move(move_t base_move) {
     return cube;
 }
 
-void apply_basic_move_raw(cube_cubie *cube, corner_t cp[], edge_t ep[], int co[], int eo[]) {
+void apply_basic_move_raw(cube_cubie_t *cube, corner_t cp[], edge_t ep[], int co[], int eo[]) {
     for (int i = 0; i < 8; i++) {
         cube->corner_permutations[i] = cp[i];
         cube->corner_orientations[i] = co[i];

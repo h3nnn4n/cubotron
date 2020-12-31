@@ -1,7 +1,7 @@
 #ifndef _COORD_CUBE
 #define _COORD_CUBE
 
-#include "cubie.h"
+#include "cubie_cube.h"
 
 typedef struct {
     int edge_orientations;
@@ -9,6 +9,6 @@ typedef struct {
 } coord_cube_t;
 
 coord_cube_t *get_coord_cube();
-coord_cube_t *make_coord_cube(cube_cubie *);
+coord_cube_t *make_coord_cube(cube_cubie_t *);
 
 #endif /* end of include guard */

@@ -10,7 +10,7 @@ void test_double_turn_moves_have_diameter_2() {
     };
 
     for (int j = 0; j < N_COLORS; j++) {
-        cube_cubie *cube = init_cubie_cube();
+        cube_cubie_t *cube = init_cubie_cube();
 
         apply_move(cube, moves[j]);
         TEST_ASSERT_FALSE(is_solved(cube));
@@ -27,7 +27,7 @@ void test_half_turn_moves_have_diameter_4() {
     };
 
     for (int j = 0; j < 12; j++) {
-        cube_cubie *cube = init_cubie_cube();
+        cube_cubie_t *cube = init_cubie_cube();
 
         for (int i = 0; i < 3; i++) {
             apply_move(cube, moves[j]);
@@ -48,7 +48,7 @@ void test_half_turn_moves_inverses() {
     };
 
     for (int j = 0; j < N_COLORS; j++) {
-        cube_cubie *cube = init_cubie_cube();
+        cube_cubie_t *cube = init_cubie_cube();
 
         // Tests that U3 undoes U1
         apply_move(cube, moves[j]);
@@ -81,7 +81,7 @@ void test_move_sequences_diameter() {
             sprintf(buffer, "%s %s", buffer, move_to_str(move_book[move_book_index][move_index]));
         TEST_MESSAGE(buffer);
 
-        cube_cubie *cube = init_cubie_cube();
+        cube_cubie_t *cube = init_cubie_cube();
 
         for (int sequence_index = 0; sequence_index < 6; sequence_index++) {
             for (int move_index = 0; move_index < 4; move_index++) {
@@ -120,7 +120,7 @@ void test_move_sequences_diameter_2() {
             sprintf(buffer, "%s %s", buffer, move_to_str(move_book[move_book_index][move_index]));
         TEST_MESSAGE(buffer);
 
-        cube_cubie *cube = init_cubie_cube();
+        cube_cubie_t *cube = init_cubie_cube();
 
         for (int sequence_index = 0; sequence_index < 2; sequence_index++) {
             for (int move_index = 0; move_index < 16; move_index++) {

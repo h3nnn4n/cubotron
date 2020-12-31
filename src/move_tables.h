@@ -1,13 +1,13 @@
 #ifndef _MOVE_TABLES
 #define _MOVE_TABLES
 
-#include "cubie.h"
+#include "cubie_cube.h"
 #include "definitions.h"
 
-void        build_move_table();
-cube_cubie *build_basic_move(move_t base_move);
-void        apply_basic_move_raw(cube_cubie *cube, corner_t cp[], edge_t ep[], int co[], int eo[]);
-void        apply_move(cube_cubie *cube, move_t move_to_apply);
+void          build_move_table();
+cube_cubie_t *build_basic_move(move_t base_move);
+void          apply_basic_move_raw(cube_cubie_t *cube, corner_t cp[], edge_t ep[], int co[], int eo[]);
+void          apply_move(cube_cubie_t *cube, move_t move_to_apply);
 
 extern corner_t corner_permutation_U[];
 extern int      corner_orientation_U[];

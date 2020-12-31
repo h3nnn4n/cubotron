@@ -11,7 +11,7 @@ coord_cube_t *get_coord_cube() {
     return coord_cube;
 }
 
-coord_cube_t *make_coord_cube(cube_cubie *cubie) {
+coord_cube_t *make_coord_cube(cube_cubie_t *cubie) {
     coord_cube_t *coord_cube = get_coord_cube();
 
     coord_cube->edge_orientations   = get_edge_orientations(cubie);

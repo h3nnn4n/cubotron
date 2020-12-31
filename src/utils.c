@@ -1,13 +1,13 @@
 #include <assert.h>
 
-#include "cubie.h"
+#include "cubie_cube.h"
 
 static char *_move_t_to_str[] = {
     "MOVE_U2", "MOVE_U2", "MOVE_U3", "MOVE_R1", "MOVE_R2", "MOVE_R3", "MOVE_F1", "MOVE_F2", "MOVE_F3",   "MOVE_D1",
     "MOVE_D2", "MOVE_D3", "MOVE_L1", "MOVE_L2", "MOVE_L3", "MOVE_B1", "MOVE_B2", "MOVE_B3", "MOVE_NULL",
 };
 
-int cubie_off_count(cube_cubie *cube) {
+int cubie_off_count(cube_cubie_t *cube) {
     int count = 0;
 
     for (int i = 0; i < 8; i++) {
@@ -29,7 +29,7 @@ int cubie_off_count(cube_cubie *cube) {
     return count;
 }
 
-int is_solved(cube_cubie *cube) { return cubie_off_count(cube) == 0; }
+int is_solved(cube_cubie_t *cube) { return cubie_off_count(cube) == 0; }
 
 char *move_to_str(move_t move) {
     assert(move >= 0);
@@ -38,7 +38,7 @@ char *move_to_str(move_t move) {
     return _move_t_to_str[move];
 }
 
-int is_valid(cube_cubie *cube) {
+int is_valid(cube_cubie_t *cube) {
     int edge_count[12]     = {0};
     int corner_count[8]    = {0};
     int edge_orientation   = 0;
