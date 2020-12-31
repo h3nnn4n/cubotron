@@ -12,7 +12,10 @@ void cubie_apply_move(cube_cubie_t *cube, move_t move_to_apply) {
     if (move_to_apply == MOVE_NULL)
         return;
 
+    assert(cube != NULL);
+    assert(move_to_apply >= 0 && move_to_apply < N_MOVES);
     assert(move_table_cubie != NULL);
+
     multiply_cube_cubie(cube, move_table_cubie[move_to_apply]);
 
     assert(is_valid(cube));
