@@ -1,6 +1,10 @@
 #include <assert.h>
+#include <pcg_variants.h>
 
+#include "coord_cube.h"
+#include "coord_move_tables.h"
 #include "cubie_cube.h"
+#include "cubie_move_table.h"
 
 static char *_move_t_to_str[] = {
     "MOVE_U2", "MOVE_U2", "MOVE_U3", "MOVE_R1", "MOVE_R2", "MOVE_R3", "MOVE_F1", "MOVE_F2", "MOVE_F3",   "MOVE_D1",
@@ -69,4 +73,26 @@ int is_valid(cube_cubie_t *cube) {
         return 0;
 
     return 1;
+}
+
+cube_cubie_t *random_cubie_cube() {
+    cube_cubie_t *cube = init_cubie_cube();
+
+    for (int i = 0; i < 40; i++) {
+        move_t move = pcg32_boundedrand(N_MOVES);
+        cubie_apply_move(cube, move);
+    }
+
+    return cube;
+}
+
+coord_cube_t *random_coord_cube() {
+    coord_cube_t *cube = get_coord_cube();
+
+    for (int i = 0; i < 40; i++) {
+        move_t move = pcg32_boundedrand(N_MOVES);
+        coord_apply_move(cube, move);
+    }
+
+    return cube;
 }

@@ -77,7 +77,7 @@ $(BUILDDIR)/%.o: %.c
 
 $(TARGET): $(OBJS)
 	@echo $(ECHOFLAGS) "[LD]\t$<"
-	@$(CC) -o "$@" $^
+	@$(CC) -o "$@" $^ $(LDFLAGS)
 
 clean:
 	@echo Cleaning...
