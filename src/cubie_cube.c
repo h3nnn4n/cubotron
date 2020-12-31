@@ -2,7 +2,6 @@
 
 #include "cubie_cube.h"
 #include "definitions.h"
-#include "move_tables.h"
 #include "utils.h"
 
 cube_cubie_t *init_cubie_cube() {

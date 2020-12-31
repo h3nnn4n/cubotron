@@ -7,6 +7,8 @@
 #define N_CORNERS 8
 #define N_EDGES   12
 
+#define N_MOVES 18
+
 #define N_COLORS   6
 #define N_FACELETS 54
 
