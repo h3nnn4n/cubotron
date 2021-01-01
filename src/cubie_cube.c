@@ -80,6 +80,7 @@ void multiply_cube_cubie(cube_cubie_t *cube1, cube_cubie_t *cube2) {
     multiply_cube_cubie_corners(cube1, cube2);
 
     assert(is_valid(cube1));
+    assert(is_valid(cube2));
 }
 
 void multiply_cube_cubie_edges(cube_cubie_t *cube1, cube_cubie_t *cube2) {
@@ -93,7 +94,7 @@ void multiply_cube_cubie_edges(cube_cubie_t *cube1, cube_cubie_t *cube2) {
 
     for (int i = 0; i < N_EDGES; i++) {
         cube1->edge_permutations[i] = ep[i];
-        cube2->edge_orientations[i] = eo[i];
+        cube1->edge_orientations[i] = eo[i];
     }
 }
 
@@ -138,6 +139,24 @@ void multiply_cube_cubie_corners(cube_cubie_t *cube1, cube_cubie_t *cube2) {
 
     for (int i = 0; i < N_CORNERS; i++) {
         cube1->corner_permutations[i] = cp[i];
-        cube2->corner_orientations[i] = co[i];
+        cube1->corner_orientations[i] = co[i];
     }
+}
+
+int are_cubie_equal(cube_cubie_t *cube1, cube_cubie_t *cube2) {
+    for (int i = 0; i < N_EDGES; i++) {
+        if (cube1->edge_permutations[i] != cube2->edge_permutations[i])
+            return 0;
+        if (cube1->edge_orientations[i] != cube2->edge_orientations[i])
+            return 0;
+    }
+
+    for (int i = 0; i < N_CORNERS; i++) {
+        if (cube1->corner_permutations[i] != cube2->corner_permutations[i])
+            return 0;
+        if (cube1->corner_orientations[i] != cube2->corner_orientations[i])
+            return 0;
+    }
+
+    return 1;
 }

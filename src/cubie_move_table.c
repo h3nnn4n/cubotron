@@ -25,9 +25,9 @@ void cubie_build_move_table() {
     if (move_table_cubie != NULL)
         return;
 
-    move_table_cubie = malloc(sizeof(cube_cubie_t *) * 18);
+    move_table_cubie = malloc(sizeof(cube_cubie_t *) * N_MOVES);
 
-    cube_cubie_t *moves[6];
+    cube_cubie_t *moves[N_COLORS];
     moves[0] = cubie_build_basic_move(MOVE_U1);
     moves[1] = cubie_build_basic_move(MOVE_R1);
     moves[2] = cubie_build_basic_move(MOVE_F1);
@@ -35,11 +35,11 @@ void cubie_build_move_table() {
     moves[4] = cubie_build_basic_move(MOVE_L1);
     moves[5] = cubie_build_basic_move(MOVE_B1);
 
-    for (int i = 0; i < 18; i++) {
+    for (int i = 0; i < N_MOVES; i++) {
         move_table_cubie[i] = init_cubie_cube();
     }
 
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < N_COLORS; i++) {
         for (int j = 0; j < 3; j++) {
             for (int jj = 0; jj <= j; jj++) {
                 multiply_cube_cubie(move_table_cubie[3 * i + j], moves[i]);
@@ -102,12 +102,14 @@ cube_cubie_t *cubie_build_basic_move(move_t base_move) {
 }
 
 void cubie_apply_basic_move_raw(cube_cubie_t *cube, corner_t cp[], edge_t ep[], int co[], int eo[]) {
-    for (int i = 0; i < 8; i++) {
+    assert(is_valid(cube));
+
+    for (int i = 0; i < N_CORNERS; i++) {
         cube->corner_permutations[i] = cp[i];
         cube->corner_orientations[i] = co[i];
     }
 
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < N_EDGES; i++) {
         cube->edge_permutations[i] = ep[i];
         cube->edge_orientations[i] = eo[i];
     }

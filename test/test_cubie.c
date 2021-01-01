@@ -211,6 +211,49 @@ void test_get_edge_and_set_edge_orientations() {
     free(cube2);
 }
 
+void test_cube_moves() {
+    cube_cubie_t *reference = init_cubie_cube();
+
+    for (int move = 0; move < N_MOVES; move++) {
+        cube_cubie_t *cube = init_cubie_cube();
+
+        cubie_apply_move(cube, move);
+
+        TEST_ASSERT_FALSE(are_cubie_equal(reference, cube));
+
+        free(cube);
+    }
+}
+
+void test_cube_moves2() {
+    for (int move = 0; move < N_MOVES; move++) {
+        cube_cubie_t *cube1 = init_cubie_cube();
+        cube_cubie_t *cube2 = init_cubie_cube();
+
+        TEST_ASSERT_TRUE(are_cubie_equal(cube1, cube2));
+
+        cubie_apply_move(cube1, move);
+        TEST_ASSERT_FALSE(are_cubie_equal(cube1, cube2));
+
+        cubie_apply_move(cube2, move);
+        TEST_ASSERT_TRUE(are_cubie_equal(cube1, cube2));
+
+        free(cube1);
+        free(cube2);
+    }
+}
+
+void test_orientation_changes() {
+    cube_cubie_t *cube = init_cubie_cube();
+
+    cubie_apply_move(cube, MOVE_F1);
+
+    TEST_ASSERT_NOT_EQUAL_INT(0, get_corner_orientations(cube));
+    TEST_ASSERT_NOT_EQUAL_INT(0, get_edge_orientations(cube));
+
+    free(cube);
+}
+
 void setUp(void) { cubie_build_move_table(); }
 
 void tearDown(void) {}
@@ -238,6 +281,10 @@ int main() {
     RUN_TEST(test_set_edge_orientations_only_makes_valid_cubes);
     RUN_TEST(test_set_edge_and_get_edge_orientations);
     RUN_TEST(test_get_edge_and_set_edge_orientations);
+
+    RUN_TEST(test_cube_moves);
+    RUN_TEST(test_cube_moves2);
+    RUN_TEST(test_orientation_changes);
 
     return UNITY_END();
 }
