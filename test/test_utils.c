@@ -24,8 +24,8 @@ void test_random_coord_cube() {
     TEST_ASSERT_NOT_EQUAL_INT(0, cube->corner_orientations);
 }
 
-void setUp() { build_move_tables(); };
-void tearDown(){};
+void setUp() { build_move_tables(); }
+void tearDown() {}
 
 int main() {
     pcg32_srandom(43u, 55u);
