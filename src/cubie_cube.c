@@ -1,5 +1,6 @@
 #include <assert.h>
 
+#include "coord_cube.h"
 #include "cubie_cube.h"
 #include "definitions.h"
 #include "utils.h"

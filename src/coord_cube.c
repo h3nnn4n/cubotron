@@ -24,3 +24,13 @@ void copy_coord_cube(coord_cube_t *dest, coord_cube_t *source) {
     dest->edge_orientations   = source->edge_orientations;
     dest->corner_orientations = source->corner_orientations;
 }
+
+int are_coord_equal(coord_cube_t *cube1, coord_cube_t *cube2) {
+    if (cube1->edge_orientations != cube2->edge_orientations)
+        return 0;
+
+    if (cube1->corner_orientations != cube2->corner_orientations)
+        return 0;
+
+    return 1;
+}

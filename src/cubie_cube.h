@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 
+#include "cubie_cube.h"
 #include "definitions.h"
 
 // Represents the cube at the cubie level, as a series of permutations

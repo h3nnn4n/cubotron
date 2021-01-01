@@ -80,6 +80,39 @@ void test_coord_orientation_changes() {
     free(coord_cube);
 }
 
+void test_moves_are_reversible() {
+    TEST_PASS();
+    const int n_moves = 10;
+    move_t    moves[50];
+
+    for (int i = 0; i < 1000; i++) {
+        coord_cube_t *cube      = random_coord_cube();
+        coord_cube_t *reference = get_coord_cube();
+        copy_coord_cube(reference, cube);
+
+        for (int i = 0; i < n_moves; i++) {
+            moves[i] = pcg32_boundedrand_r(&rng, N_MOVES);
+            coord_apply_move(cube, moves[i]);
+            printf("%s\n", move_to_str(moves[i]));
+        }
+
+        printf("\n");
+
+        // FIXME: as of now we dont have enough coordinates to diferentiate some cubes
+        /*TEST_ASSERT_FALSE(are_coord_equal(reference, cube));*/
+
+        for (int i = n_moves - 1; i >= 0; i--) {
+            // FIXME: We need to reverse the move
+            coord_apply_move(cube, moves[i]);
+            printf("%s\n", move_to_str(moves[i]));
+        }
+
+        /*TEST_ASSERT_TRUE(are_coord_equal(reference, cube));*/
+
+        free(cube);
+    }
+}
+
 void setUp(void) { build_move_tables(); }
 
 void tearDown(void) {}
@@ -94,6 +127,8 @@ int main() {
     RUN_TEST(test_coord_sanity_brute_force);
 
     RUN_TEST(test_coord_orientation_changes);
+
+    RUN_TEST(test_moves_are_reversible);
 
     return UNITY_END();
 }
