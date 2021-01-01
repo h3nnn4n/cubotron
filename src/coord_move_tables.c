@@ -5,8 +5,8 @@
 #include "cubie_move_table.h"
 #include "definitions.h"
 
-static int *move_table_edge_orientations;
-static int *move_table_corner_orientations;
+static int *move_table_edge_orientations   = NULL;
+static int *move_table_corner_orientations = NULL;
 
 void coord_apply_move(coord_cube_t *cube, move_t move) {
     assert(cube != NULL);
