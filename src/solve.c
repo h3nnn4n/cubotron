@@ -8,7 +8,7 @@
 #define max_moves 4
 
 move_t *solve(coord_cube_t *cube) {
-    move_t *solution = malloc(sizeof(move_t) * 30); // HACK
+    move_t *solution = NULL;
 
     move_t        move_stack[max_moves];
     coord_cube_t *cube_stack[max_moves];
@@ -25,10 +25,6 @@ move_t *solve(coord_cube_t *cube) {
     copy_coord_cube(cube_stack[0], cube);
     printf("scrambled cube: %d %d\n\n", cube->edge_orientations, cube->corner_orientations);
 
-    /*sprintf(buffer, " moves: %4d pivot: %2d", move_count, pivot);*/
-    /*sprintf(buffer, "%s : %7d %7d", buffer, cube->edge_orientations, cube->corner_orientations);*/
-    /*printf("%s\n", buffer);*/
-
     do {
         move_stack[pivot]++;
 
@@ -38,7 +34,6 @@ move_t *solve(coord_cube_t *cube) {
             pivot--;
 
             if (pivot < 0) {
-                printf("failed to solve\n");
                 break;
             } else if (pivot == 0) {
                 copy_coord_cube(cube_stack[0], cube);
@@ -52,7 +47,7 @@ move_t *solve(coord_cube_t *cube) {
         coord_apply_move(cube_stack[pivot], move_stack[pivot]);
         move_count++;
 
-        if (move_count % 10000000 == 0) {
+        if (move_count % 1000000 == 0) {
             sprintf(buffer, " moves: %4d pivot: %2d", move_count, pivot);
             sprintf(buffer, "%s : %7d %7d -> ", buffer, cube_stack[pivot]->edge_orientations,
                     cube_stack[pivot]->corner_orientations);
@@ -62,10 +57,11 @@ move_t *solve(coord_cube_t *cube) {
         }
 
         if (cube_stack[pivot]->edge_orientations + cube_stack[pivot]->corner_orientations == 0) {
-            buffer[0] = '\0';
+            solution = malloc(sizeof(move_t) * (pivot + 1));
+
             for (int i = 0; i <= pivot; i++)
-                sprintf(buffer, "%s %s", buffer, move_to_str(move_stack[i]));
-            printf("%s\n", buffer);
+                solution[i] = get_reverse_move(move_stack[i]);
+            solution[pivot + 1] = MOVE_NULL;
 
             break;
         }

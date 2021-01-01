@@ -14,7 +14,16 @@ int main() {
     coord_apply_move(cube, MOVE_R3);
     coord_apply_move(cube, MOVE_F2);
 
-    solve(cube);
+    move_t *solution = solve(cube);
+
+    if (solution == NULL) {
+        printf("failed to solve\n");
+    } else {
+        for (int i = 0; solution[i] != MOVE_NULL; i++)
+            printf(" %s", move_to_str(solution[i]));
+
+        printf("\n");
+    }
 
     return 0;
 }
