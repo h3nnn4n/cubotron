@@ -35,8 +35,7 @@ int main() {
     RUN_TEST(test_random_cubie_cube_not_solved);
 
     RUN_TEST(test_random_cubie_cube);
-    // FIXME
-    /*RUN_TEST(test_random_coord_cube);*/
+    RUN_TEST(test_random_coord_cube);
 
     return UNITY_END();
 }
