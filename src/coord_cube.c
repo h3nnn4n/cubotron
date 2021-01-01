@@ -19,3 +19,8 @@ coord_cube_t *make_coord_cube(cube_cubie_t *cubie) {
 
     return coord_cube;
 }
+
+void copy_coord_cube(coord_cube_t *dest, coord_cube_t *source) {
+    dest->edge_orientations   = source->edge_orientations;
+    dest->corner_orientations = source->corner_orientations;
+}
