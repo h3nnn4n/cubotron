@@ -6,9 +6,13 @@
 #include "cubie_cube.h"
 #include "cubie_move_table.h"
 
-static char *_move_t_to_str[] = {
-    "MOVE_U2", "MOVE_U2", "MOVE_U3", "MOVE_R1", "MOVE_R2", "MOVE_R3", "MOVE_F1", "MOVE_F2", "MOVE_F3",   "MOVE_D1",
+static char *_move_t_to_str_enum[] = {
+    "MOVE_U1", "MOVE_U2", "MOVE_U3", "MOVE_R1", "MOVE_R2", "MOVE_R3", "MOVE_F1", "MOVE_F2", "MOVE_F3",   "MOVE_D1",
     "MOVE_D2", "MOVE_D3", "MOVE_L1", "MOVE_L2", "MOVE_L3", "MOVE_B1", "MOVE_B2", "MOVE_B3", "MOVE_NULL",
+};
+
+static char *_move_t_to_str[] = {
+    "U ", "U2", "U'", "R ", "R2", "R'", "F ", "F2", "F'", "D ", "D2", "D'", "L ", "L2", "L'", "B ", "B2", "B'", "NULL",
 };
 
 int cubie_off_count(cube_cubie_t *cube) {
@@ -34,6 +38,13 @@ int cubie_off_count(cube_cubie_t *cube) {
 }
 
 int is_solved(cube_cubie_t *cube) { return cubie_off_count(cube) == 0; }
+
+char *move_to_str_enum(move_t move) {
+    assert(move >= 0);
+    assert(move <= 18);
+
+    return _move_t_to_str_enum[move];
+}
 
 char *move_to_str(move_t move) {
     assert(move >= 0);
