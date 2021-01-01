@@ -13,4 +13,6 @@ int   is_valid(cube_cubie_t *cube);
 cube_cubie_t *random_cubie_cube();
 coord_cube_t *random_coord_cube();
 
+move_t get_reverse_move(move_t move);
+
 #endif /* end of include guard */

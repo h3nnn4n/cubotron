@@ -102,12 +102,11 @@ void test_moves_are_reversible() {
         /*TEST_ASSERT_FALSE(are_coord_equal(reference, cube));*/
 
         for (int i = n_moves - 1; i >= 0; i--) {
-            // FIXME: We need to reverse the move
-            coord_apply_move(cube, moves[i]);
+            coord_apply_move(cube, get_reverse_move(moves[i]));
             printf("%s\n", move_to_str(moves[i]));
         }
 
-        /*TEST_ASSERT_TRUE(are_coord_equal(reference, cube));*/
+        TEST_ASSERT_TRUE(are_coord_equal(reference, cube));
 
         free(cube);
     }
