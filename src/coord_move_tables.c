@@ -10,7 +10,8 @@ static int *move_table_corner_orientations;
 
 void coord_apply_move(coord_cube_t *cube, move_t move) {
     assert(cube != NULL);
-    assert(move >= 0 && move < N_MOVES);
+    assert(move >= 0);
+    assert(move < N_MOVES);
     assert(move_table_edge_orientations != NULL);
     assert(move_table_corner_orientations != NULL);
     assert(cube->edge_orientations * N_MOVES + move < N_EDGE_ORIENTATIONS * N_MOVES);
