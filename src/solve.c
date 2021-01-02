@@ -5,7 +5,7 @@
 #include "cubie_cube.h"
 #include "utils.h"
 
-#define max_moves 4
+#define max_moves 5
 
 move_t *solve(coord_cube_t *cube) {
     move_t *solution = NULL;
@@ -23,7 +23,6 @@ move_t *solve(coord_cube_t *cube) {
     }
 
     copy_coord_cube(cube_stack[0], cube);
-    printf("scrambled cube: %d %d\n\n", cube->edge_orientations, cube->corner_orientations);
 
     do {
         move_stack[pivot]++;
@@ -56,8 +55,9 @@ move_t *solve(coord_cube_t *cube) {
             printf("%s\n", buffer);
         }
 
-        if (cube_stack[pivot]->edge_orientations + cube_stack[pivot]->corner_orientations == 0) {
-            solution = malloc(sizeof(move_t) * (pivot + 1));
+        int solved = (cube_stack[pivot]->edge_orientations + cube_stack[pivot]->corner_orientations) == 0;
+        if (solved) {
+            solution = malloc(sizeof(move_t) * (pivot + 2));
 
             for (int i = 0; i <= pivot; i++)
                 solution[i] = move_stack[i];
