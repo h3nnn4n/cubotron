@@ -15,7 +15,7 @@ move_t *solve(coord_cube_t *cube) {
     int           pivot      = 0;
     int           move_count = 0;
 
-    char buffer[512];
+    /*char buffer[512];*/
 
     for (int i = 0; i < max_moves; i++) {
         move_stack[i] = -1;
