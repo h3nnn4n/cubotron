@@ -9,8 +9,6 @@
 #include "cubie_cube.h"
 #include "cubie_move_table.h"
 
-static int Cnk_cache[N_CORNERS * 4] = {0};
-
 static char *_move_t_to_str_enum[] = {
     "MOVE_U1", "MOVE_U2", "MOVE_U3", "MOVE_R1", "MOVE_R2", "MOVE_R3", "MOVE_F1", "MOVE_F2", "MOVE_F3",   "MOVE_D1",
     "MOVE_D2", "MOVE_D3", "MOVE_L1", "MOVE_L2", "MOVE_L3", "MOVE_B1", "MOVE_B2", "MOVE_B3", "MOVE_NULL",
@@ -180,11 +178,6 @@ int Cnk(int n, int k) {
     if (n < k)
         return 0;
 
-    int index = n * 4 + k;
-
-    if (Cnk_cache[index] > 0)
-        return Cnk_cache[index];
-
     if (k > n / 2)
         k = n - k;
 
@@ -192,8 +185,6 @@ int Cnk(int n, int k) {
         s *= i;
         s /= j;
     }
-
-    Cnk_cache[index] = s;
 
     return s;
 }
