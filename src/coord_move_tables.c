@@ -7,6 +7,7 @@
 
 static int *move_table_edge_orientations   = NULL;
 static int *move_table_corner_orientations = NULL;
+static int *move_table_UD_slice            = NULL;
 
 void coord_apply_move(coord_cube_t *cube, move_t move) {
     assert(cube != NULL);
@@ -19,6 +20,7 @@ void coord_apply_move(coord_cube_t *cube, move_t move) {
 
     cube->edge_orientations   = move_table_edge_orientations[cube->edge_orientations * N_MOVES + move];
     cube->corner_orientations = move_table_corner_orientations[cube->corner_orientations * N_MOVES + move];
+    cube->UD_slice            = move_table_UD_slice[cube->UD_slice * N_MOVES + move];
 }
 
 void build_move_tables() {
@@ -54,6 +56,23 @@ void build_move_tables() {
                 set_corner_orientations(cube, corner_orientations);
                 cubie_apply_move(cube, move);
                 move_table_corner_orientations[corner_orientations * N_MOVES + move] = get_corner_orientations(cube);
+            }
+        }
+
+        free(cube);
+    }
+
+    // UD slice move table
+    if (move_table_UD_slice == NULL) {
+        move_table_UD_slice = (int *)malloc(sizeof(int) * N_SLICES * N_MOVES);
+
+        cube = init_cubie_cube();
+
+        for (int slice = 0; slice < N_SLICES; slice++) {
+            for (int move = 0; move < N_MOVES; move++) {
+                set_UD_slice(cube, slice);
+                cubie_apply_move(cube, move);
+                move_table_UD_slice[slice * N_MOVES + move] = get_UD_slice(cube);
             }
         }
 

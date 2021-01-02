@@ -6,6 +6,7 @@
 typedef struct {
     int edge_orientations;
     int corner_orientations;
+    int UD_slice;
 } coord_cube_t;
 
 coord_cube_t *get_coord_cube();

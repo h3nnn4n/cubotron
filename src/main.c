@@ -9,12 +9,20 @@ int main() {
     build_move_tables();
 
     coord_cube_t *cube = get_coord_cube();
-    coord_apply_move(cube, MOVE_R1);
-    coord_apply_move(cube, MOVE_B1);
-    coord_apply_move(cube, MOVE_L1);
-    coord_apply_move(cube, MOVE_F1);
 
-    printf("scrambled cube: %d %d\n\n", cube->edge_orientations, cube->corner_orientations);
+    move_t moves[4] = {
+        MOVE_R1,
+        MOVE_B1,
+        MOVE_L1,
+        MOVE_F1,
+    };
+
+    for (int i = 0; i < 4; i++) {
+        coord_apply_move(cube, moves[i]);
+        printf(" %s", move_to_str(moves[i]));
+    }
+    printf(" : %4d %4d %3d\n\n", cube->edge_orientations, cube->corner_orientations, cube->UD_slice);
+
     move_t *solution = solve(cube);
 
     if (solution == NULL) {
@@ -25,9 +33,7 @@ int main() {
             coord_apply_move(cube, solution[i]);
         }
 
-        printf("\n");
-
-        printf("\n   solved cube: %d %d\n\n", cube->edge_orientations, cube->corner_orientations);
+        printf(" : %4d %4d %3d\n\n", cube->edge_orientations, cube->corner_orientations, cube->UD_slice);
     }
 
     return 0;

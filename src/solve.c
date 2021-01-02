@@ -15,8 +15,6 @@ move_t *solve(coord_cube_t *cube) {
     int           pivot      = 0;
     int           move_count = 0;
 
-    /*char buffer[512];*/
-
     for (int i = 0; i < max_moves; i++) {
         move_stack[i] = -1;
         cube_stack[i] = random_coord_cube();
@@ -48,16 +46,18 @@ move_t *solve(coord_cube_t *cube) {
 
         /*
         if (move_count % 1000000 == 0) {
+            char buffer[512];
             sprintf(buffer, " moves: %4d pivot: %2d", move_count, pivot);
-            sprintf(buffer, "%s : %7d %7d -> ", buffer, cube_stack[pivot]->edge_orientations,
-                    cube_stack[pivot]->corner_orientations);
+            sprintf(buffer, "%s : %4d %4d %3d -> ", buffer, cube_stack[pivot]->edge_orientations,
+                    cube_stack[pivot]->corner_orientations, cube_stack[pivot]->UD_slice);
             for (int i = 0; i <= pivot; i++)
                 sprintf(buffer, "%s %s", buffer, move_to_str(move_stack[i]));
             printf("%s\n", buffer);
         }
         */
 
-        int solved = (cube_stack[pivot]->edge_orientations + cube_stack[pivot]->corner_orientations) == 0;
+        int solved = (cube_stack[pivot]->edge_orientations + cube_stack[pivot]->corner_orientations +
+                      cube_stack[pivot]->UD_slice) == 0;
         if (solved) {
             solution = malloc(sizeof(move_t) * (pivot + 2));
 
