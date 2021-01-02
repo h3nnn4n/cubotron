@@ -24,6 +24,9 @@ void set_corner_orientations(cube_cubie_t *cube, int orientations);
 int  get_corner_orientations(cube_cubie_t *cube);
 void set_edge_orientations(cube_cubie_t *cube, int orientations);
 int  get_edge_orientations(cube_cubie_t *cube);
-int  are_cubie_equal(cube_cubie_t *cube1, cube_cubie_t *cube2);
+int  get_UD_slice(cube_cubie_t *cube);
+void set_UD_slice(cube_cubie_t *cube, int slice);
+
+int are_cubie_equal(cube_cubie_t *cube1, cube_cubie_t *cube2);
 
 #endif /* end of include guard */

@@ -73,6 +73,45 @@ int get_edge_orientations(cube_cubie_t *cube) {
     return orientations;
 }
 
+int get_UD_slice(cube_cubie_t *cube) {
+    int slice = 0;
+    int x     = 1;
+
+    for (int i = BR; i >= UR; i--) {
+        int ep = cube->edge_permutations[i];
+
+        if (ep >= FR && ep <= BR) {
+            slice += Cnk(BR - i, x);
+            x++;
+        }
+    }
+
+    return slice;
+}
+
+void set_UD_slice(cube_cubie_t *cube, int slice) {
+    static int slice_edges[4] = {FR, FL, BL, BR};
+    static int other_edges[8] = {UR, UF, UL, UB, DR, DF, DL, DB};
+
+    for (int i = 0; i < N_EDGES; i++)
+        cube->edge_permutations[i] = -1;
+
+    for (int x = 4, i = 0; i < N_EDGES; i++) {
+        if (slice - Cnk(BR - i, x) >= 0) {
+            cube->edge_permutations[i] = slice_edges[4 - x];
+            slice -= Cnk(BR - i, x);
+            x--;
+        }
+    }
+
+    for (int x = 0, i = 0; i < N_EDGES; i++) {
+        if (cube->edge_permutations[i] == -1) {
+            cube->edge_permutations[i] = other_edges[x];
+            x++;
+        }
+    }
+}
+
 void multiply_cube_cubie(cube_cubie_t *cube1, cube_cubie_t *cube2) {
     assert(is_valid(cube1));
     assert(is_valid(cube2));

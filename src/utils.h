@@ -18,4 +18,6 @@ move_t get_reverse_move(move_t move);
 long get_microseconds(void);
 void coord_benchmark();
 
+int Cnk(int n, int k);
+
 #endif /* end of include guard */

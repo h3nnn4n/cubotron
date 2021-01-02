@@ -171,3 +171,20 @@ void coord_benchmark() {
     printf("moves: %d\n", move_count);
     printf("moves / second : %.2f\n", ((float)move_count / (end - start)) * 1000000.0);
 }
+
+int Cnk(int n, int k) {
+    int i, j, s;
+
+    if (n < k)
+        return 0;
+
+    if (k > n / 2)
+        k = n - k;
+
+    for (s = 1, i = n, j = 1; i != n - k; i--, j++) {
+        s *= i;
+        s /= j;
+    }
+
+    return s;
+}
