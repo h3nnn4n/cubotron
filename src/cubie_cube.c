@@ -105,7 +105,7 @@ void set_UD_slice(cube_cubie_t *cube, int slice) {
     }
 
     for (int x = 0, i = 0; i < N_EDGES; i++) {
-        if (cube->edge_permutations[i] == -1) {
+        if (cube->edge_permutations[i] == (edge_t)-1) {
             cube->edge_permutations[i] = other_edges[x];
             x++;
         }
