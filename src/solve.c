@@ -60,7 +60,7 @@ move_t *solve(coord_cube_t *cube) {
             solution = malloc(sizeof(move_t) * (pivot + 1));
 
             for (int i = 0; i <= pivot; i++)
-                solution[i] = get_reverse_move(move_stack[i]);
+                solution[i] = move_stack[i];
             solution[pivot + 1] = MOVE_NULL;
 
             break;
