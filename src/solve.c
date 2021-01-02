@@ -46,6 +46,7 @@ move_t *solve(coord_cube_t *cube) {
         coord_apply_move(cube_stack[pivot], move_stack[pivot]);
         move_count++;
 
+        /*
         if (move_count % 1000000 == 0) {
             sprintf(buffer, " moves: %4d pivot: %2d", move_count, pivot);
             sprintf(buffer, "%s : %7d %7d -> ", buffer, cube_stack[pivot]->edge_orientations,
@@ -54,6 +55,7 @@ move_t *solve(coord_cube_t *cube) {
                 sprintf(buffer, "%s %s", buffer, move_to_str(move_stack[i]));
             printf("%s\n", buffer);
         }
+        */
 
         int solved = (cube_stack[pivot]->edge_orientations + cube_stack[pivot]->corner_orientations) == 0;
         if (solved) {
