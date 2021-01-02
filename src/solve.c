@@ -3,9 +3,10 @@
 
 #include "coord_move_tables.h"
 #include "cubie_cube.h"
+#include "solve.h"
 #include "utils.h"
 
-#define max_moves 5
+#define max_moves 20
 
 move_t *solve(coord_cube_t *cube) {
     move_t *solution = NULL;
@@ -17,7 +18,7 @@ move_t *solve(coord_cube_t *cube) {
 
     for (int i = 0; i < max_moves; i++) {
         move_stack[i] = -1;
-        cube_stack[i] = random_coord_cube();
+        cube_stack[i] = get_coord_cube();
     }
 
     copy_coord_cube(cube_stack[0], cube);
@@ -56,9 +57,7 @@ move_t *solve(coord_cube_t *cube) {
         }
         */
 
-        int solved = (cube_stack[pivot]->edge_orientations + cube_stack[pivot]->corner_orientations +
-                      cube_stack[pivot]->UD_slice) == 0;
-        if (solved) {
+        if (is_phase1_solved(cube_stack[pivot])) {
             solution = malloc(sizeof(move_t) * (pivot + 2));
 
             for (int i = 0; i <= pivot; i++)
@@ -77,4 +76,8 @@ move_t *solve(coord_cube_t *cube) {
     } while (1);
 
     return solution;
+}
+
+int is_phase1_solved(coord_cube_t *cube) {
+    return (cube->edge_orientations + cube->corner_orientations + cube->UD_slice) == 0;
 }
