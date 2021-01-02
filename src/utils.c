@@ -188,3 +188,21 @@ int Cnk(int n, int k) {
 
     return s;
 }
+
+void rotate_left(int *pieces, int l, int r) {
+    int t = pieces[l];
+
+    for (int i = l; i < r; i++)
+        pieces[i] = pieces[i + 1];
+
+    pieces[r] = t;
+}
+
+void rotate_right(int *pieces, int l, int r) {
+    int t = pieces[r];
+
+    for (int i = r; i > l; i--)
+        pieces[i] = pieces[i - 1];
+
+    pieces[l] = t;
+}

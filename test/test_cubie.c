@@ -256,6 +256,51 @@ void test_get_UD_slice_and_set_UD_slice() {
     free(cube2);
 }
 
+void test_set_corner_permutations_only_makes_valid_cubes() {
+    cube_cubie_t *cube = init_cubie_cube();
+
+    for (int i = 0; i < N_CORNER_PERMUTATIONS; i++) {
+        set_corner_permutations(cube, i);
+
+        TEST_ASSERT_TRUE(is_valid(cube));
+    }
+
+    free(cube);
+}
+
+void test_set_corner_permutations_and_get_corner_permutations() {
+    cube_cubie_t *cube = init_cubie_cube();
+
+    for (int i = 0; i < N_CORNER_PERMUTATIONS; i++) {
+        set_corner_permutations(cube, i);
+        int permutations = get_corner_permutations(cube);
+
+        TEST_ASSERT_EQUAL_INT(i, permutations);
+    }
+
+    free(cube);
+}
+
+void test_get_corner_permutations_and_set_corner_permutations() {
+    cube_cubie_t *cube1 = init_cubie_cube();
+    cube_cubie_t *cube2 = init_cubie_cube();
+
+    // Take 10k cubes and suffle them with 30 moves
+    for (int i = 0; i < 10000; i++) {
+        for (int j = 0; j < 30; j++)
+            cubie_apply_move(cube1, pcg32_boundedrand_r(&rng, N_MOVES));
+
+        int permutations = get_corner_permutations(cube1);
+        set_corner_permutations(cube2, permutations);
+        int permutations2 = get_corner_permutations(cube2);
+
+        TEST_ASSERT_EQUAL_INT(permutations, permutations2);
+    }
+
+    free(cube1);
+    free(cube2);
+}
+
 void test_cube_moves() {
     cube_cubie_t *reference = init_cubie_cube();
 
@@ -330,6 +375,10 @@ int main() {
     RUN_TEST(test_set_UD_slice_only_makes_valid_cubes);
     RUN_TEST(test_set_UD_slice_and_get_UD_slice);
     RUN_TEST(test_get_UD_slice_and_set_UD_slice);
+
+    RUN_TEST(test_set_corner_permutations_only_makes_valid_cubes);
+    RUN_TEST(test_set_corner_permutations_and_get_corner_permutations);
+    RUN_TEST(test_get_corner_permutations_and_set_corner_permutations);
 
     RUN_TEST(test_cube_moves);
     RUN_TEST(test_cube_moves2);

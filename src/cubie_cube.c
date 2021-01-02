@@ -112,6 +112,46 @@ void set_UD_slice(cube_cubie_t *cube, int slice) {
     }
 }
 
+int get_corner_permutations(cube_cubie_t *cube) {
+    corner_t perm[N_CORNERS] = {0};
+    int      permutations    = 0;
+
+    for (int i = 0; i < N_CORNERS; i++)
+        perm[i] = cube->corner_permutations[i];
+
+    for (int i = 7; i > 0; i--) {
+        int k = 0;
+
+        while (perm[i] != (corner_t)i) {
+            rotate_left((int *)perm, 0, i);
+            k++;
+        }
+
+        permutations = (i + 1) * permutations + k;
+    }
+
+    return permutations;
+}
+
+void set_corner_permutations(cube_cubie_t *cube, int permutations) {
+    corner_t perm[N_CORNERS] = {URF, UFL, ULB, UBR, DFR, DLF, DBL, DRB};
+
+    int k;
+
+    for (int i = 1; i < N_CORNERS; i++) {
+        k = permutations % (i + 1);
+        permutations /= i + 1;
+        while (k > 0) {
+            rotate_right((int *)perm, 0, i);
+            k--;
+        }
+    }
+
+    for (int i = 7; i >= 0; i--) {
+        cube->corner_permutations[i] = perm[i];
+    }
+}
+
 void multiply_cube_cubie(cube_cubie_t *cube1, cube_cubie_t *cube2) {
     assert(is_valid(cube1));
     assert(is_valid(cube2));

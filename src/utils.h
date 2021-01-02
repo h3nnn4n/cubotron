@@ -18,6 +18,8 @@ move_t get_reverse_move(move_t move);
 long get_microseconds(void);
 void coord_benchmark();
 
-int Cnk(int n, int k);
+int  Cnk(int n, int k);
+void rotate_left(int *pieces, int l, int r);
+void rotate_right(int *pieces, int l, int r);
 
 #endif /* end of include guard */
