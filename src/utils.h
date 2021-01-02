@@ -15,4 +15,7 @@ coord_cube_t *random_coord_cube();
 
 move_t get_reverse_move(move_t move);
 
+long get_microseconds(void);
+void coord_benchmark();
+
 #endif /* end of include guard */

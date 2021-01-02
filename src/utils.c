@@ -1,4 +1,7 @@
 #include <assert.h>
+#include <stdio.h>
+#include <time.h>
+
 #include <pcg_variants.h>
 
 #include "coord_cube.h"
@@ -134,4 +137,37 @@ move_t get_reverse_move(move_t move) {
     assert(move < N_MOVES);
 
     return reverse_move[move];
+}
+
+long get_microseconds(void) {
+    struct timespec ts;
+    timespec_get(&ts, TIME_UTC);
+    return (long)(ts.tv_sec * 1000000000L + ts.tv_nsec) / 1000;
+}
+
+void coord_benchmark() {
+    coord_cube_t *cube = get_coord_cube();
+
+    move_t moves[1000];
+
+    for (int i = 0; i < 1000; i++)
+        moves[i] = pcg32_boundedrand(N_MOVES);
+
+    int  move_count = 0;
+    long start      = get_microseconds();
+    long end;
+
+    do {
+        for (int j = 0; j < 1000; j++) {
+            for (int i = 0; i < 1000; i++) {
+                coord_apply_move(cube, moves[i]);
+                move_count++;
+            }
+        }
+        end = get_microseconds();
+    } while (end - start < 1000000);
+
+    printf("elapsed time: %ld microseconds\n", end - start);
+    printf("moves: %d\n", move_count);
+    printf("moves / second : %.2f\n", ((float)move_count / (end - start)) * 1000000.0);
 }
