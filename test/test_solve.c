@@ -5,7 +5,7 @@
 #include <solve.h>
 #include <utils.h>
 
-void test_random_solves() {
+void test_random_phase1_solving() {
     coord_cube_t *solved = get_coord_cube();
 
     for (int i = 0; i < 250; i++) {
@@ -20,7 +20,7 @@ void test_random_solves() {
         // FIXME: The coordinate encoding doesnt have enough resolution yet to differentiate this
         /*TEST_ASSERT_FALSE(are_coord_equal(solved, cube));*/
 
-        move_t *solution = solve(cube);
+        move_t *solution = solve_phase1(cube);
 
         for (int i = 0; solution[i] != MOVE_NULL; i++) {
             coord_apply_move(cube, solution[i]);
@@ -41,7 +41,7 @@ int main() {
 
     UNITY_BEGIN();
 
-    RUN_TEST(test_random_solves);
+    RUN_TEST(test_random_phase1_solving);
 
     return UNITY_END();
 }
