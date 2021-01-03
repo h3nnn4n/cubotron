@@ -17,6 +17,17 @@ void build_pruning_tables() {
     printf("finished pruning tables\n");
 }
 
+int get_phase1_pruning(coord_cube_t *cube) {
+    assert(pruning_phase1_corner != NULL);
+    assert(pruning_phase1_edge != NULL);
+
+    int value1 = pruning_phase1_corner[cube->corner_orientations * N_SLICES + cube->UD_slice];
+    int value2 = pruning_phase1_edge[cube->edge_orientations * N_SLICES + cube->UD_slice];
+
+    // We want the bigger one
+    return value1 > value2 ? value1 : value2;
+}
+
 void build_phase1_corner_table() {
     if (pruning_phase1_corner != NULL)
         return;

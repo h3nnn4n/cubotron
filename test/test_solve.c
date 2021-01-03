@@ -2,6 +2,7 @@
 #include <unity.h>
 
 #include <move_tables.h>
+#include <pruning.h>
 #include <solve.h>
 #include <utils.h>
 
@@ -113,7 +114,11 @@ void test_random_full_solver() {
     }
 }
 
-void setUp() { build_move_tables(); }
+void setUp() {
+    build_move_tables();
+    build_pruning_tables();
+}
+
 void tearDown() {}
 
 int main() {
