@@ -112,6 +112,34 @@ void set_UD_slice(cube_cubie_t *cube, int slice) {
     }
 }
 
+int get_corner_parity(cube_cubie_t *cube) {
+    int parity = 0;
+
+    for (int i = DRB; i >= URF + 1; i--) {
+        for (int j = i - 1; j >= URF; j--) {
+            if (cube->corner_permutations[j] > cube->corner_permutations[i]) {
+                parity++;
+            }
+        }
+    }
+
+    return parity % 2;
+}
+
+int get_edge_parity(cube_cubie_t *cube) {
+    int parity = 0;
+
+    for (int i = BR; i >= UR + 1; i--) {
+        for (int j = i - 1; j >= UR; j--) {
+            if (cube->edge_permutations[j] > cube->edge_permutations[i]) {
+                parity++;
+            }
+        }
+    }
+
+    return parity % 2;
+}
+
 int get_corner_permutations(cube_cubie_t *cube) {
     corner_t perm[N_CORNERS] = {0};
     int      permutations    = 0;

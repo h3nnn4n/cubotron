@@ -107,6 +107,11 @@ int is_valid(cube_cubie_t *cube) {
     if (corner_orientation % 3 != 0)
         return 0;
 
+    // FIXME: This cant be used yet, because is causes several contracts to fail
+    // Caused due to things like corner permutation being set but not the edges
+    // if (get_corner_parity(cube) != get_edge_parity(cube))
+    //     return 0;
+
     return 1;
 }
 
