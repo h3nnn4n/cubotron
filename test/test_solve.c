@@ -1,7 +1,7 @@
 #include <pcg_variants.h>
 #include <unity.h>
 
-#include <coord_move_tables.h>
+#include <move_tables.h>
 #include <solve.h>
 #include <utils.h>
 

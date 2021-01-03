@@ -1,8 +1,8 @@
 #include <pcg_variants.h>
 #include <stdio.h>
 
-#include "coord_move_tables.h"
 #include "cubie_cube.h"
+#include "move_tables.h"
 #include "solve.h"
 #include "utils.h"
 

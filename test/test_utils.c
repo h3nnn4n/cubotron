@@ -1,7 +1,7 @@
 #include <pcg_variants.h>
 #include <unity.h>
 
-#include <coord_move_tables.h>
+#include <move_tables.h>
 #include <utils.h>
 
 void test_random_cubie_cube_not_solved() {

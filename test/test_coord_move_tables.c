@@ -5,6 +5,7 @@
 #include <coord_move_tables.h>
 #include <cubie_move_table.h>
 #include <definitions.h>
+#include <move_tables.h>
 #include <utils.h>
 
 static pcg32_random_t rng;

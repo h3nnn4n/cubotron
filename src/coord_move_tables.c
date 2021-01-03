@@ -41,9 +41,7 @@ void coord_apply_move(coord_cube_t *cube, move_t move) {
     assert(cube->corner_permutations < N_CORNER_PERMUTATIONS);
 }
 
-void build_move_tables() {
-    cubie_build_move_table();
-
+void coord_build_move_tables() {
     cube_cubie_t *cube = NULL;
 
     // Edge orientation move tables
