@@ -7,10 +7,12 @@
 #include <utils.h>
 
 void test_random_phase1_solving() {
+    char buffer[512];
+
     for (int i = 0; i < 20; i++) {
         coord_cube_t *cube = get_coord_cube();
 
-        int    n_moves   = 6;
+        int    n_moves   = 30;
         move_t moves[50] = {0};
         for (int i = 0; i < n_moves; i++) {
             moves[i] = pcg32_boundedrand(N_MOVES);
@@ -22,8 +24,10 @@ void test_random_phase1_solving() {
             coord_apply_move(cube, moves[i]);
         }
 
-        // FIXME: Enable once prunning is working and we can solve any cubes
-        /*TEST_ASSERT_FALSE(is_phase1_solved(cube));*/
+        sprintf(buffer, "%4d %4d %3d", cube->edge_orientations, cube->corner_orientations, cube->UD_slice);
+        TEST_MESSAGE(buffer);
+
+        TEST_ASSERT_FALSE(is_phase1_solved(cube));
 
         move_t *solution = solve_phase1(cube);
 
@@ -114,14 +118,13 @@ void test_random_full_solver() {
     }
 }
 
-void setUp() {
-    build_move_tables();
-    build_pruning_tables();
-}
-
+void setUp() {}
 void tearDown() {}
 
 int main() {
+    build_move_tables();
+    build_pruning_tables();
+
     pcg32_srandom(43u, 55u);
 
     UNITY_BEGIN();
