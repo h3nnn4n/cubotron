@@ -11,10 +11,8 @@ static int *pruning_phase1_corner = NULL;
 static int *pruning_phase1_edge   = NULL;
 
 void build_pruning_tables() {
-    printf("building pruning tables\n\n");
     build_phase1_corner_table();
     build_phase1_edge_table();
-    printf("finished pruning tables\n");
 }
 
 int get_phase1_pruning(coord_cube_t *cube) {
