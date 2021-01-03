@@ -19,7 +19,7 @@ void test_copy_coord_cube() {
         /*TEST_ASSERT_FALSE(are_coord_equal(cube, other));*/
 
         copy_coord_cube(other, cube);
-        TEST_ASSERT_TRUE(are_coord_equal(cube, other));
+        TEST_ASSERT_TRUE(are_all_coord_equal(cube, other));
     }
 
     free(cube);

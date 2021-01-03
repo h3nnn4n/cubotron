@@ -99,14 +99,14 @@ void test_moves_are_reversible() {
         printf("\n");
 
         // FIXME: as of now we dont have enough coordinates to diferentiate some cubes
-        /*TEST_ASSERT_FALSE(are_coord_equal(reference, cube));*/
+        /*TEST_ASSERT_FALSE(are_phase1_coord_equal(reference, cube));*/
 
         for (int i = n_moves - 1; i >= 0; i--) {
             coord_apply_move(cube, get_reverse_move(moves[i]));
             printf("%s\n", move_to_str(moves[i]));
         }
 
-        TEST_ASSERT_TRUE(are_coord_equal(reference, cube));
+        TEST_ASSERT_TRUE(are_phase1_coord_equal(reference, cube));
 
         free(cube);
     }

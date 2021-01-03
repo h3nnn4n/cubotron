@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdio.h>
 
 #include "coord_cube.h"
 #include "cubie_cube.h"
@@ -8,6 +9,9 @@
 static int *move_table_edge_orientations   = NULL;
 static int *move_table_corner_orientations = NULL;
 static int *move_table_UD_slice            = NULL;
+static int *move_table_corner_permutations = NULL;
+
+static int gambi = 0;
 
 void coord_apply_move(coord_cube_t *cube, move_t move) {
     assert(cube != NULL);
@@ -17,10 +21,22 @@ void coord_apply_move(coord_cube_t *cube, move_t move) {
     assert(move_table_corner_orientations != NULL);
     assert(cube->edge_orientations * N_MOVES + move < N_EDGE_ORIENTATIONS * N_MOVES);
     assert(cube->corner_orientations * N_MOVES + move < N_CORNER_ORIENTATIONS * N_MOVES);
+    /*printf("%d %d %d %d %d\n", cube->corner_permutations, N_MOVES, move, cube->corner_permutations * N_MOVES + move,*/
+    /*N_CORNER_PERMUTATIONS * N_MOVES);*/
+    assert(cube->corner_permutations * N_MOVES + move < N_CORNER_PERMUTATIONS * N_MOVES);
 
+    if (cube->corner_permutations > gambi)
+        gambi = cube->corner_permutations;
+
+    /*printf("%d\n", gambi);*/
+
+    // Phase 1
     cube->edge_orientations   = move_table_edge_orientations[cube->edge_orientations * N_MOVES + move];
     cube->corner_orientations = move_table_corner_orientations[cube->corner_orientations * N_MOVES + move];
     cube->UD_slice            = move_table_UD_slice[cube->UD_slice * N_MOVES + move];
+
+    // Phase 2
+    cube->corner_permutations = move_table_corner_permutations[cube->corner_permutations * N_MOVES + move];
 }
 
 void build_move_tables() {
@@ -75,6 +91,24 @@ void build_move_tables() {
                 move_table_UD_slice[slice * N_MOVES + move] = get_UD_slice(cube);
             }
         }
+
+        free(cube);
+    }
+
+    // Corner permutations move table
+    if (move_table_corner_permutations == NULL) {
+        move_table_corner_permutations = (int *)malloc(sizeof(int) * N_CORNER_PERMUTATIONS * N_MOVES);
+
+        cube = init_cubie_cube();
+
+        for (int permutations = 0; permutations < N_CORNER_PERMUTATIONS; permutations++) {
+            for (int move = 0; move < N_MOVES; move++) {
+                set_corner_permutations(cube, permutations);
+                cubie_apply_move(cube, move);
+                move_table_corner_permutations[permutations * N_MOVES + move] = get_corner_permutations(cube);
+            }
+        }
+        printf("done\n");
 
         free(cube);
     }

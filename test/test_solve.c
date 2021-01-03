@@ -26,7 +26,7 @@ void test_random_solves() {
             coord_apply_move(cube, solution[i]);
         }
 
-        TEST_ASSERT_TRUE(are_coord_equal(solved, cube));
+        TEST_ASSERT_TRUE(are_phase1_coord_equal(solved, cube));
 
         free(solution);
         free(cube);
