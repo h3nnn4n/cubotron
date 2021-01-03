@@ -108,7 +108,6 @@ void build_move_tables() {
                 move_table_corner_permutations[permutations * N_MOVES + move] = get_corner_permutations(cube);
             }
         }
-        printf("done\n");
 
         free(cube);
     }
