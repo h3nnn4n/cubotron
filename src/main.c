@@ -26,7 +26,8 @@ int main() {
         coord_apply_move(cube, moves[i]);
         printf(" %s", move_to_str(moves[i]));
     }
-    printf(" : %4d %4d %3d\n\n", cube->edge_orientations, cube->corner_orientations, cube->UD_slice);
+    printf(" : %4d %4d %3d %4d\n\n", cube->edge_orientations, cube->corner_orientations, cube->UD_slice,
+           cube->corner_permutations);
 
     move_t *solution = solve(cube);
 
