@@ -6,10 +6,12 @@
 #include "cubie_move_table.h"
 #include "definitions.h"
 
-static int *move_table_edge_orientations   = NULL;
-static int *move_table_corner_orientations = NULL;
-static int *move_table_UD_slice            = NULL;
-static int *move_table_corner_permutations = NULL;
+static int *move_table_edge_orientations          = NULL;
+static int *move_table_corner_orientations        = NULL;
+static int *move_table_UD_slice                   = NULL;
+static int *move_table_corner_permutations        = NULL;
+static int  move_table_parity[N_PARITY * N_MOVES] = {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1,
+                                                    0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0};
 
 int *get_move_table_edge_orientations() { return move_table_edge_orientations; }
 int *get_move_table_corner_orientations() { return move_table_corner_orientations; }
@@ -25,6 +27,7 @@ void coord_apply_move(coord_cube_t *cube, move_t move) {
     assert(cube->edge_orientations * N_MOVES + move < N_EDGE_ORIENTATIONS * N_MOVES);
     assert(cube->corner_orientations * N_MOVES + move < N_CORNER_ORIENTATIONS * N_MOVES);
     assert(cube->corner_permutations * N_MOVES + move < N_CORNER_PERMUTATIONS * N_MOVES);
+    assert(cube->parity * N_MOVES + move < N_PARITY * N_MOVES);
 
     // Phase 1
     cube->edge_orientations   = move_table_edge_orientations[cube->edge_orientations * N_MOVES + move];
@@ -32,12 +35,14 @@ void coord_apply_move(coord_cube_t *cube, move_t move) {
     cube->UD_slice            = move_table_UD_slice[cube->UD_slice * N_MOVES + move];
 
     // Phase 2
+    cube->parity              = move_table_parity[cube->parity * N_MOVES + move];
     cube->corner_permutations = move_table_corner_permutations[cube->corner_permutations * N_MOVES + move];
 
     // Post conditions
     assert(cube->edge_orientations < N_EDGE_ORIENTATIONS);
     assert(cube->corner_orientations < N_CORNER_ORIENTATIONS);
     assert(cube->UD_slice < N_SLICES);
+    assert(cube->parity < N_PARITY);
     assert(cube->corner_permutations < N_CORNER_PERMUTATIONS);
 }
 
