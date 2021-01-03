@@ -11,8 +11,6 @@ static int *move_table_corner_orientations = NULL;
 static int *move_table_UD_slice            = NULL;
 static int *move_table_corner_permutations = NULL;
 
-static int gambi = 0;
-
 void coord_apply_move(coord_cube_t *cube, move_t move) {
     assert(cube != NULL);
     assert(move >= 0);
@@ -21,14 +19,7 @@ void coord_apply_move(coord_cube_t *cube, move_t move) {
     assert(move_table_corner_orientations != NULL);
     assert(cube->edge_orientations * N_MOVES + move < N_EDGE_ORIENTATIONS * N_MOVES);
     assert(cube->corner_orientations * N_MOVES + move < N_CORNER_ORIENTATIONS * N_MOVES);
-    /*printf("%d %d %d %d %d\n", cube->corner_permutations, N_MOVES, move, cube->corner_permutations * N_MOVES + move,*/
-    /*N_CORNER_PERMUTATIONS * N_MOVES);*/
     assert(cube->corner_permutations * N_MOVES + move < N_CORNER_PERMUTATIONS * N_MOVES);
-
-    if (cube->corner_permutations > gambi)
-        gambi = cube->corner_permutations;
-
-    /*printf("%d\n", gambi);*/
 
     // Phase 1
     cube->edge_orientations   = move_table_edge_orientations[cube->edge_orientations * N_MOVES + move];
