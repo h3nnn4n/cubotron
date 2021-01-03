@@ -11,6 +11,11 @@ static int *move_table_corner_orientations = NULL;
 static int *move_table_UD_slice            = NULL;
 static int *move_table_corner_permutations = NULL;
 
+int *get_move_table_edge_orientations() { return move_table_edge_orientations; }
+int *get_move_table_corner_orientations() { return move_table_corner_orientations; }
+int *get_move_table_UD_slice() { return move_table_UD_slice; }
+int *get_move_table_corner_permutations() { return move_table_corner_permutations; }
+
 void coord_apply_move(coord_cube_t *cube, move_t move) {
     assert(cube != NULL);
     assert(move >= 0);
