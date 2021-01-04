@@ -7,6 +7,7 @@ typedef struct {
     int edge_orientations;
     int corner_orientations;
     int UD_slice;
+    int UD_sorted_slice;
     int parity;
     int corner_permutations;
 } coord_cube_t;

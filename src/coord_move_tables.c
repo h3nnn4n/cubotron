@@ -9,6 +9,7 @@
 static int *move_table_edge_orientations          = NULL;
 static int *move_table_corner_orientations        = NULL;
 static int *move_table_UD_slice                   = NULL;
+static int *move_table_UD_sorted_slice            = NULL;
 static int *move_table_corner_permutations        = NULL;
 static int  move_table_parity[N_PARITY * N_MOVES] = {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1,
                                                     0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0};
@@ -24,8 +25,14 @@ void coord_apply_move(coord_cube_t *cube, move_t move) {
     assert(move < N_MOVES);
     assert(move_table_edge_orientations != NULL);
     assert(move_table_corner_orientations != NULL);
+    assert(move_table_UD_slice != NULL);
+    assert(move_table_UD_sorted_slice != NULL);
+    assert(move_table_corner_permutations != NULL);
+
     assert(cube->edge_orientations * N_MOVES + move < N_EDGE_ORIENTATIONS * N_MOVES);
     assert(cube->corner_orientations * N_MOVES + move < N_CORNER_ORIENTATIONS * N_MOVES);
+    assert(cube->UD_slice * N_MOVES + move < N_SLICES * N_MOVES);
+    assert(cube->UD_sorted_slice * N_MOVES + move < N_SORTED_SLICES * N_MOVES);
     assert(cube->corner_permutations * N_MOVES + move < N_CORNER_PERMUTATIONS * N_MOVES);
     assert(cube->parity * N_MOVES + move < N_PARITY * N_MOVES);
 
@@ -35,6 +42,7 @@ void coord_apply_move(coord_cube_t *cube, move_t move) {
     cube->UD_slice            = move_table_UD_slice[cube->UD_slice * N_MOVES + move];
 
     // Phase 2
+    cube->UD_sorted_slice     = move_table_UD_sorted_slice[cube->UD_sorted_slice * N_MOVES + move];
     cube->parity              = move_table_parity[cube->parity * N_MOVES + move];
     cube->corner_permutations = move_table_corner_permutations[cube->corner_permutations * N_MOVES + move];
 
@@ -42,6 +50,7 @@ void coord_apply_move(coord_cube_t *cube, move_t move) {
     assert(cube->edge_orientations < N_EDGE_ORIENTATIONS);
     assert(cube->corner_orientations < N_CORNER_ORIENTATIONS);
     assert(cube->UD_slice < N_SLICES);
+    assert(cube->UD_sorted_slice < N_SORTED_SLICES);
     assert(cube->parity < N_PARITY);
     assert(cube->corner_permutations < N_CORNER_PERMUTATIONS);
 }
@@ -94,6 +103,25 @@ void coord_build_move_tables() {
                 set_UD_slice(cube, slice);
                 cubie_apply_move(cube, move);
                 move_table_UD_slice[slice * N_MOVES + move] = get_UD_slice(cube);
+            }
+        }
+
+        free(cube);
+    }
+
+    // UD sorted slice move table
+    if (move_table_UD_sorted_slice == NULL) {
+        move_table_UD_sorted_slice = (int *)malloc(sizeof(int) * N_SORTED_SLICES * N_MOVES);
+
+        cube = init_cubie_cube();
+
+        for (int slice = 0; slice < N_SORTED_SLICES; slice++) {
+            for (int move = 0; move < N_MOVES; move++) {
+                set_UD_sorted_slice(cube, slice);
+                cubie_apply_move(cube, move);
+                assert(slice * N_MOVES + move < N_SORTED_SLICES * N_MOVES);
+                // FIXME: Leavign this in segfaults
+                /*move_table_UD_slice[slice * N_MOVES + move] = get_UD_sorted_slice(cube);*/
             }
         }
 
