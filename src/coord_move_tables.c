@@ -47,6 +47,13 @@ void coord_apply_move(coord_cube_t *cube, move_t move) {
     cube->corner_permutations = move_table_corner_permutations[cube->corner_permutations * N_MOVES + move];
 
     // Post conditions
+    assert(cube->edge_orientations >= 0);
+    assert(cube->corner_orientations >= 0);
+    assert(cube->UD_slice >= 0);
+    assert(cube->UD_sorted_slice >= 0);
+    assert(cube->parity >= 0);
+    assert(cube->corner_permutations >= 0);
+
     assert(cube->edge_orientations < N_EDGE_ORIENTATIONS);
     assert(cube->corner_orientations < N_CORNER_ORIENTATIONS);
     assert(cube->UD_slice < N_SLICES);
