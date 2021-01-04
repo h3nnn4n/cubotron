@@ -112,6 +112,65 @@ void set_UD_slice(cube_cubie_t *cube, int slice) {
     }
 }
 
+int get_UD_sorted_slice(cube_cubie_t *cube) {
+    int      slice_a    = 0;
+    int      slice_b    = 0;
+    corner_t corners[6] = {0};
+
+    for (int x = 0, i = URF; i <= DRB; i++) {
+        if (cube->corner_permutations[i] <= DLF) {
+            slice_a += Cnk(i, x + 1);
+            corners[x] = cube->corner_permutations[i];
+            x++;
+        }
+    }
+
+    for (int k, i = 5; i > 0; i--) {
+        k = 0;
+        while (corners[i] != (corner_t)i) {
+            rotate_left((int *)corners, 0, i);
+            k++;
+        }
+        slice_b = (i + 1) * slice_b + k;
+    }
+
+    return 720 * slice_a + slice_b;
+}
+
+void set_UD_sorted_slice(cube_cubie_t *cube, int slice) {
+    corner_t corners[6]       = {URF, UFL, ULB, UBR, DFR, DLF};
+    corner_t other_corners[2] = {DBL, DRB};
+    int      b                = slice % 720;
+    int      a                = slice / 720;
+
+    for (int i = 0; i < N_CORNERS; i++)
+        cube->corner_permutations[i] = DRB;
+
+    for (int pivot, i = 1; i < 6; i++) {
+        pivot = b % (i + 1);
+        b /= i + 1;
+        while (pivot > 0) {
+            rotate_right((int *)corners, 0, i);
+            pivot--;
+        }
+    }
+
+    for (int pivot = 5, i = DRB; i >= 0; i--) {
+        if (a - Cnk(i, pivot + 1) >= 0) {
+            cube->corner_permutations[i] = corners[pivot];
+            a -= Cnk(i, pivot + 1);
+            pivot--;
+        }
+    }
+
+    for (int pivot = 0, i = URF; i <= DRB; i++) {
+        if (cube->corner_permutations[i] == DRB) {
+            cube->corner_permutations[i] = other_corners[pivot];
+            pivot++;
+        }
+    }
+}
+
 int get_corner_parity(cube_cubie_t *cube) {
     int parity = 0;
 

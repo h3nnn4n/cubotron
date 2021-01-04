@@ -26,6 +26,8 @@ void set_edge_orientations(cube_cubie_t *cube, int orientations);
 int  get_edge_orientations(cube_cubie_t *cube);
 int  get_UD_slice(cube_cubie_t *cube);
 void set_UD_slice(cube_cubie_t *cube, int slice);
+int  get_UD_sorted_slice(cube_cubie_t *cube);
+void set_UD_sorted_slice(cube_cubie_t *cube, int slice);
 int  get_corner_permutations(cube_cubie_t *cube);
 void set_corner_permutations(cube_cubie_t *cube, int permutations);
 
