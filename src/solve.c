@@ -24,6 +24,7 @@ move_t *solve(coord_cube_t *original_cube) {
 
     if (phase1_solution == NULL) {
         /*printf("failed to solve phase1\n");*/
+        free(solution);
         return NULL;
     } else {
         /*printf("phase1 solution:\n");*/
@@ -47,6 +48,7 @@ move_t *solve(coord_cube_t *original_cube) {
 
     if (phase2_solution == NULL) {
         /*printf("failed to solve phase2\n");*/
+        free(solution);
         return NULL;
     } else {
         /*printf("phase2 solution:\n");*/
