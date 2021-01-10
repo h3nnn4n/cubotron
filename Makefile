@@ -13,7 +13,7 @@ INCLUDES = -Isrc \
            -Ideps/pcg-c/include
 
 OPTIMIZATION=-O3
-OPTIMIZATION=-O0 -g
+#OPTIMIZATION=-O0 -g
 
 override CFLAGS += -Wall -Wextra -pedantic -std=gnu11 $(OPTIMIZATION) $(OPTIONS) $(INCLUDES)
 
