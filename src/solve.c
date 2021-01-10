@@ -35,13 +35,12 @@ move_t *solve(coord_cube_t *original_cube) {
             phase1_move_count++;
         }
 
-        /*printf("\n coords: %4d %4d %3d %4d\n\n", cube->edge_orientations, cube->corner_orientations, cube->UD_slice,*/
-        /*cube->corner_permutations);*/
+        /*printf("\n coords: %4d %4d %3d %4d %4d\n\n", cube->edge_orientations, cube->corner_orientations,
+         * cube->UD_slice,*/
+        /*cube->UD_sorted_slice, cube->corner_permutations);*/
 
         assert(is_phase1_solved(cube));
     }
-
-    //
 
     /*printf("starting phase2\n");*/
     move_t *phase2_solution = solve_phase2(cube);
@@ -60,8 +59,9 @@ move_t *solve(coord_cube_t *original_cube) {
         }
         solution[phase1_move_count + phase2_move_count] = MOVE_NULL;
 
-        /*printf("\n coords: %4d %4d %3d %4d\n\n", cube->edge_orientations, cube->corner_orientations, cube->UD_slice,*/
-        /*cube->corner_permutations);*/
+        /*printf("\n coords: %4d %4d %3d %4d %4d\n\n", cube->edge_orientations, cube->corner_orientations,
+         * cube->UD_slice,*/
+        /*cube->UD_sorted_slice, cube->corner_permutations);*/
 
         assert(is_phase2_solved(cube));
     }
@@ -177,66 +177,79 @@ move_t *solve_phase2(coord_cube_t *cube) {
 
     move_t        move_stack[max_moves];
     coord_cube_t *cube_stack[max_moves];
-    int           pivot      = 0;
+    int           pruning_stack[max_moves];
     int           move_count = 0;
+    int           max_depth  = 25;
 
     for (int i = 0; i < max_moves; i++) {
-        move_stack[i] = -1;
-        cube_stack[i] = get_coord_cube();
+        move_stack[i]    = -1;
+        pruning_stack[i] = -1;
+        cube_stack[i]    = get_coord_cube();
     }
 
     copy_coord_cube(cube_stack[0], cube);
 
-    do {
-        move_stack[pivot]++;
+    for (int allowed_depth = 1; allowed_depth <= max_depth; allowed_depth++) {
+        int pivot = 0;
+        copy_coord_cube(cube_stack[0], cube);
 
-        if ((int)move_stack[pivot] >= n_moves) {
-            move_stack[pivot] = -1;
-            /*printf("\n");*/
-            pivot--;
+        /*printf("searching with max depth: %d\n", allowed_depth);*/
 
-            if (pivot < 0) {
-                break;
-            } else if (pivot == 0) {
-                copy_coord_cube(cube_stack[0], cube);
-            } else if (pivot > 0) {
-                copy_coord_cube(cube_stack[pivot], cube_stack[pivot - 1]);
+        do {
+            move_stack[pivot]++;
+
+            if ((int)move_stack[pivot] >= n_moves) {
+                pruning_stack[pivot] = -1; // ?
+                move_stack[pivot]    = -1;
+                /*printf("\n");*/
+                pivot--;
+
+                if (pivot < 0) {
+                    break;
+                } else if (pivot == 0) {
+                    copy_coord_cube(cube_stack[0], cube);
+                } else if (pivot > 0) {
+                    copy_coord_cube(cube_stack[pivot], cube_stack[pivot - 1]);
+                }
+
+                continue;
             }
 
-            continue;
-        }
+            coord_apply_move(cube_stack[pivot], moves[move_stack[pivot]]);
+            pruning_stack[pivot] = get_phase2_pruning(cube_stack[pivot]);
+            move_count++;
 
-        coord_apply_move(cube_stack[pivot], moves[move_stack[pivot]]);
-        move_count++;
+            /*
+            if (move_count % 1000000 == 0) {
+                char buffer[512];
+                sprintf(buffer, " moves: %4d pivot: %2d", move_count, pivot);
+                sprintf(buffer, "%s : %4d -> ", buffer, cube_stack[pivot]->corner_permutations);
+                for (int i = 0; i <= pivot; i++)
+                    sprintf(buffer, "%s %s", buffer, move_to_str(move_stack[i]));
+                printf("%s\n", buffer);
+            }
+            */
 
-        /*
-        if (move_count % 1000000 == 0) {
-            char buffer[512];
-            sprintf(buffer, " moves: %4d pivot: %2d", move_count, pivot);
-            sprintf(buffer, "%s : %4d -> ", buffer, cube_stack[pivot]->corner_permutations);
-            for (int i = 0; i <= pivot; i++)
-                sprintf(buffer, "%s %s", buffer, move_to_str(move_stack[i]));
-            printf("%s\n", buffer);
-        }
-        */
+            if (is_phase2_solved(cube_stack[pivot])) {
+                solution = malloc(sizeof(move_t) * (pivot + 2));
 
-        if (is_phase2_solved(cube_stack[pivot])) {
-            solution = malloc(sizeof(move_t) * (pivot + 2));
+                for (int i = 0; i <= pivot; i++)
+                    solution[i] = moves[move_stack[i]];
+                solution[pivot + 1] = MOVE_NULL;
 
-            for (int i = 0; i <= pivot; i++)
-                solution[i] = moves[move_stack[i]];
-            solution[pivot + 1] = MOVE_NULL;
+                break;
+            }
 
-            break;
-        }
-
-        if (pivot < max_moves - 1) {
-            copy_coord_cube(cube_stack[pivot + 1], cube_stack[pivot]);
-            pivot++;
-        } else {
-            copy_coord_cube(cube_stack[pivot], cube_stack[pivot - 1]);
-        }
-    } while (1);
+            if (pivot < max_moves - 1) {
+                if (pruning_stack[pivot] + pivot <= allowed_depth) {
+                    copy_coord_cube(cube_stack[pivot + 1], cube_stack[pivot]);
+                    pivot++;
+                }
+            } else {
+                copy_coord_cube(cube_stack[pivot], cube_stack[pivot - 1]);
+            }
+        } while (1);
+    }
 
     return solution;
 }
@@ -245,4 +258,4 @@ int is_phase1_solved(coord_cube_t *cube) {
     return (cube->edge_orientations + cube->corner_orientations + cube->UD_slice) == 0;
 }
 
-int is_phase2_solved(coord_cube_t *cube) { return cube->corner_permutations == 0; }
+int is_phase2_solved(coord_cube_t *cube) { return (cube->corner_permutations + cube->UD_sorted_slice) == 0; }

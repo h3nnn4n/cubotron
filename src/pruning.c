@@ -29,6 +29,16 @@ int get_phase1_pruning(coord_cube_t *cube) {
     return value1 > value2 ? value1 : value2;
 }
 
+int get_phase2_pruning(coord_cube_t *cube) {
+    assert(pruning_phase2_corner != NULL);
+
+    int value1 =
+        pruning_phase2_corner[(cube->corner_permutations * N_SORTED_SLICES + cube->UD_sorted_slice) * N_PARITY +
+                              cube->parity];
+
+    return value1;
+}
+
 void build_phase1_corner_table() {
     if (pruning_phase1_corner != NULL)
         return;
