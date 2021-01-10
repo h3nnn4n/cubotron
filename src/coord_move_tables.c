@@ -17,7 +17,9 @@ static int  move_table_parity[N_PARITY * N_MOVES] = {1, 0, 1, 1, 0, 1, 1, 0, 1, 
 int *get_move_table_edge_orientations() { return move_table_edge_orientations; }
 int *get_move_table_corner_orientations() { return move_table_corner_orientations; }
 int *get_move_table_UD_slice() { return move_table_UD_slice; }
+int *get_move_table_UD_sorted_slice() { return move_table_UD_sorted_slice; }
 int *get_move_table_corner_permutations() { return move_table_corner_permutations; }
+int *get_move_table_parity() { return move_table_parity; }
 
 void coord_apply_move(coord_cube_t *cube, move_t move) {
     assert(cube != NULL);
