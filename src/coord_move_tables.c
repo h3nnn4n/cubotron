@@ -129,7 +129,7 @@ void coord_build_move_tables() {
                 set_UD_sorted_slice(cube, slice);
                 cubie_apply_move(cube, move);
                 assert(slice * N_MOVES + move < N_SORTED_SLICES * N_MOVES);
-                move_table_UD_sorted_slice[slice * move] = get_UD_sorted_slice(cube);
+                move_table_UD_sorted_slice[slice * N_MOVES + move] = get_UD_sorted_slice(cube);
             }
         }
 
