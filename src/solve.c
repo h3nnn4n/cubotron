@@ -78,7 +78,7 @@ move_t *solve_phase1(coord_cube_t *cube) {
     coord_cube_t *    cube_stack[max_moves];
     unsigned long int move_count = 0;
 
-    int max_depth = 13;
+    int max_depth = 12;
 
     for (int i = 0; i < max_moves; i++) {
         move_stack[i]    = -1;
@@ -90,7 +90,7 @@ move_t *solve_phase1(coord_cube_t *cube) {
     /*long start_time    = get_microseconds();*/
     /*printf("estimated number of moves: %d\n", move_estimate);*/
 
-    for (int allowed_depth = 1; allowed_depth < max_depth; allowed_depth++) {
+    for (int allowed_depth = 1; allowed_depth <= max_depth; allowed_depth++) {
         int pivot = 0;
         /*printf("searching with max depth: %d\n", allowed_depth);*/
 
