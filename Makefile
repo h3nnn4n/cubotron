@@ -12,9 +12,9 @@ INCLUDES = -Isrc \
            -Ideps/Unity/src \
            -Ideps/pcg-c/include
 
-override CFLAGS += -Wall -Wextra -pedantic -std=gnu11 $(OPTIMIZATION) $(OPTIONS) $(INCLUDES)
-
 OPTIMIZATION=-O3
+
+override CFLAGS += -Wall -Wextra -pedantic -std=gnu11 $(OPTIMIZATION) $(OPTIONS) $(INCLUDES)
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
@@ -68,7 +68,7 @@ pcg_clean:
 
 $(TEST_TARGETS): $(OBJS_NO_MAIN) $(OBJS_TEST)
 	@echo $(ECHOFLAGS) "[LD]\t$<"
-	$(CC) -o "$@" $@.o $(OBJS_NO_MAIN) $(LDFLAGS)
+	$(CC) -o "$@" $@.o $(OBJS_NO_MAIN) $(LDFLAGS) $(OPTIMIZATION)
 
 $(BUILDDIR)/%.o: %.c
 	@echo $(ECHOFLAGS) "[CC]\t$<"
@@ -77,7 +77,7 @@ $(BUILDDIR)/%.o: %.c
 
 $(TARGET): $(OBJS)
 	@echo $(ECHOFLAGS) "[LD]\t$<"
-	@$(CC) -o "$@" $^ $(LDFLAGS)
+	@$(CC) -o "$@" $^ $(LDFLAGS) $(OPTIMIZATION)
 
 clean:
 	@echo Cleaning...
