@@ -5,6 +5,7 @@
 #include "coord_move_tables.h"
 #include "definitions.h"
 #include "pruning.h"
+#include "pruning_cache.h"
 #include "utils.h"
 
 static int *pruning_phase1_corner = NULL;
@@ -41,6 +42,10 @@ int get_phase2_pruning(coord_cube_t *cube) {
 
 void build_phase1_corner_table() {
     if (pruning_phase1_corner != NULL)
+        return;
+
+    if (pruning_table_cache_load("pruning_tables", "phase1_corner", &pruning_phase1_corner,
+                                 N_CORNER_ORIENTATIONS * N_SLICES))
         return;
 
     printf("bulding phase1 corner orientations pruning table\n");
@@ -92,10 +97,16 @@ void build_phase1_corner_table() {
     printf("nodes per second : %.2f\n",
            ((float)(N_CORNER_ORIENTATIONS * N_SLICES) / (end_time - start_time)) * 1000000.0);
     printf("\n");
+
+    pruning_table_cache_store("pruning_tables", "phase1_corner", pruning_phase1_corner,
+                              N_CORNER_ORIENTATIONS * N_SLICES);
 }
 
 void build_phase1_edge_table() {
     if (pruning_phase1_edge != NULL)
+        return;
+
+    if (pruning_table_cache_load("pruning_tables", "phase1_edge", &pruning_phase1_edge, N_EDGE_ORIENTATIONS * N_SLICES))
         return;
 
     printf("bulding phase1 edge orientations pruning table\n");
@@ -147,11 +158,17 @@ void build_phase1_edge_table() {
     printf("nodes per second : %.2f\n",
            ((float)(N_EDGE_ORIENTATIONS * N_SLICES) / (end_time - start_time)) * 1000000.0);
     printf("\n");
+
+    pruning_table_cache_store("pruning_tables", "phase1_edge", pruning_phase1_edge, N_EDGE_ORIENTATIONS * N_SLICES);
 }
 
 // FIXME: Seems a bit too low for my taste, even when considering just the space is used in phase2
 void build_phase2_corner_table() {
     if (pruning_phase2_corner != NULL)
+        return;
+
+    if (pruning_table_cache_load("pruning_tables", "phase2_corner", &pruning_phase2_corner,
+                                 N_CORNER_PERMUTATIONS * N_SORTED_SLICES * N_PARITY))
         return;
 
     printf("bulding phase2 corner orientations pruning table\n");
@@ -216,4 +233,7 @@ void build_phase2_corner_table() {
     printf("nodes per second : %.2f\n",
            ((float)(N_CORNER_PERMUTATIONS * N_SORTED_SLICES * N_PARITY) / (end_time - start_time)) * 1000000.0);
     printf("\n");
+
+    pruning_table_cache_store("pruning_tables", "phase2_corner", pruning_phase2_corner,
+                              N_CORNER_PERMUTATIONS * N_SORTED_SLICES * N_PARITY);
 }
