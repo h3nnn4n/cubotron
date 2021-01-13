@@ -36,11 +36,20 @@ void pruning_table_cache_store(char *cache_name, char *table_name, int *pruning_
     char filepath[512];
     snprintf(filepath, 511, "%s/%s", cache_name, table_name);
 
+    ensure_directory_exists(cache_name);
+
     FILE *        f             = fopen(filepath, "wb");
     unsigned long bytes_written = fwrite(pruning_table, sizeof(int), table_size, f);
     fclose(f);
 
     printf("%lu bytes stored in %s\n", bytes_written, filepath);
+}
+
+void ensure_directory_exists(char *directory) {
+    struct stat st = {0};
+
+    if (stat("/some/directory", &st) == -1)
+        mkdir(directory, 0777);
 }
 
 int file_exists(char *filepath) {

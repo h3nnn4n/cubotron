@@ -4,5 +4,6 @@
 int  pruning_table_cache_load(char *cache_name, char *table_name, int **pruning_table, int table_size);
 void pruning_table_cache_store(char *cache_name, char *table_name, int *pruning_table, int table_size);
 int  file_exists(char *filepath);
+void ensure_directory_exists(char *directory);
 
 #endif /* end of include guard */
