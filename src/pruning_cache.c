@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 
 #include "pruning_cache.h"
+#include "utils.h"
 
 int pruning_table_cache_load(char *cache_name, char *table_name, int **pruning_table, int table_size) {
     char filepath[512];
@@ -10,6 +11,8 @@ int pruning_table_cache_load(char *cache_name, char *table_name, int **pruning_t
 
     if (!file_exists(filepath))
         return 0;
+
+    long start_time = get_microseconds();
 
     printf("loading: %s   ", filepath);
     fflush(stdout);
@@ -27,7 +30,8 @@ int pruning_table_cache_load(char *cache_name, char *table_name, int **pruning_t
 
     fclose(f);
 
-    printf("%lu bytes loaded\n", total_bytes_read);
+    long end_time = get_microseconds();
+    printf("%lu bytes loaded in %.4f seconds\n", total_bytes_read, (float)(end_time - start_time) / 1000000.0);
 
     return 1;
 }
@@ -36,13 +40,16 @@ void pruning_table_cache_store(char *cache_name, char *table_name, int *pruning_
     char filepath[512];
     snprintf(filepath, 511, "%s/%s", cache_name, table_name);
 
+    long start_time = get_microseconds();
     ensure_directory_exists(cache_name);
 
     FILE *        f             = fopen(filepath, "wb");
     unsigned long bytes_written = fwrite(pruning_table, sizeof(int), table_size, f);
     fclose(f);
 
-    printf("%lu bytes stored in %s\n", bytes_written, filepath);
+    long end_time = get_microseconds();
+    printf("%lu bytes stored in %s in %.4f seconds\n", bytes_written, filepath,
+           (float)(end_time - start_time) / 1000000.0);
 }
 
 void ensure_directory_exists(char *directory) {
