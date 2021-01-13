@@ -66,6 +66,46 @@ void test_rotate_left_diameter() {
     free(cube);
 }
 
+void test_is_bad_move_true_cases() {
+    for (int i = 0; i < N_COLORS; i++) {
+        int offset = i * 3;
+
+        TEST_ASSERT_TRUE(is_bad_move(MOVE_U1 + offset, MOVE_U1 + offset));
+        TEST_ASSERT_TRUE(is_bad_move(MOVE_U1 + offset, MOVE_U2 + offset));
+        TEST_ASSERT_TRUE(is_bad_move(MOVE_U1 + offset, MOVE_U3 + offset));
+
+        TEST_ASSERT_TRUE(is_bad_move(MOVE_U2 + offset, MOVE_U1 + offset));
+        TEST_ASSERT_TRUE(is_bad_move(MOVE_U2 + offset, MOVE_U2 + offset));
+        TEST_ASSERT_TRUE(is_bad_move(MOVE_U2 + offset, MOVE_U3 + offset));
+
+        TEST_ASSERT_TRUE(is_bad_move(MOVE_U3 + offset, MOVE_U1 + offset));
+        TEST_ASSERT_TRUE(is_bad_move(MOVE_U3 + offset, MOVE_U2 + offset));
+        TEST_ASSERT_TRUE(is_bad_move(MOVE_U3 + offset, MOVE_U3 + offset));
+    }
+}
+
+void test_is_bad_move_false_cases() {
+    for (int i = 0; i < N_COLORS; i++) {
+        int offset1 = i * 3;
+
+        for (int j = i + 1; j < N_COLORS; j++) {
+            int offset2 = j * 3;
+
+            TEST_ASSERT_FALSE(is_bad_move(MOVE_U1 + offset1, MOVE_U1 + offset2));
+            TEST_ASSERT_FALSE(is_bad_move(MOVE_U1 + offset1, MOVE_U2 + offset2));
+            TEST_ASSERT_FALSE(is_bad_move(MOVE_U1 + offset1, MOVE_U3 + offset2));
+
+            TEST_ASSERT_FALSE(is_bad_move(MOVE_U2 + offset1, MOVE_U1 + offset2));
+            TEST_ASSERT_FALSE(is_bad_move(MOVE_U2 + offset1, MOVE_U2 + offset2));
+            TEST_ASSERT_FALSE(is_bad_move(MOVE_U2 + offset1, MOVE_U3 + offset2));
+
+            TEST_ASSERT_FALSE(is_bad_move(MOVE_U3 + offset1, MOVE_U1 + offset2));
+            TEST_ASSERT_FALSE(is_bad_move(MOVE_U3 + offset1, MOVE_U2 + offset2));
+            TEST_ASSERT_FALSE(is_bad_move(MOVE_U3 + offset1, MOVE_U3 + offset2));
+        }
+    }
+}
+
 void setUp() { build_move_tables(); }
 void tearDown() {}
 
@@ -82,6 +122,9 @@ int main() {
     RUN_TEST(test_rotate_right_reverts_rotate_left);
     RUN_TEST(test_rotate_right_diameter);
     RUN_TEST(test_rotate_left_diameter);
+
+    RUN_TEST(test_is_bad_move_true_cases);
+    RUN_TEST(test_is_bad_move_false_cases);
 
     return UNITY_END();
 }
