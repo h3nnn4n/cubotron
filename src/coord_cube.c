@@ -4,15 +4,17 @@
 
 coord_cube_t *get_coord_cube() {
     coord_cube_t *coord_cube = (coord_cube_t *)malloc(sizeof(coord_cube_t));
-
-    coord_cube->edge_orientations   = 0;
-    coord_cube->corner_orientations = 0;
-    coord_cube->UD_slice            = 0;
-    coord_cube->UD_sorted_slice     = 0;
-    coord_cube->parity              = 0;
-    coord_cube->corner_permutations = 0;
-
+    reset_coord_cube(coord_cube);
     return coord_cube;
+}
+
+void reset_coord_cube(coord_cube_t *cube) {
+    cube->edge_orientations   = 0;
+    cube->corner_orientations = 0;
+    cube->UD_slice            = 0;
+    cube->UD_sorted_slice     = 0;
+    cube->parity              = 0;
+    cube->corner_permutations = 0;
 }
 
 coord_cube_t *make_coord_cube(cube_cubie_t *cubie) {

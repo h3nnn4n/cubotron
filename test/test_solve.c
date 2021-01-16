@@ -7,13 +7,15 @@
 #include <utils.h>
 
 void test_random_phase1_solving() {
-    char buffer[512];
+    /*char          buffer[512];*/
+    coord_cube_t *cube = get_coord_cube();
 
-    for (int i = 0; i < 20; i++) {
-        coord_cube_t *cube = get_coord_cube();
-
-        int    n_moves   = 30;
+    for (int i = 0; i < 100; i++) {
+        int    n_moves   = 50;
         move_t moves[50] = {0};
+
+        reset_coord_cube(cube);
+
         for (int i = 0; i < n_moves; i++) {
             moves[i] = pcg32_boundedrand(N_MOVES);
 
@@ -24,8 +26,8 @@ void test_random_phase1_solving() {
             coord_apply_move(cube, moves[i]);
         }
 
-        sprintf(buffer, "%4d %4d %3d", cube->edge_orientations, cube->corner_orientations, cube->UD_slice);
-        TEST_MESSAGE(buffer);
+        /*sprintf(buffer, "%4d %4d %3d", cube->edge_orientations, cube->corner_orientations, cube->UD_slice);*/
+        /*TEST_MESSAGE(buffer);*/
 
         TEST_ASSERT_FALSE(is_phase1_solved(cube));
 
@@ -38,8 +40,8 @@ void test_random_phase1_solving() {
         TEST_ASSERT_TRUE(is_phase1_solved(cube));
 
         free(solution);
-        free(cube);
     }
+    free(cube);
 }
 
 void test_random_phase2_solving() {
@@ -86,7 +88,7 @@ void test_random_full_solver() {
     for (int i = 0; i < 5; i++) {
         coord_cube_t *cube = get_coord_cube();
 
-        int    n_moves   = 4;
+        int    n_moves   = 50;
         move_t moves[50] = {0};
         for (int i = 0; i < n_moves; i++) {
             moves[i] = pcg32_boundedrand(N_MOVES);

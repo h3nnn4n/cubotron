@@ -86,8 +86,8 @@ move_t *solve_phase1(coord_cube_t *cube) {
         cube_stack[i]    = get_coord_cube();
     }
 
-    /*int  move_estimate = get_phase1_pruning(cube);*/
     /*long start_time    = get_microseconds();*/
+    /*int move_estimate = get_phase1_pruning(cube);*/
     /*printf("estimated number of moves: %d\n", move_estimate);*/
 
     for (int allowed_depth = 1; allowed_depth <= max_depth; allowed_depth++) {
@@ -116,6 +116,9 @@ move_t *solve_phase1(coord_cube_t *cube) {
                 continue;
             }
 
+            if (pivot > 0 && is_bad_move(move_stack[pivot], move_stack[pivot - 1]))
+                continue;
+
             assert(move_stack[pivot] <= N_MOVES);
 
             coord_apply_move(cube_stack[pivot], move_stack[pivot]);
@@ -131,7 +134,13 @@ move_t *solve_phase1(coord_cube_t *cube) {
                         cube_stack[pivot]->corner_orientations, cube_stack[pivot]->UD_slice);
                 for (int i = 0; i <= pivot; i++)
                     sprintf(buffer, "%s %s", buffer, move_to_str(move_stack[i]));
-                printf("%s\n", buffer);
+                printf("%s", buffer);
+
+                long end_time = get_microseconds();
+                printf("  :  elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);
+                printf("moves: %lu - ", move_count);
+                printf("moves per second : %.2f", ((float)move_count / (end_time - start_time)) * 1000000.0);
+                printf("\n");
             }
             */
 
@@ -142,25 +151,23 @@ move_t *solve_phase1(coord_cube_t *cube) {
                     solution[i] = move_stack[i];
                 solution[pivot + 1] = MOVE_NULL;
 
-                break;
+                goto solution_found;
             }
 
-            if (pivot < max_moves - 1) {
-                if (pruning_stack[pivot] + pivot <= allowed_depth) {
-                    /*if ((pruning_stack[pivot] + pivot <= allowed_depth) &&*/
-                    /*(pivot > 0 && pruning_stack[pivot] <= pruning_stack[pivot - 1])) {*/
-                    copy_coord_cube(cube_stack[pivot + 1], cube_stack[pivot]);
-                    pivot++;
-                } else {
-                    /*printf("skiping \n");*/
-                    /*copy_coord_cube(cube_stack[pivot + 1], cube_stack[pivot]);*/
-                    /*pivot++;*/
-                }
+            if (pruning_stack[pivot] + pivot < allowed_depth) {
+                copy_coord_cube(cube_stack[pivot + 1], cube_stack[pivot]);
+                pivot++;
             } else {
-                copy_coord_cube(cube_stack[pivot], cube_stack[pivot - 1]);
+                if (pivot > 0) {
+                    copy_coord_cube(cube_stack[pivot], cube_stack[pivot - 1]);
+                } else {
+                    copy_coord_cube(cube_stack[pivot], cube);
+                }
             }
         } while (1);
     }
+
+solution_found:
 
     /*long end_time = get_microseconds();*/
     /*printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);*/
@@ -179,7 +186,7 @@ move_t *solve_phase2(coord_cube_t *cube) {
     coord_cube_t *cube_stack[max_moves];
     int           pruning_stack[max_moves];
     int           move_count = 0;
-    int           max_depth  = 25;
+    int           max_depth  = 20;
 
     for (int i = 0; i < max_moves; i++) {
         move_stack[i]    = -1;
@@ -215,6 +222,9 @@ move_t *solve_phase2(coord_cube_t *cube) {
                 continue;
             }
 
+            if (pivot > 0 && is_bad_move(move_stack[pivot], move_stack[pivot - 1]))
+                continue;
+
             coord_apply_move(cube_stack[pivot], moves[move_stack[pivot]]);
             pruning_stack[pivot] = get_phase2_pruning(cube_stack[pivot]);
             move_count++;
@@ -237,19 +247,23 @@ move_t *solve_phase2(coord_cube_t *cube) {
                     solution[i] = moves[move_stack[i]];
                 solution[pivot + 1] = MOVE_NULL;
 
-                break;
+                goto solution_found;
             }
 
-            if (pivot < max_moves - 1) {
-                if (pruning_stack[pivot] + pivot <= allowed_depth) {
-                    copy_coord_cube(cube_stack[pivot + 1], cube_stack[pivot]);
-                    pivot++;
-                }
+            if (pruning_stack[pivot] + pivot < allowed_depth) {
+                copy_coord_cube(cube_stack[pivot + 1], cube_stack[pivot]);
+                pivot++;
             } else {
-                copy_coord_cube(cube_stack[pivot], cube_stack[pivot - 1]);
+                if (pivot > 0) {
+                    copy_coord_cube(cube_stack[pivot], cube_stack[pivot - 1]);
+                } else {
+                    copy_coord_cube(cube_stack[pivot], cube);
+                }
             }
         } while (1);
     }
+
+solution_found:
 
     return solution;
 }
