@@ -45,11 +45,12 @@ void test_random_phase1_solving() {
 }
 
 void test_random_phase2_solving() {
-    // FIXME: Bump this when we get the pruning tables working
-    for (int i = 0; i < 20; i++) {
-        coord_cube_t *cube = get_coord_cube();
+    coord_cube_t *cube = get_coord_cube();
 
-        int    n_moves   = 4;
+    for (int i = 0; i < 100; i++) {
+        reset_coord_cube(cube);
+
+        int    n_moves   = 50;
         move_t moves[50] = {0};
         for (int i = 0; i < n_moves; i++) {
             moves[i] = pcg32_boundedrand(N_MOVES);
@@ -61,11 +62,11 @@ void test_random_phase2_solving() {
             coord_apply_move(cube, moves[i]);
         }
 
+        // Fake phase1 solution
         cube->corner_orientations = 0;
         cube->edge_orientations   = 0;
         cube->UD_slice            = 0;
 
-        // FIXME: Enable once prunning is working and we can solve any cubes
         TEST_ASSERT_FALSE(is_phase2_solved(cube));
 
         move_t *solution = solve_phase2(cube);
@@ -77,16 +78,17 @@ void test_random_phase2_solving() {
         TEST_ASSERT_TRUE(is_phase2_solved(cube));
 
         free(solution);
-        free(cube);
     }
+
+    free(cube);
 }
 
 void test_random_full_solver() {
-    char buffer[512];
+    /*char buffer[512];*/
+    coord_cube_t *cube = get_coord_cube();
 
-    // FIXME: Bump this when we get the pruning tables working
-    for (int i = 0; i < 5; i++) {
-        coord_cube_t *cube = get_coord_cube();
+    for (int i = 0; i < 50; i++) {
+        reset_coord_cube(cube);
 
         int    n_moves   = 50;
         move_t moves[50] = {0};
@@ -103,10 +105,10 @@ void test_random_full_solver() {
         TEST_ASSERT_FALSE(is_phase1_solved(cube));
         TEST_ASSERT_FALSE(is_phase2_solved(cube));
 
-        sprintf(buffer, "%4d %4d %3d %4d %4d", cube->edge_orientations, cube->corner_orientations, cube->UD_slice,
-                cube->UD_sorted_slice, cube->corner_permutations);
+        /*sprintf(buffer, "%4d %4d %3d %4d %4d", cube->edge_orientations, cube->corner_orientations, cube->UD_slice,*/
+        /*cube->UD_sorted_slice, cube->corner_permutations);*/
 
-        TEST_MESSAGE(buffer);
+        /*TEST_MESSAGE(buffer);*/
 
         move_t *solution = solve(cube);
 
@@ -118,8 +120,9 @@ void test_random_full_solver() {
         TEST_ASSERT_TRUE(is_phase2_solved(cube));
 
         free(solution);
-        free(cube);
     }
+
+    free(cube);
 }
 
 void setUp() {}
