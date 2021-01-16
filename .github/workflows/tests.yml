@@ -13,4 +13,4 @@ jobs:
       - name: Run Makefile
         run: make test
         env:
-            CFLAGS=-DDISABLE_PRUNING_TABLE_CACHE_STORE
+            CFLAGS: -DDISABLE_PRUNING_TABLE_CACHE_STORE
