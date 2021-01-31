@@ -10,7 +10,8 @@ OPTIONS =
 
 INCLUDES = -Isrc \
            -Ideps/Unity/src \
-           -Ideps/pcg-c/include
+           -Ideps/pcg-c/include \
+           -Ideps/pcg-c/extras
 
 OPTIMIZATION=-O3
 #OPTIMIZATION=-O0 -g
@@ -29,7 +30,8 @@ endif
 
 CC = gcc
 
-C_FILES := $(wildcard src/*.c)
+C_FILES := $(wildcard src/*.c) \
+           $(wildcard deps/pcg-c/extras/*.c)
 C_FILES_TEST := $(wildcard test/*.c)
 C_FILES_TEST_DEPS := $(wildcard deps/Unity/src/*.c)
 
