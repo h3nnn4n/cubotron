@@ -7,7 +7,6 @@
 #include <utils.h>
 
 void test_random_phase1_solving() {
-    /*char          buffer[512];*/
     coord_cube_t *cube = get_coord_cube();
 
     for (int i = 0; i < 100; i++) {
@@ -26,6 +25,7 @@ void test_random_phase1_solving() {
             coord_apply_move(cube, moves[i]);
         }
 
+        /*char buffer[512];*/
         /*sprintf(buffer, "%4d %4d %3d", cube->edge_orientations, cube->corner_orientations, cube->UD_slice);*/
         /*TEST_MESSAGE(buffer);*/
 
@@ -62,10 +62,16 @@ void test_random_phase2_solving() {
             coord_apply_move(cube, moves[i]);
         }
 
-        // Fake phase1 solution
-        cube->corner_orientations = 0;
-        cube->edge_orientations   = 0;
-        cube->UD_slice            = 0;
+        // Apply phase1 solution
+        {
+            move_t *solution = solve_phase1(cube);
+
+            for (int i = 0; solution[i] != MOVE_NULL; i++) {
+                coord_apply_move(cube, solution[i]);
+            }
+
+            TEST_ASSERT_TRUE(is_phase1_solved(cube));
+        }
 
         TEST_ASSERT_FALSE(is_phase2_solved(cube));
 
@@ -84,10 +90,9 @@ void test_random_phase2_solving() {
 }
 
 void test_random_full_solver() {
-    /*char buffer[512];*/
     coord_cube_t *cube = get_coord_cube();
 
-    for (int i = 0; i < 50; i++) {
+    for (int i = 0; i < 100; i++) {
         reset_coord_cube(cube);
 
         int    n_moves   = 50;
@@ -104,6 +109,8 @@ void test_random_full_solver() {
 
         TEST_ASSERT_FALSE(is_phase1_solved(cube));
         TEST_ASSERT_FALSE(is_phase2_solved(cube));
+
+        /*char buffer[512];*/
 
         /*sprintf(buffer, "%4d %4d %3d %4d %4d", cube->edge_orientations, cube->corner_orientations, cube->UD_slice,*/
         /*cube->UD_sorted_slice, cube->corner_permutations);*/

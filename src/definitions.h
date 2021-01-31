@@ -4,7 +4,7 @@
 #define N_CORNER_ORIENTATIONS  2187
 #define N_EDGE_ORIENTATIONS    2048
 #define N_SLICES               495
-#define N_SORTED_SLICES        20160
+#define N_SORTED_SLICES        11880
 #define N_SORTED_SLICES_PHASE2 24
 #define N_PARITY               2
 #define N_CORNER_PERMUTATIONS  40320

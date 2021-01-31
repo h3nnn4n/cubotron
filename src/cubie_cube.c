@@ -113,60 +113,63 @@ void set_UD_slice(cube_cubie_t *cube, int slice) {
 }
 
 int get_UD_sorted_slice(cube_cubie_t *cube) {
-    int      slice_a    = 0;
-    int      slice_b    = 0;
-    corner_t corners[6] = {0};
+    int    combination = 0;
+    int    permutation = 0;
+    int    seen        = 0;
+    edge_t edges[4]    = {0};
 
-    for (int x = 0, i = URF; i <= DRB; i++) {
-        if (cube->corner_permutations[i] <= DLF) {
-            slice_a += Cnk(i, x + 1);
-            corners[x] = cube->corner_permutations[i];
-            x++;
+    for (int i = BR; i >= UR; i--)
+        if (FR <= cube->edge_permutations[i] && cube->edge_permutations[i] <= BR) {
+            combination += Cnk(11 - i, seen + 1);
+            edges[3 - seen] = cube->edge_permutations[i];
+            seen += 1;
         }
+
+    for (int i = 3; i > 0; i--) {
+        seen = 0;
+
+        while ((int)edges[i] != i + 8) {
+            rotate_left((int *)edges, 0, i);
+            seen++;
+        }
+
+        permutation = (i + 1) * permutation + seen;
     }
 
-    for (int k, i = 5; i > 0; i--) {
-        k = 0;
-        while (corners[i] != (corner_t)i) {
-            rotate_left((int *)corners, 0, i);
-            k++;
-        }
-        slice_b = (i + 1) * slice_b + k;
-    }
-
-    return 720 * slice_a + slice_b;
+    return (24 * combination + permutation);
 }
 
 void set_UD_sorted_slice(cube_cubie_t *cube, int slice) {
-    corner_t corners[6]       = {URF, UFL, ULB, UBR, DFR, DLF};
-    corner_t other_corners[2] = {DBL, DRB};
-    int      b                = slice % 720;
-    int      a                = slice / 720;
+    edge_t slice_edges[4] = {FR, FL, BL, BR};
+    edge_t other_edges[8] = {UR, UF, UL, UB, DR, DF, DL, DB};
 
-    for (int i = 0; i < N_CORNERS; i++)
-        cube->corner_permutations[i] = DRB;
+    int permutation = slice % 24;
+    int combination = slice / 24;
 
-    for (int pivot, i = 1; i < 6; i++) {
-        pivot = b % (i + 1);
-        b /= i + 1;
-        while (pivot > 0) {
-            rotate_right((int *)corners, 0, i);
-            pivot--;
+    for (int i = 0; i < N_EDGES; i++) {
+        cube->edge_permutations[i] = DB;
+    }
+
+    for (int i = 1, k; i < 4; i++) {
+        k = permutation % (i + 1);
+        permutation /= i + 1;
+
+        while (k-- > 0)
+            rotate_right((int *)slice_edges, 0, i);
+    }
+
+    for (int i = UR, seen = 3; i <= BR; i++) {
+        if (combination - Cnk(11 - i, seen + 1) >= 0) {
+            cube->edge_permutations[i] = slice_edges[3 - seen];
+            combination -= Cnk(11 - i, seen + 1);
+            seen -= 1;
         }
     }
 
-    for (int pivot = 5, i = DRB; i >= 0; i--) {
-        if (a - Cnk(i, pivot + 1) >= 0) {
-            cube->corner_permutations[i] = corners[pivot];
-            a -= Cnk(i, pivot + 1);
-            pivot--;
-        }
-    }
-
-    for (int pivot = 0, i = URF; i <= DRB; i++) {
-        if (cube->corner_permutations[i] == DRB) {
-            cube->corner_permutations[i] = other_corners[pivot];
-            pivot++;
+    for (int i = UR, seen = 0; i <= BR; i++) {
+        if (cube->edge_permutations[i] == DB) {
+            cube->edge_permutations[i] = other_edges[seen];
+            seen += 1;
         }
     }
 }
