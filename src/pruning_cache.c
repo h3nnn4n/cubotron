@@ -14,7 +14,7 @@ int pruning_table_cache_load(char *cache_name, char *table_name, int **pruning_t
 
     long start_time = get_microseconds();
 
-    printf("loading: %s   ", filepath);
+    printf("loading: %35s   ", filepath);
     fflush(stdout);
     FILE *f = fopen(filepath, "rb");
 
