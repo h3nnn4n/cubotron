@@ -76,10 +76,10 @@ void test_move_sequences_diameter() {
                                {MOVE_L1, MOVE_D1, MOVE_L3, MOVE_D3}, {MOVE_L3, MOVE_D1, MOVE_L1, MOVE_D3}};
 
     for (int move_book_index = 0; move_book_index < 14; move_book_index++) {
-        char buffer[256] = "";
-        for (int move_index = 0; move_index < 4; move_index++)
-            sprintf(buffer, "%s %s", buffer, move_to_str(move_book[move_book_index][move_index]));
-        TEST_MESSAGE(buffer);
+        /*char buffer[256] = "";*/
+        /*for (int move_index = 0; move_index < 4; move_index++)*/
+        /*sprintf(buffer, "%s %s", buffer, move_to_str(move_book[move_book_index][move_index]));*/
+        /*TEST_MESSAGE(buffer);*/
 
         cube_cubie_t *cube = init_cubie_cube();
 
@@ -115,10 +115,10 @@ void test_move_sequences_diameter_2() {
     };
 
     for (int move_book_index = 0; move_book_index < 4; move_book_index++) {
-        char buffer[256] = "";
-        for (int move_index = 0; move_index < 16; move_index++)
-            sprintf(buffer, "%s %s", buffer, move_to_str(move_book[move_book_index][move_index]));
-        TEST_MESSAGE(buffer);
+        /*char buffer[256] = "";*/
+        /*for (int move_index = 0; move_index < 16; move_index++)*/
+        /*sprintf(buffer, "%s %s", buffer, move_to_str(move_book[move_book_index][move_index]));*/
+        /*TEST_MESSAGE(buffer);*/
 
         cube_cubie_t *cube = init_cubie_cube();
 
