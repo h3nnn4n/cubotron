@@ -35,6 +35,8 @@ move_t *solve(coord_cube_t *original_cube) {
             phase1_move_count++;
         }
 
+        free(phase1_solution);
+
         /*printf("\n coords: %4d %4d %3d %4d %4d\n\n", cube->edge_orientations, cube->corner_orientations,
          * cube->UD_slice,*/
         /*cube->UD_sorted_slice, cube->corner_permutations);*/
@@ -59,6 +61,8 @@ move_t *solve(coord_cube_t *original_cube) {
         }
         solution[phase1_move_count + phase2_move_count] = MOVE_NULL;
 
+        free(phase2_solution);
+
         /*printf("\n coords: %4d %4d %3d %4d %4d\n\n", cube->edge_orientations, cube->corner_orientations,
          * cube->UD_slice,*/
         /*cube->UD_sorted_slice, cube->corner_permutations);*/
@@ -66,6 +70,8 @@ move_t *solve(coord_cube_t *original_cube) {
         assert(is_phase2_solved(cube));
     }
     /*printf("finished phase2\n");*/
+
+    free(cube);
 
     return solution;
 }
@@ -169,6 +175,10 @@ move_t *solve_phase1(coord_cube_t *cube) {
 
 solution_found:
 
+    for (int i = 0; i < max_moves; i++) {
+        free(cube_stack[i]);
+    }
+
     /*long end_time = get_microseconds();*/
     /*printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);*/
     /*printf("moves: %lu - ", move_count);*/
@@ -264,6 +274,10 @@ move_t *solve_phase2(coord_cube_t *cube) {
     }
 
 solution_found:
+
+    for (int i = 0; i < max_moves; i++) {
+        free(cube_stack[i]);
+    }
 
     return solution;
 }

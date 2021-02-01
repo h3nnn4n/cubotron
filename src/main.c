@@ -51,6 +51,8 @@ void do_solve(coord_cube_t *cube) {
         printf("\n");
     }
 
+    free(solution);
+
     assert(is_phase1_solved(cube));
     assert(is_phase2_solved(cube));
 }
@@ -85,6 +87,9 @@ int main() {
     printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);
     printf("solve_count: %d - ", solve_count);
     printf("solves per second : %.2f\n", ((float)solve_count / (end_time - start_time)) * 1000000.0);
+
+    free(cube);
+    purge_cubie_move_table();
 
     return 0;
 }

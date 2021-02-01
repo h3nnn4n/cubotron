@@ -21,6 +21,13 @@ void cubie_apply_move(cube_cubie_t *cube, move_t move_to_apply) {
     assert(is_valid(cube));
 }
 
+
+void purge_cubie_move_table() {
+    for (int i = 0; i < N_MOVES; i++) {
+        free(move_table_cubie[i]);
+    }
+}
+
 void cubie_build_move_table() {
     if (move_table_cubie != NULL)
         return;
@@ -45,6 +52,10 @@ void cubie_build_move_table() {
                 multiply_cube_cubie(move_table_cubie[3 * i + j], moves[i]);
             }
         }
+    }
+
+    for (int i = 0; i < N_COLORS; i++) {
+        free(moves[i]);
     }
 }
 
