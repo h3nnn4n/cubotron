@@ -281,9 +281,3 @@ solution_found:
 
     return solution;
 }
-
-int is_phase1_solved(coord_cube_t *cube) {
-    return (cube->edge_orientations + cube->corner_orientations + cube->E_slice) == 0;
-}
-
-int is_phase2_solved(coord_cube_t *cube) { return (cube->corner_permutations + cube->E_sorted_slice) == 0; }

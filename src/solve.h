@@ -7,7 +7,4 @@ move_t *solve(coord_cube_t *cube);
 move_t *solve_phase1(coord_cube_t *cube);
 move_t *solve_phase2(coord_cube_t *cube);
 
-int is_phase1_solved(coord_cube_t *cube);
-int is_phase2_solved(coord_cube_t *cube);
-
 #endif /* end of include guard */

@@ -79,3 +79,9 @@ int are_phase1_coord_equal(coord_cube_t *cube1, coord_cube_t *cube2) {
 
     return 1;
 }
+
+int is_phase1_solved(coord_cube_t *cube) {
+    return (cube->edge_orientations + cube->corner_orientations + cube->E_slice) == 0;
+}
+
+int is_phase2_solved(coord_cube_t *cube) { return (cube->corner_permutations + cube->E_sorted_slice) == 0; }

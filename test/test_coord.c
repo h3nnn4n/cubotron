@@ -25,6 +25,50 @@ void test_copy_coord_cube() {
     free(cube);
 }
 
+void test_is_phase1_solved() {
+    coord_cube_t *cube = get_coord_cube();
+
+    TEST_ASSERT_TRUE(is_phase1_solved(cube));
+
+    coord_apply_move(cube, MOVE_F1);
+    coord_apply_move(cube, MOVE_R1);
+    coord_apply_move(cube, MOVE_B1);
+    coord_apply_move(cube, MOVE_R1);
+
+    TEST_ASSERT_FALSE(is_phase1_solved(cube));
+
+    coord_apply_move(cube, MOVE_R3);
+    coord_apply_move(cube, MOVE_B3);
+    coord_apply_move(cube, MOVE_R3);
+    coord_apply_move(cube, MOVE_F3);
+
+    TEST_ASSERT_TRUE(is_phase1_solved(cube));
+
+    free(cube);
+}
+
+void test_is_phase2_solved() {
+    coord_cube_t *cube = get_coord_cube();
+
+    TEST_ASSERT_TRUE(is_phase2_solved(cube));
+
+    coord_apply_move(cube, MOVE_F1);
+    coord_apply_move(cube, MOVE_R1);
+    coord_apply_move(cube, MOVE_B1);
+    coord_apply_move(cube, MOVE_R1);
+
+    TEST_ASSERT_FALSE(is_phase2_solved(cube));
+
+    coord_apply_move(cube, MOVE_R3);
+    coord_apply_move(cube, MOVE_B3);
+    coord_apply_move(cube, MOVE_R3);
+    coord_apply_move(cube, MOVE_F3);
+
+    TEST_ASSERT_TRUE(is_phase1_solved(cube));
+
+    free(cube);
+}
+
 void setUp(void) { build_move_tables(); }
 
 void tearDown(void) {}
@@ -35,6 +79,8 @@ int main() {
     UNITY_BEGIN();
 
     RUN_TEST(test_copy_coord_cube);
+    RUN_TEST(test_is_phase1_solved);
+    RUN_TEST(test_is_phase2_solved);
 
     return UNITY_END();
 }
