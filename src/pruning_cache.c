@@ -37,11 +37,6 @@ int pruning_table_cache_load(char *cache_name, char *table_name, int **pruning_t
 }
 
 void pruning_table_cache_store(char *cache_name, char *table_name, int *pruning_table, int table_size) {
-// Storing pruning tables on CI is slow and useless (at least until I setup artifact caching)
-#ifdef DISABLE_PRUNING_TABLE_CACHE_STORE
-    return;
-#endif
-
     char filepath[512];
     snprintf(filepath, 511, "%s/%s", cache_name, table_name);
 

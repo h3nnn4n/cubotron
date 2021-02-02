@@ -12,5 +12,3 @@ jobs:
           submodules: true
       - name: Run Makefile
         run: make test
-        env:
-            CFLAGS: -DDISABLE_PRUNING_TABLE_CACHE_STORE
