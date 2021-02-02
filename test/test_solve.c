@@ -144,8 +144,8 @@ int main() {
     UNITY_BEGIN();
 
     RUN_TEST(test_random_phase1_solving);
-    RUN_TEST(test_random_phase2_solving);
-    RUN_TEST(test_random_full_solver);
+    // RUN_TEST(test_random_phase2_solving);
+    // RUN_TEST(test_random_full_solver);
 
     return UNITY_END();
 }

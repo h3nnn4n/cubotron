@@ -39,16 +39,26 @@ int get_phase1_pruning(coord_cube_t *cube) {
 }
 
 int get_phase2_pruning(coord_cube_t *cube) {
+    assert(pruning_phase2_UD_edge != NULL);
     assert(pruning_phase2_corner != NULL);
 
-    int index1 = (cube->corner_permutations * N_SORTED_SLICES_PHASE2 + cube->E_sorted_slice) * N_PARITY + cube->parity;
+    int index_edge =
+        (cube->UD_edge_permutations * N_SORTED_SLICES_PHASE2 + cube->E_sorted_slice) * N_PARITY + cube->parity;
+    int index_corner =
+        (cube->corner_permutations * N_SORTED_SLICES_PHASE2 + cube->E_sorted_slice) * N_PARITY + cube->parity;
 
-    assert(index1 >= 0);
-    assert(index1 < N_CORNER_PERMUTATIONS * N_SORTED_SLICES_PHASE2 * N_PARITY);
+    assert(index_edge >= 0);
+    assert(index_corner >= 0);
 
-    int value1 = pruning_phase2_corner[index1];
+    assert(index_edge < N_EDGE8_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2 * N_PARITY);
+    assert(index_corner < N_CORNER_PERMUTATIONS * N_SORTED_SLICES_PHASE2 * N_PARITY);
 
-    return value1;
+    int value_edge   = pruning_phase2_UD_edge[index_edge];
+    int value_corner = pruning_phase2_corner[index_corner];
+
+    // return value_edge;
+    // return value_corner;
+    return value_edge > value_corner ? value_edge : value_corner;
 }
 
 void build_phase1_corner_table() {
