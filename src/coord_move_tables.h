@@ -16,4 +16,6 @@ int *get_move_table_UD_edge_permutations();
 int *get_move_table_corner_permutations();
 int *get_move_table_parity();
 
+void build_UD_edge_permutations_move_table();
+
 #endif /* end of include guard */

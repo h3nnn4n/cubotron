@@ -2,9 +2,11 @@
 #include <stdio.h>
 
 #include "coord_cube.h"
+#include "coord_move_tables.h"
 #include "cubie_cube.h"
 #include "cubie_move_table.h"
 #include "definitions.h"
+#include "pruning_cache.h"
 
 static int *move_table_edge_orientations          = NULL;
 static int *move_table_corner_orientations        = NULL;
@@ -144,21 +146,7 @@ void coord_build_move_tables() {
     }
 
     // UD edge permutations move table
-    if (move_table_UD_edge_permutations == NULL) {
-        move_table_UD_edge_permutations = (int *)malloc(sizeof(int) * N_EDGE8_PHASE1_PERMUTATIONS * N_MOVES);
-
-        cube = init_cubie_cube();
-
-        for (int permutations = 0; permutations < N_EDGE8_PHASE1_PERMUTATIONS; permutations++) {
-            for (int move = 0; move < N_MOVES; move++) {
-                set_UD_edges(cube, permutations);
-                cubie_apply_move(cube, move);
-                move_table_UD_edge_permutations[permutations * N_MOVES + move] = get_UD_edges(cube);
-            }
-        }
-
-        free(cube);
-    }
+    build_UD_edge_permutations_move_table();
 
     // Corner permutations move table
     if (move_table_corner_permutations == NULL) {
@@ -176,4 +164,32 @@ void coord_build_move_tables() {
 
         free(cube);
     }
+}
+
+void build_UD_edge_permutations_move_table() {
+    cube_cubie_t *cube = NULL;
+
+    if (move_table_UD_edge_permutations != NULL)
+        return;
+
+    if (pruning_table_cache_load("move_tables", "UD_edge_permutations", &move_table_UD_edge_permutations,
+                                 N_EDGE8_PHASE1_PERMUTATIONS * N_MOVES))
+        return;
+
+    move_table_UD_edge_permutations = (int *)malloc(sizeof(int) * N_EDGE8_PHASE1_PERMUTATIONS * N_MOVES);
+
+    cube = init_cubie_cube();
+
+    for (int permutations = 0; permutations < N_EDGE8_PHASE1_PERMUTATIONS; permutations++) {
+        for (int move = 0; move < N_MOVES; move++) {
+            set_UD_edges(cube, permutations);
+            cubie_apply_move(cube, move);
+            move_table_UD_edge_permutations[permutations * N_MOVES + move] = get_UD_edges(cube);
+        }
+    }
+
+    pruning_table_cache_store("move_tables", "UD_edge_permutations", move_table_UD_edge_permutations,
+                              N_EDGE8_PHASE1_PERMUTATIONS * N_MOVES);
+
+    free(cube);
 }
