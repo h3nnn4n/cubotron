@@ -30,8 +30,8 @@ void apply_random_scramble(coord_cube_t *cube, int n_moves) {
         coord_apply_move(cube, moves[i]);
         printf(" %s", move_to_str(moves[i]));
     }
-    printf(" : %4d %4d %3d %4d %4d\n", cube->edge_orientations, cube->corner_orientations, cube->UD_slice,
-           cube->UD_sorted_slice, cube->corner_permutations);
+    printf(" : %4d %4d %3d %4d %4d\n", cube->edge_orientations, cube->corner_orientations, cube->E_slice,
+           cube->E_sorted_slice, cube->corner_permutations);
 
     assert(!is_phase1_solved(cube));
     assert(!is_phase2_solved(cube));

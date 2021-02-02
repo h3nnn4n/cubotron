@@ -8,6 +8,7 @@
 #define N_SORTED_SLICES_PHASE2 24
 #define N_PARITY               2
 #define N_CORNER_PERMUTATIONS  40320
+#define N_EDGE8_PERMUTATIONS   40320
 
 #define N_CORNERS 8
 #define N_EDGES   12

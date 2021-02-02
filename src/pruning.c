@@ -23,8 +23,8 @@ int get_phase1_pruning(coord_cube_t *cube) {
     assert(pruning_phase1_corner != NULL);
     assert(pruning_phase1_edge != NULL);
 
-    int value1 = pruning_phase1_corner[cube->corner_orientations * N_SLICES + cube->UD_slice];
-    int value2 = pruning_phase1_edge[cube->edge_orientations * N_SLICES + cube->UD_slice];
+    int value1 = pruning_phase1_corner[cube->corner_orientations * N_SLICES + cube->E_slice];
+    int value2 = pruning_phase1_edge[cube->edge_orientations * N_SLICES + cube->E_slice];
 
     assert(value1 >= 0);
     assert(value2 >= 0);
@@ -39,7 +39,7 @@ int get_phase1_pruning(coord_cube_t *cube) {
 int get_phase2_pruning(coord_cube_t *cube) {
     assert(pruning_phase2_corner != NULL);
 
-    int index1 = (cube->corner_permutations * N_SORTED_SLICES_PHASE2 + cube->UD_sorted_slice) * N_PARITY + cube->parity;
+    int index1 = (cube->corner_permutations * N_SORTED_SLICES_PHASE2 + cube->E_sorted_slice) * N_PARITY + cube->parity;
 
     assert(index1 >= 0);
     assert(index1 < N_CORNER_PERMUTATIONS * N_SORTED_SLICES_PHASE2 * N_PARITY);
@@ -68,7 +68,7 @@ void build_phase1_corner_table() {
     // The solved phase1 cube has coord zero and can be solved in zero moves
     pruning_phase1_corner[0] = 0;
 
-    int *slice_move_table               = get_move_table_UD_slice();
+    int *slice_move_table               = get_move_table_E_slice();
     int *corner_orientations_move_table = get_move_table_corner_orientations();
 
     int missing = N_CORNER_ORIENTATIONS * N_SLICES - 1;
@@ -129,7 +129,7 @@ void build_phase1_edge_table() {
     // The solved phase1 cube has coord zero and can be solved in zero moves
     pruning_phase1_edge[0] = 0;
 
-    int *slice_move_table             = get_move_table_UD_slice();
+    int *slice_move_table             = get_move_table_E_slice();
     int *edge_orientations_move_table = get_move_table_edge_orientations();
 
     int missing = N_EDGE_ORIENTATIONS * N_SLICES - 1;
@@ -192,7 +192,7 @@ void build_phase2_corner_table() {
     pruning_phase2_corner[0] = 0;
 
     int *parity_move_table              = get_move_table_parity();
-    int *sorted_slice_move_table        = get_move_table_UD_sorted_slice();
+    int *sorted_slice_move_table        = get_move_table_E_sorted_slice();
     int *corner_permutations_move_table = get_move_table_corner_permutations();
 
     /*int missing = N_CORNER_PERMUTATIONS * N_SORTED_SLICES_PHASE2 * N_PARITY - 1;*/

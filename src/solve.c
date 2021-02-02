@@ -38,8 +38,8 @@ move_t *solve(coord_cube_t *original_cube) {
         free(phase1_solution);
 
         /*printf("\n coords: %4d %4d %3d %4d %4d\n\n", cube->edge_orientations, cube->corner_orientations,
-         * cube->UD_slice,*/
-        /*cube->UD_sorted_slice, cube->corner_permutations);*/
+         * cube->E_slice,*/
+        /*cube->E_sorted_slice, cube->corner_permutations);*/
 
         assert(is_phase1_solved(cube));
     }
@@ -64,8 +64,8 @@ move_t *solve(coord_cube_t *original_cube) {
         free(phase2_solution);
 
         /*printf("\n coords: %4d %4d %3d %4d %4d\n\n", cube->edge_orientations, cube->corner_orientations,
-         * cube->UD_slice,*/
-        /*cube->UD_sorted_slice, cube->corner_permutations);*/
+         * cube->E_slice,*/
+        /*cube->E_sorted_slice, cube->corner_permutations);*/
 
         assert(is_phase2_solved(cube));
     }
@@ -137,7 +137,7 @@ move_t *solve_phase1(coord_cube_t *cube) {
                 sprintf(buffer, " moves: %14lu pivot: %2d estimated_dist: %2d", move_count, pivot,
                         pruning_stack[pivot]);
                 sprintf(buffer, "%s : %4d %4d %3d -> ", buffer, cube_stack[pivot]->edge_orientations,
-                        cube_stack[pivot]->corner_orientations, cube_stack[pivot]->UD_slice);
+                        cube_stack[pivot]->corner_orientations, cube_stack[pivot]->E_slice);
                 for (int i = 0; i <= pivot; i++)
                     sprintf(buffer, "%s %s", buffer, move_to_str(move_stack[i]));
                 printf("%s", buffer);
@@ -283,7 +283,7 @@ solution_found:
 }
 
 int is_phase1_solved(coord_cube_t *cube) {
-    return (cube->edge_orientations + cube->corner_orientations + cube->UD_slice) == 0;
+    return (cube->edge_orientations + cube->corner_orientations + cube->E_slice) == 0;
 }
 
-int is_phase2_solved(coord_cube_t *cube) { return (cube->corner_permutations + cube->UD_sorted_slice) == 0; }
+int is_phase2_solved(coord_cube_t *cube) { return (cube->corner_permutations + cube->E_sorted_slice) == 0; }

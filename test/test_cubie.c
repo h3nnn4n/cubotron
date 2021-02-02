@@ -211,11 +211,11 @@ void test_get_edge_and_set_edge_orientations() {
     free(cube2);
 }
 
-void test_set_UD_slice_only_makes_valid_cubes() {
+void test_set_E_slice_only_makes_valid_cubes() {
     cube_cubie_t *cube = init_cubie_cube();
 
     for (int i = 0; i < N_SLICES; i++) {
-        set_UD_slice(cube, i);
+        set_E_slice(cube, i);
 
         TEST_ASSERT_TRUE(is_valid(cube));
     }
@@ -223,12 +223,12 @@ void test_set_UD_slice_only_makes_valid_cubes() {
     free(cube);
 }
 
-void test_set_UD_slice_and_get_UD_slice() {
+void test_set_E_slice_and_get_E_slice() {
     cube_cubie_t *cube = init_cubie_cube();
 
     for (int i = 0; i < N_SLICES; i++) {
-        set_UD_slice(cube, i);
-        int slice = get_UD_slice(cube);
+        set_E_slice(cube, i);
+        int slice = get_E_slice(cube);
 
         TEST_ASSERT_EQUAL_INT(i, slice);
     }
@@ -236,7 +236,7 @@ void test_set_UD_slice_and_get_UD_slice() {
     free(cube);
 }
 
-void test_get_UD_slice_and_set_UD_slice() {
+void test_get_E_slice_and_set_E_slice() {
     cube_cubie_t *cube1 = init_cubie_cube();
     cube_cubie_t *cube2 = init_cubie_cube();
 
@@ -245,9 +245,9 @@ void test_get_UD_slice_and_set_UD_slice() {
         for (int j = 0; j < 30; j++)
             cubie_apply_move(cube1, pcg32_boundedrand_r(&rng, N_MOVES));
 
-        int slice = get_UD_slice(cube1);
-        set_UD_slice(cube2, slice);
-        int slice2 = get_UD_slice(cube2);
+        int slice = get_E_slice(cube1);
+        set_E_slice(cube2, slice);
+        int slice2 = get_E_slice(cube2);
 
         TEST_ASSERT_EQUAL_INT(slice, slice2);
     }
@@ -256,11 +256,11 @@ void test_get_UD_slice_and_set_UD_slice() {
     free(cube2);
 }
 
-void test_set_UD_sorted_slice_only_makes_valid_cubes() {
+void test_set_E_sorted_slice_only_makes_valid_cubes() {
     cube_cubie_t *cube = init_cubie_cube();
 
     for (int i = 0; i < N_SORTED_SLICES; i++) {
-        set_UD_sorted_slice(cube, i);
+        set_E_sorted_slice(cube, i);
 
         TEST_ASSERT_TRUE(is_valid(cube));
     }
@@ -268,12 +268,12 @@ void test_set_UD_sorted_slice_only_makes_valid_cubes() {
     free(cube);
 }
 
-void test_set_UD_sorted_slice_and_get_UD_sorted_slice() {
+void test_set_E_sorted_slice_and_get_E_sorted_slice() {
     cube_cubie_t *cube = init_cubie_cube();
 
     for (int i = 0; i < N_SORTED_SLICES; i++) {
-        set_UD_sorted_slice(cube, i);
-        int slice = get_UD_sorted_slice(cube);
+        set_E_sorted_slice(cube, i);
+        int slice = get_E_sorted_slice(cube);
 
         TEST_ASSERT_EQUAL_INT(i, slice);
     }
@@ -281,7 +281,7 @@ void test_set_UD_sorted_slice_and_get_UD_sorted_slice() {
     free(cube);
 }
 
-void test_get_UD_sorted_slice_and_set_UD_sorted_slice() {
+void test_get_E_sorted_slice_and_set_E_sorted_slice() {
     cube_cubie_t *cube1 = init_cubie_cube();
     cube_cubie_t *cube2 = init_cubie_cube();
 
@@ -290,9 +290,9 @@ void test_get_UD_sorted_slice_and_set_UD_sorted_slice() {
         for (int j = 0; j < 30; j++)
             cubie_apply_move(cube1, pcg32_boundedrand_r(&rng, N_MOVES));
 
-        int slice = get_UD_sorted_slice(cube1);
-        set_UD_sorted_slice(cube2, slice);
-        int slice2 = get_UD_sorted_slice(cube2);
+        int slice = get_E_sorted_slice(cube1);
+        set_E_sorted_slice(cube2, slice);
+        int slice2 = get_E_sorted_slice(cube2);
 
         TEST_ASSERT_EQUAL_INT(slice, slice2);
     }
@@ -417,13 +417,13 @@ int main() {
     RUN_TEST(test_set_edge_and_get_edge_orientations);
     RUN_TEST(test_get_edge_and_set_edge_orientations);
 
-    RUN_TEST(test_set_UD_slice_only_makes_valid_cubes);
-    RUN_TEST(test_set_UD_slice_and_get_UD_slice);
-    RUN_TEST(test_get_UD_slice_and_set_UD_slice);
+    RUN_TEST(test_set_E_slice_only_makes_valid_cubes);
+    RUN_TEST(test_set_E_slice_and_get_E_slice);
+    RUN_TEST(test_get_E_slice_and_set_E_slice);
 
-    RUN_TEST(test_set_UD_sorted_slice_only_makes_valid_cubes);
-    RUN_TEST(test_set_UD_sorted_slice_and_get_UD_sorted_slice);
-    RUN_TEST(test_get_UD_sorted_slice_and_set_UD_sorted_slice);
+    RUN_TEST(test_set_E_sorted_slice_only_makes_valid_cubes);
+    RUN_TEST(test_set_E_sorted_slice_and_get_E_sorted_slice);
+    RUN_TEST(test_get_E_sorted_slice_and_set_E_sorted_slice);
 
     RUN_TEST(test_set_corner_permutations_only_makes_valid_cubes);
     RUN_TEST(test_set_corner_permutations_and_get_corner_permutations);

@@ -73,7 +73,7 @@ int get_edge_orientations(cube_cubie_t *cube) {
     return orientations;
 }
 
-int get_UD_slice(cube_cubie_t *cube) {
+int get_E_slice(cube_cubie_t *cube) {
     int slice = 0;
     int x     = 1;
 
@@ -89,7 +89,7 @@ int get_UD_slice(cube_cubie_t *cube) {
     return slice;
 }
 
-void set_UD_slice(cube_cubie_t *cube, int slice) {
+void set_E_slice(cube_cubie_t *cube, int slice) {
     static int slice_edges[4] = {FR, FL, BL, BR};
     static int other_edges[8] = {UR, UF, UL, UB, DR, DF, DL, DB};
 
@@ -112,7 +112,7 @@ void set_UD_slice(cube_cubie_t *cube, int slice) {
     }
 }
 
-int get_UD_sorted_slice(cube_cubie_t *cube) {
+int get_E_sorted_slice(cube_cubie_t *cube) {
     int    combination = 0;
     int    permutation = 0;
     int    seen        = 0;
@@ -139,7 +139,7 @@ int get_UD_sorted_slice(cube_cubie_t *cube) {
     return (24 * combination + permutation);
 }
 
-void set_UD_sorted_slice(cube_cubie_t *cube, int slice) {
+void set_E_sorted_slice(cube_cubie_t *cube, int slice) {
     edge_t slice_edges[4] = {FR, FL, BL, BR};
     edge_t other_edges[8] = {UR, UF, UL, UB, DR, DF, DL, DB};
 

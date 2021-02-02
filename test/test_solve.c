@@ -26,7 +26,7 @@ void test_random_phase1_solving() {
         }
 
         /*char buffer[512];*/
-        /*sprintf(buffer, "%4d %4d %3d", cube->edge_orientations, cube->corner_orientations, cube->UD_slice);*/
+        /*sprintf(buffer, "%4d %4d %3d", cube->edge_orientations, cube->corner_orientations, cube->E_slice);*/
         /*TEST_MESSAGE(buffer);*/
 
         TEST_ASSERT_FALSE(is_phase1_solved(cube));
@@ -112,8 +112,8 @@ void test_random_full_solver() {
 
         /*char buffer[512];*/
 
-        /*sprintf(buffer, "%4d %4d %3d %4d %4d", cube->edge_orientations, cube->corner_orientations, cube->UD_slice,*/
-        /*cube->UD_sorted_slice, cube->corner_permutations);*/
+        /*sprintf(buffer, "%4d %4d %3d %4d %4d", cube->edge_orientations, cube->corner_orientations, cube->E_slice,*/
+        /*cube->E_sorted_slice, cube->corner_permutations);*/
 
         /*TEST_MESSAGE(buffer);*/
 
