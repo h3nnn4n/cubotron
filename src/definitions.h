@@ -1,14 +1,15 @@
 #ifndef _DEFINITIONS
 #define _DEFINITIONS
 
-#define N_CORNER_ORIENTATIONS  2187
-#define N_EDGE_ORIENTATIONS    2048
-#define N_SLICES               495
-#define N_SORTED_SLICES        11880
-#define N_SORTED_SLICES_PHASE2 24
-#define N_PARITY               2
-#define N_CORNER_PERMUTATIONS  40320
-#define N_EDGE8_PERMUTATIONS   40320
+#define N_CORNER_ORIENTATIONS       2187
+#define N_EDGE_ORIENTATIONS         2048
+#define N_SLICES                    495
+#define N_SORTED_SLICES             11880
+#define N_SORTED_SLICES_PHASE2      24
+#define N_PARITY                    2
+#define N_CORNER_PERMUTATIONS       40320
+#define N_EDGE8_PHASE1_PERMUTATIONS 665280
+#define N_EDGE8_PHASE2_PERMUTATIONS 20160
 
 #define N_CORNERS 8
 #define N_EDGES   12

@@ -54,7 +54,7 @@ void test_coord_sanity_brute_force() {
     coord_cube_t *coord_cube = get_coord_cube();
     cube_cubie_t *cubie_cube = init_cubie_cube();
 
-    for (int i = 0; i < 10000; i++) {
+    for (int i = 0; i < 100000; i++) {
         move_t move = pcg32_boundedrand_r(&rng, N_MOVES);
 
         cubie_apply_move(cubie_cube, move);
@@ -66,6 +66,7 @@ void test_coord_sanity_brute_force() {
         TEST_ASSERT_EQUAL_INT(get_E_sorted_slice(cubie_cube), coord_cube->E_sorted_slice);
         TEST_ASSERT_EQUAL_INT(get_edge_parity(cubie_cube), coord_cube->parity);
         TEST_ASSERT_EQUAL_INT(get_corner_parity(cubie_cube), coord_cube->parity);
+        TEST_ASSERT_EQUAL_INT(get_UD_edges(cubie_cube), coord_cube->UD_edge_permutations);
         TEST_ASSERT_EQUAL_INT(get_corner_permutations(cubie_cube), coord_cube->corner_permutations);
     }
 
