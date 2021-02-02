@@ -52,8 +52,8 @@ int are_all_coord_equal(coord_cube_t *cube1, coord_cube_t *cube2) {
     if (cube1->UD_sorted_slice != cube2->UD_sorted_slice)
         return 0;
 
-    // if (cube1->parity != cube2->parity)
-    //     return 0;
+    if (cube1->parity != cube2->parity)
+        return 0;
 
     if (cube1->corner_permutations != cube2->corner_permutations)
         return 0;
