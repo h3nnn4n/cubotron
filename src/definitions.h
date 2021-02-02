@@ -18,13 +18,6 @@
 #define N_FACELETS 54
 
 typedef enum {
-    ROT_URF3 = 0,
-    ROT_F2   = 1,
-    ROT_U4   = 2,
-    MIRR_LR2 = 3,
-} base_symmetry;
-
-typedef enum {
     URF = 0,
     UFL = 1,
     ULB = 2,
