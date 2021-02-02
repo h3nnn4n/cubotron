@@ -47,7 +47,7 @@ void test_random_phase1_solving() {
 void test_random_phase2_solving() {
     coord_cube_t *cube = get_coord_cube();
 
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 10; i++) {
         reset_coord_cube(cube);
 
         int    n_moves   = 50;
@@ -92,7 +92,7 @@ void test_random_phase2_solving() {
 void test_random_full_solver() {
     coord_cube_t *cube = get_coord_cube();
 
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 10; i++) {
         reset_coord_cube(cube);
 
         int    n_moves   = 50;
