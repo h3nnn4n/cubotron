@@ -12,6 +12,7 @@ int *get_move_table_edge_orientations();
 int *get_move_table_corner_orientations();
 int *get_move_table_E_slice();
 int *get_move_table_E_sorted_slice();
+int *get_move_table_UD_edge_permutations();
 int *get_move_table_corner_permutations();
 int *get_move_table_parity();
 
