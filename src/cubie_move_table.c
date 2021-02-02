@@ -21,7 +21,6 @@ void cubie_apply_move(cube_cubie_t *cube, move_t move_to_apply) {
     assert(is_valid(cube));
 }
 
-
 void purge_cubie_move_table() {
     for (int i = 0; i < N_MOVES; i++) {
         free(move_table_cubie[i]);
