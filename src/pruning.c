@@ -41,6 +41,7 @@ int get_phase1_pruning(coord_cube_t *cube) {
 int get_phase2_pruning(coord_cube_t *cube) {
     assert(pruning_phase2_UD_edge != NULL);
     assert(pruning_phase2_corner != NULL);
+    assert(is_phase1_solved(cube)); // UD_slices only works for phase2
 
     int index_edge =
         (cube->UD_edge_permutations * N_SORTED_SLICES_PHASE2 + cube->E_sorted_slice) * N_PARITY + cube->parity;
@@ -57,7 +58,7 @@ int get_phase2_pruning(coord_cube_t *cube) {
     int value_corner = pruning_phase2_corner[index_corner];
 
     // return value_edge;
-    // return value_corner;
+    /*return value_corner;*/
     return value_edge > value_corner ? value_edge : value_corner;
 }
 

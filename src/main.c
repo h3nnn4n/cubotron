@@ -11,7 +11,7 @@
 #include "solve.h"
 #include "utils.h"
 
-#define n_scrable_moves 100
+#define n_scrable_moves 20
 
 void apply_random_scramble(coord_cube_t *cube, int n_moves) {
     assert(cube != NULL);
@@ -72,15 +72,14 @@ int main() {
 
     while (1) {
         int n = pcg32_boundedrand(n_scrable_moves / 2) + n_scrable_moves / 2;
+        n     = n_scrable_moves;
         apply_random_scramble(cube, n);
         do_solve(cube);
         printf("\n");
         solve_count += 1;
 
-        if (solve_count % 10 == 0) {
-            if (get_microseconds() - start_time > 5000000.0)
-                break;
-        }
+        if (get_microseconds() - start_time > 1000000.0)
+            break;
     }
 
     long end_time = get_microseconds();
