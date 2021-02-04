@@ -235,6 +235,13 @@ void build_phase2_UD_edge_table() {
                 int index =
                     (next_UD_edge_permutation * N_SORTED_SLICES_PHASE2 + next_sorted_slice) * N_PARITY + next_parity;
 
+                // Skip any moves that leaves phase2
+                if (index >= N_EDGE8_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2 * N_PARITY)
+                    continue;
+
+                assert(index >= 0);
+                assert(index < N_EDGE8_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2 * N_PARITY);
+
                 if (pruning_phase2_UD_edge[index] == -1) {
                     pruning_phase2_UD_edge[index] = depth + 1;
 
