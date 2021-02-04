@@ -31,7 +31,7 @@ int pruning_table_cache_load(char *cache_name, char *table_name, int **pruning_t
     fclose(f);
 
     long end_time = get_microseconds();
-    printf("%lu bytes loaded in %.4f seconds\n", total_bytes_read, (float)(end_time - start_time) / 1000000.0);
+    printf("%9lu bytes loaded in %.4f seconds\n", total_bytes_read, (float)(end_time - start_time) / 1000000.0);
 
     return 1;
 }
@@ -48,7 +48,7 @@ void pruning_table_cache_store(char *cache_name, char *table_name, int *pruning_
     fclose(f);
 
     long end_time = get_microseconds();
-    printf("%lu bytes stored in %s in %.4f seconds\n", bytes_written, filepath,
+    printf("%9lu bytes stored in %s in %.4f seconds\n", bytes_written, filepath,
            (float)(end_time - start_time) / 1000000.0);
 }
 
