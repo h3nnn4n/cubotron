@@ -304,7 +304,7 @@ void test_get_E_sorted_slice_and_set_E_sorted_slice() {
 void test_set_UD6_edges_only_makes_valid_cubes() {
     cube_cubie_t *cube = init_cubie_cube();
 
-    for (int i = 0; i < N_SLICES; i++) {
+    for (int i = 0; i < N_UD6_PHASE1_PERMUTATIONS; i++) {
         set_UD6_edges(cube, i);
 
         TEST_ASSERT_TRUE(is_valid(cube));
@@ -316,7 +316,7 @@ void test_set_UD6_edges_only_makes_valid_cubes() {
 void test_set_UD6_edges_and_get_UD6_edges() {
     cube_cubie_t *cube = init_cubie_cube();
 
-    for (int i = 0; i < N_SLICES; i++) {
+    for (int i = 0; i < N_UD6_PHASE1_PERMUTATIONS; i++) {
         set_UD6_edges(cube, i);
         int slice = get_UD6_edges(cube);
 
