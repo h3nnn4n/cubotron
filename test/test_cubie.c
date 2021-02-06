@@ -301,11 +301,11 @@ void test_get_E_sorted_slice_and_set_E_sorted_slice() {
     free(cube2);
 }
 
-void test_set_UD_edges_only_makes_valid_cubes() {
+void test_set_UD6_edges_only_makes_valid_cubes() {
     cube_cubie_t *cube = init_cubie_cube();
 
     for (int i = 0; i < N_SLICES; i++) {
-        set_UD_edges(cube, i);
+        set_UD6_edges(cube, i);
 
         TEST_ASSERT_TRUE(is_valid(cube));
     }
@@ -313,12 +313,12 @@ void test_set_UD_edges_only_makes_valid_cubes() {
     free(cube);
 }
 
-void test_set_UD_edges_and_get_UD_edges() {
+void test_set_UD6_edges_and_get_UD6_edges() {
     cube_cubie_t *cube = init_cubie_cube();
 
     for (int i = 0; i < N_SLICES; i++) {
-        set_UD_edges(cube, i);
-        int slice = get_UD_edges(cube);
+        set_UD6_edges(cube, i);
+        int slice = get_UD6_edges(cube);
 
         TEST_ASSERT_EQUAL_INT(i, slice);
     }
@@ -326,7 +326,7 @@ void test_set_UD_edges_and_get_UD_edges() {
     free(cube);
 }
 
-void test_get_UD_edges_and_set_UD_edges() {
+void test_get_UD6_edges_and_set_UD6_edges() {
     cube_cubie_t *cube1 = init_cubie_cube();
     cube_cubie_t *cube2 = init_cubie_cube();
 
@@ -335,9 +335,9 @@ void test_get_UD_edges_and_set_UD_edges() {
         for (int j = 0; j < 30; j++)
             cubie_apply_move(cube1, pcg32_boundedrand_r(&rng, N_MOVES));
 
-        int slice = get_UD_edges(cube1);
-        set_UD_edges(cube2, slice);
-        int slice2 = get_UD_edges(cube2);
+        int slice = get_UD6_edges(cube1);
+        set_UD6_edges(cube2, slice);
+        int slice2 = get_UD6_edges(cube2);
 
         TEST_ASSERT_EQUAL_INT(slice, slice2);
     }
@@ -470,9 +470,9 @@ int main() {
     RUN_TEST(test_set_E_sorted_slice_and_get_E_sorted_slice);
     RUN_TEST(test_get_E_sorted_slice_and_set_E_sorted_slice);
 
-    RUN_TEST(test_set_UD_edges_only_makes_valid_cubes);
-    RUN_TEST(test_set_UD_edges_and_get_UD_edges);
-    RUN_TEST(test_get_UD_edges_and_set_UD_edges);
+    RUN_TEST(test_set_UD6_edges_only_makes_valid_cubes);
+    RUN_TEST(test_set_UD6_edges_and_get_UD6_edges);
+    RUN_TEST(test_get_UD6_edges_and_set_UD6_edges);
 
     RUN_TEST(test_set_corner_permutations_only_makes_valid_cubes);
     RUN_TEST(test_set_corner_permutations_and_get_corner_permutations);

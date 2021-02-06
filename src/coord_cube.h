@@ -9,7 +9,7 @@ typedef struct {
     int E_slice;
     int E_sorted_slice;
     int parity;
-    int UD_edge_permutations;
+    int UD6_edge_permutations;
     int corner_permutations;
 } coord_cube_t;
 

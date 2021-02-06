@@ -38,7 +38,7 @@ move_t *solve(coord_cube_t *original_cube) {
         free(phase1_solution);
 
         // printf("\n coords: %4d %4d %3d %4d %4d %4d\n\n", cube->edge_orientations, cube->corner_orientations,
-        // cube->E_slice, cube->E_sorted_slice, cube->UD_edge_permutations, cube->corner_permutations);
+        // cube->E_slice, cube->E_sorted_slice, cube->UD6_edge_permutations, cube->corner_permutations);
 
         assert(is_phase1_solved(cube));
     }
@@ -63,7 +63,7 @@ move_t *solve(coord_cube_t *original_cube) {
         free(phase2_solution);
 
         // printf("\n coords: %4d %4d %3d %4d %4d %4d\n\n", cube->edge_orientations, cube->corner_orientations,
-        // cube->E_slice, cube->E_sorted_slice, cube->UD_edge_permutations, cube->corner_permutations);
+        // cube->E_slice, cube->E_sorted_slice, cube->UD6_edge_permutations, cube->corner_permutations);
 
         assert(is_phase2_solved(cube));
     }

@@ -174,7 +174,7 @@ void set_E_sorted_slice(cube_cubie_t *cube, int slice) {
     }
 }
 
-int get_UD_edges(cube_cubie_t *cubiecube) {
+int get_UD6_edges(cube_cubie_t *cubiecube) {
     int    combination = 0;
     int    permutation = 0;
     edge_t edges[6]    = {0};
@@ -201,7 +201,7 @@ int get_UD_edges(cube_cubie_t *cubiecube) {
     return 720 * combination + permutation;
 }
 
-void set_UD_edges(cube_cubie_t *cubiecube, int idx) {
+void set_UD6_edges(cube_cubie_t *cubiecube, int idx) {
     edge_t slice_edges[6] = {UR, UF, UL, UB, DR, DF};
     edge_t other_edges[6] = {DL, DB, FR, FL, BL, BR};
     int    permutation    = idx % 720;
