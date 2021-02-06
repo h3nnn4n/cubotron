@@ -174,6 +174,73 @@ void set_E_sorted_slice(cube_cubie_t *cube, int slice) {
     }
 }
 
+int get_UD7_edges(cube_cubie_t *cubiecube) {
+    int    combination = 0;
+    int    permutation = 0;
+    edge_t edges[7]    = {0};
+
+    for (int i = UR, seen = 0; i <= BR; i++) {
+        if (cubiecube->edge_permutations[i] <= DL) {
+            combination += Cnk(i, seen + 1);
+            edges[seen] = cubiecube->edge_permutations[i];
+            seen += 1;
+        }
+    }
+
+    for (int i = 6, seen = 0; i > 0; i--) {
+        seen = 0;
+
+        while ((int)edges[i] != i) {
+            rotate_left((int *)edges, 0, i);
+            seen++;
+        }
+
+        permutation = (i + 1) * permutation + seen;
+    }
+
+    return 5040 * combination + permutation;
+}
+
+void set_UD7_edges(cube_cubie_t *cubiecube, int idx) {
+    edge_t slice_edges[7] = {UR, UF, UL, UB, DR, DF, DL};
+    edge_t other_edges[5] = {DB, FR, FL, BL, BR};
+    int    permutation    = idx % 5040;
+    int    combination    = idx / 5040;
+
+    for (int i = 0; i < N_EDGES; i++) {
+        cubiecube->edge_permutations[i] = BR;
+    }
+
+    for (int i = 1, j = 1; i < 7; i++) {
+        j = permutation % (i + 1);
+        permutation /= i + 1;
+        while (j-- > 0) {
+            rotate_right((int *)slice_edges, 0, i);
+        }
+    }
+
+    for (int i = BR, seen = 6; i >= 0; i--) {
+        if (combination - Cnk(i, seen + 1) >= 0) {
+            assert(seen >= 0);
+            assert(seen < 7);
+
+            cubiecube->edge_permutations[i] = slice_edges[seen];
+            combination -= Cnk(i, seen + 1);
+            seen -= 1;
+        }
+    }
+
+    for (int i = UR, seen = 0; i <= BR; i++) {
+        if (cubiecube->edge_permutations[i] == BR) {
+            assert(seen >= 0);
+            assert(seen < 5);
+
+            cubiecube->edge_permutations[i] = other_edges[seen];
+            seen += 1;
+        }
+    }
+}
+
 int get_UD6_edges(cube_cubie_t *cubiecube) {
     int    combination = 0;
     int    permutation = 0;

@@ -28,6 +28,8 @@ int  get_E_slice(cube_cubie_t *cube);
 void set_E_slice(cube_cubie_t *cube, int slice);
 int  get_E_sorted_slice(cube_cubie_t *cube);
 void set_E_sorted_slice(cube_cubie_t *cube, int slice);
+int  get_UD7_edges(cube_cubie_t *cube);
+void set_UD7_edges(cube_cubie_t *cube, int slice);
 int  get_UD6_edges(cube_cubie_t *cube);
 void set_UD6_edges(cube_cubie_t *cube, int slice);
 int  get_corner_permutations(cube_cubie_t *cube);
