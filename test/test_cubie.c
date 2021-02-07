@@ -349,8 +349,7 @@ void test_get_UD6_edges_and_set_UD6_edges() {
 void test_set_UD7_edges_only_makes_valid_cubes() {
     cube_cubie_t *cube = init_cubie_cube();
 
-    // FIXME: The actual number is bigger
-    for (int i = 0; i < N_UD6_PHASE1_PERMUTATIONS; i++) {
+    for (int i = 0; i < N_UD7_PHASE1_PERMUTATIONS; i++) {
         set_UD7_edges(cube, i);
 
         TEST_ASSERT_TRUE(is_valid(cube));
@@ -362,8 +361,7 @@ void test_set_UD7_edges_only_makes_valid_cubes() {
 void test_set_UD7_edges_and_get_UD7_edges() {
     cube_cubie_t *cube = init_cubie_cube();
 
-    // FIXME: The actual number is bigger
-    for (int i = 0; i < N_UD6_PHASE1_PERMUTATIONS; i++) {
+    for (int i = 0; i < N_UD7_PHASE1_PERMUTATIONS; i++) {
         set_UD7_edges(cube, i);
         int slice = get_UD7_edges(cube);
 
