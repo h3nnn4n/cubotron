@@ -21,7 +21,7 @@ int *get_move_table_edge_orientations() { return move_table_edge_orientations; }
 int *get_move_table_corner_orientations() { return move_table_corner_orientations; }
 int *get_move_table_E_slice() { return move_table_E_slice; }
 int *get_move_table_E_sorted_slice() { return move_table_E_sorted_slice; }
-int *get_move_table_UD6_edge_permutations() { return move_table_corner_permutations; }
+int *get_move_table_UD6_edge_permutations() { return move_table_UD6_edge_permutations; }
 int *get_move_table_corner_permutations() { return move_table_corner_permutations; }
 int *get_move_table_parity() { return move_table_parity; }
 
