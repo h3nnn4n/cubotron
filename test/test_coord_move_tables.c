@@ -62,11 +62,15 @@ void test_coord_sanity_brute_force() {
 
         TEST_ASSERT_EQUAL_INT(get_corner_orientations(cubie_cube), coord_cube->corner_orientations);
         TEST_ASSERT_EQUAL_INT(get_edge_orientations(cubie_cube), coord_cube->edge_orientations);
+
         TEST_ASSERT_EQUAL_INT(get_E_slice(cubie_cube), coord_cube->E_slice);
         TEST_ASSERT_EQUAL_INT(get_E_sorted_slice(cubie_cube), coord_cube->E_sorted_slice);
+
         TEST_ASSERT_EQUAL_INT(get_edge_parity(cubie_cube), coord_cube->parity);
         TEST_ASSERT_EQUAL_INT(get_corner_parity(cubie_cube), coord_cube->parity);
+
         TEST_ASSERT_EQUAL_INT(get_UD6_edges(cubie_cube), coord_cube->UD6_edge_permutations);
+        TEST_ASSERT_EQUAL_INT(get_UD7_edges(cubie_cube), coord_cube->UD7_edge_permutations);
         TEST_ASSERT_EQUAL_INT(get_corner_permutations(cubie_cube), coord_cube->corner_permutations);
     }
 

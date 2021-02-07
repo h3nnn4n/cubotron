@@ -375,8 +375,8 @@ void test_get_UD7_edges_and_set_UD7_edges() {
     cube_cubie_t *cube1 = init_cubie_cube();
     cube_cubie_t *cube2 = init_cubie_cube();
 
-    // Take 10k cubes and suffle them with 30 moves
-    for (int i = 0; i < 10000; i++) {
+    // Take 100k cubes and suffle them with 30 moves
+    for (int i = 0; i < 100000; i++) {
         for (int j = 0; j < 30; j++)
             cubie_apply_move(cube1, pcg32_boundedrand_r(&rng, N_MOVES));
 
