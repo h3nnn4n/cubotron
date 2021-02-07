@@ -179,6 +179,8 @@ int get_UD7_edges(cube_cubie_t *cubiecube) {
     int    permutation = 0;
     edge_t edges[7]    = {0};
 
+    // This is 791, or
+    // (7 choose 6) + (8 choose 6) + (9 choose 6) + (10 choose 6) + (11 choose 6)
     for (int i = UR, seen = 0; i <= BR; i++) {
         if (cubiecube->edge_permutations[i] <= DL) {
             combination += Cnk(i, seen + 1);
@@ -187,6 +189,10 @@ int get_UD7_edges(cube_cubie_t *cubiecube) {
         }
     }
 
+    assert(combination >= 0);
+    assert(combination <= 791);
+
+    // This is 7! = 5040
     for (int i = 6, seen = 0; i > 0; i--) {
         seen = 0;
 
@@ -197,6 +203,9 @@ int get_UD7_edges(cube_cubie_t *cubiecube) {
 
         permutation = (i + 1) * permutation + seen;
     }
+
+    assert(permutation >= 0);
+    assert(permutation < 5040);
 
     return 5040 * combination + permutation;
 }
