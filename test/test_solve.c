@@ -1,8 +1,10 @@
 #include <pcg_variants.h>
 #include <unity.h>
 
+#include <facelets.h>
 #include <move_tables.h>
 #include <pruning.h>
+#include <sample_facelets.h>
 #include <solve.h>
 #include <utils.h>
 
@@ -89,7 +91,7 @@ void test_random_phase2_solving() {
     free(cube);
 }
 
-void test_random_full_solver() {
+void test_random_full_solver_with_random_scrambles() {
     coord_cube_t *cube = get_coord_cube();
 
     for (int i = 0; i < 100; i++) {
@@ -132,6 +134,35 @@ void test_random_full_solver() {
     free(cube);
 }
 
+void test_random_full_solver_with_sample_cubes() {
+    for (int i = 0; i < N_FACELETS_SAMPLES; i++) {
+        cube_cubie_t *cubie_cube = build_cubie_cube_from_str(sample_facelets[i]);
+        coord_cube_t *cube       = make_coord_cube(cubie_cube);
+
+        TEST_ASSERT_FALSE(is_phase1_solved(cube));
+        TEST_ASSERT_FALSE(is_phase2_solved(cube));
+
+        /*char buffer[512];*/
+
+        /*sprintf(buffer, "%4d %4d %3d %4d %4d", cube->edge_orientations, cube->corner_orientations, cube->E_slice,*/
+        /*cube->E_sorted_slice, cube->corner_permutations);*/
+
+        /*TEST_MESSAGE(buffer);*/
+
+        move_t *solution = solve(cube);
+
+        for (int i = 0; solution[i] != MOVE_NULL; i++) {
+            coord_apply_move(cube, solution[i]);
+        }
+
+        TEST_ASSERT_TRUE(is_phase1_solved(cube));
+        TEST_ASSERT_TRUE(is_phase2_solved(cube));
+
+        free(solution);
+        free(cube);
+    }
+}
+
 void setUp() {}
 void tearDown() {}
 
@@ -145,7 +176,8 @@ int main() {
 
     RUN_TEST(test_random_phase1_solving);
     RUN_TEST(test_random_phase2_solving);
-    RUN_TEST(test_random_full_solver);
+    RUN_TEST(test_random_full_solver_with_random_scrambles);
+    RUN_TEST(test_random_full_solver_with_sample_cubes);
 
     return UNITY_END();
 }
