@@ -5,6 +5,7 @@
 #include "cubie_cube.h"
 #include "definitions.h"
 #include "facelets.h"
+#include "utils.h"
 
 facelet_t corner_facelets[N_CORNERS][3] = {{U9, R1, F3}, {U7, F1, L3}, {U1, L1, B3}, {U3, B1, R3},
                                            {D3, F9, R7}, {D1, L9, F7}, {D7, B9, L7}, {D9, R9, B7}};
@@ -99,6 +100,8 @@ cube_cubie_t *build_cubie_cube_from_str(char facelets[N_FACELETS]) {
     }
 
     free(color_cube);
+
+    assert(is_valid(cubie_cube));
 
     return cubie_cube;
 }
