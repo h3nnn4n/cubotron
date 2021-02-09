@@ -51,18 +51,19 @@ color_t *build_facelet(char facelets[N_FACELETS]) {
     return facelet_cube;
 }
 
-cube_cubie_t *build_cubie_cube_from_facelet(color_t *facelets) {
+cube_cubie_t *build_cubie_cube_from_str(char facelets[N_FACELETS]) {
     cube_cubie_t *cubie_cube = init_cubie_cube();
+    color_t *     color_cube = build_facelet(facelets);
 
     for (int i = 0; i < N_CORNERS; i++) {
         int orientation = 0;
         for (orientation = 0; orientation < 3; orientation++) {
-            if (facelets[corner_facelets[i][orientation]] == U || facelets[corner_facelets[i][orientation]] == D)
+            if (color_cube[corner_facelets[i][orientation]] == U || color_cube[corner_facelets[i][orientation]] == D)
                 break;
         }
 
-        color_t color_a = facelets[corner_facelets[i][(orientation + 1) % 3]];
-        color_t color_b = facelets[corner_facelets[i][(orientation + 2) % 3]];
+        color_t color_a = color_cube[corner_facelets[i][(orientation + 1) % 3]];
+        color_t color_b = color_cube[corner_facelets[i][(orientation + 2) % 3]];
 
         for (int j = 0; j < N_CORNERS; j++) {
             if (color_a == corner_colors[j][1] && color_b == corner_colors[j][2]) {
@@ -72,6 +73,8 @@ cube_cubie_t *build_cubie_cube_from_facelet(color_t *facelets) {
             }
         }
     }
+
+    free(color_cube);
 
     return cubie_cube;
 }

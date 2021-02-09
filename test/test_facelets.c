@@ -14,8 +14,7 @@ void test_facelets_color_count() {
 
 void test_build_cube_from_facelet_string() {
     char          facelets[N_FACELETS] = "UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB";
-    color_t *     color_cube           = build_facelet(facelets);
-    cube_cubie_t *cubie_cube           = build_cubie_cube_from_facelet(color_cube);
+    cube_cubie_t *cubie_cube           = build_cubie_cube_from_str(facelets);
 
     int edge_orientation = get_edge_orientations(cubie_cube);
     TEST_ASSERT_EQUAL_INT(0, edge_orientation);
