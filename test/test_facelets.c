@@ -3,6 +3,7 @@
 #include <cubie_cube.h>
 #include <definitions.h>
 #include <facelets.h>
+#include <sample_facelets.h>
 
 void test_facelets_color_count() {
     char facelets_correct[N_FACELETS] = "UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB";
@@ -33,6 +34,8 @@ void test_build_cube_from_facelet_string_solved() {
 
     int corner_permutations = get_corner_permutations(cubie_cube);
     TEST_ASSERT_EQUAL_INT(0, corner_permutations);
+
+    free(cubie_cube);
 }
 
 void test_build_cube_from_facelet_string_scrambled() {
@@ -56,6 +59,16 @@ void test_build_cube_from_facelet_string_scrambled() {
 
     int corner_permutations = get_corner_permutations(cubie_cube);
     TEST_ASSERT_EQUAL_INT(33724, corner_permutations);
+
+    free(cubie_cube);
+}
+
+void test_build_cube_from_facelet_string() {
+    // There is an assert(is_valid(cube)) in the code that does all the work for this test
+    for (int i = 0; i < N_FACELETS_SAMPLES; i++) {
+        cube_cubie_t *cubie_cube = build_cubie_cube_from_str(sample_facelets[i]);
+        free(cubie_cube);
+    }
 }
 
 void setUp(void) {}
@@ -68,6 +81,7 @@ int main() {
     RUN_TEST(test_facelets_color_count);
     RUN_TEST(test_build_cube_from_facelet_string_solved);
     RUN_TEST(test_build_cube_from_facelet_string_scrambled);
+    RUN_TEST(test_build_cube_from_facelet_string);
 
     return UNITY_END();
 }
