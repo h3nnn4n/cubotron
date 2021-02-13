@@ -192,7 +192,8 @@ void rotate_right(int *pieces, int l, int r) {
 }
 
 // Copy paste from https://stackoverflow.com/a/5467788
-int unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf) {
+int unlink_cb(const char *fpath, __attribute__((unused)) const struct stat *sb, __attribute__((unused)) int typeflag,
+              __attribute__((unused)) struct FTW *ftwbuf) {
     int rv = remove(fpath);
 
     if (rv)
