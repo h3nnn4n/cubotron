@@ -4,11 +4,20 @@
 
 #include "coord_move_tables.h"
 #include "cubie_cube.h"
+#include "facelets.h"
 #include "pruning.h"
 #include "solve.h"
 #include "utils.h"
 
 #define max_moves 20
+
+move_t *solve_facelets(char facelets[N_FACELETS]) {
+    cube_cubie_t *cubie_cube = build_cubie_cube_from_str(facelets);
+    coord_cube_t *cube       = make_coord_cube(cubie_cube);
+    move_t *      solution   = solve(cube);
+
+    return solution;
+}
 
 move_t *solve(coord_cube_t *original_cube) {
     coord_cube_t *cube = get_coord_cube();

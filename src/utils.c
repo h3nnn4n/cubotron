@@ -1,6 +1,8 @@
 #include <assert.h>
+#include <ftw.h>
 #include <stdio.h>
 #include <time.h>
+#include <unistd.h>
 
 #include <pcg_variants.h>
 
@@ -186,3 +188,15 @@ void rotate_right(int *pieces, int l, int r) {
 
     pieces[l] = t;
 }
+
+// Copy paste from https://stackoverflow.com/a/5467788
+int unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf) {
+    int rv = remove(fpath);
+
+    if (rv)
+        perror(fpath);
+
+    return rv;
+}
+
+int rmrf(char *path) { return nftw(path, unlink_cb, 64, FTW_DEPTH | FTW_PHYS); }

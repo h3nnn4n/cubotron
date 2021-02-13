@@ -3,6 +3,7 @@
 
 #include "coord_cube.h"
 
+move_t *solve_facelets(char facelets[N_FACELETS]);
 move_t *solve(coord_cube_t *cube);
 move_t *solve_phase1(coord_cube_t *cube);
 move_t *solve_phase2(coord_cube_t *cube);
