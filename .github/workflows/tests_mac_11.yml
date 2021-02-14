@@ -1,10 +1,10 @@
-name: Unit Tests
+name: Unit Tests on MacOS Big Sur 11.0
 
 on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: mac-11.0
     steps:
       - uses: actions/checkout@master
         with:
