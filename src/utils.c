@@ -1,4 +1,6 @@
+#if !defined(__APPLE__)
 #define _XOPEN_SOURCE 500
+#endif
 
 #include <assert.h>
 #include <ftw.h>
