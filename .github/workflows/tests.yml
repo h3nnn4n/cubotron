@@ -1,0 +1,17 @@
+name: Unit Tests
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    strategy:
+      runner: [ubuntu-20.04, macos-10.15]
+
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@master
+        with:
+          fetch-depth: 1
+          submodules: true
+      - name: Run Makefile
+        run: make test
