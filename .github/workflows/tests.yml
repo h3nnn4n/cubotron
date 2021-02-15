@@ -5,9 +5,9 @@ on: [push, pull_request]
 jobs:
   build:
     strategy:
-      runner: [ubuntu-20.04, macos-10.15]
+      os: [ubuntu-20.04, macos-10.15]
 
-    runs-on: ${{ matrix.runner }}
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@master
         with:
