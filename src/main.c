@@ -67,8 +67,8 @@ int main(int argc, char **argv) {
     build_pruning_tables();
 
     if (do_benchmark) {
-        solve_random_cubes();
         solve_cube_sample_library();
+        solve_random_cubes();
         coord_benchmark();
     }
 
