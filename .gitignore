@@ -3,3 +3,5 @@ cubotron
 *_tables
 
 *.csv
+
+.ipynb_checkpoints
