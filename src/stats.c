@@ -50,6 +50,11 @@ void dump_stats() {
 
     FILE *f = fopen("stats/log.csv", "wt");
 
+    fprintf(f, "phase1_solution_length,phase2_solution_length,solution_length,");
+    fprintf(f, "phase1_move_count,phase2_move_count,move_count,");
+    fprintf(f, "phase1_solve_time,phase2_solve_time,solve_time");
+    fprintf(f, "\n");
+
     for (int i = 0; i < MAX_STATS; i++) {
         solve_stats_t *stats = &solve_stats[i];
 
