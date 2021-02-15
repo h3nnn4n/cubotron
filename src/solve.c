@@ -7,6 +7,7 @@
 #include "facelets.h"
 #include "pruning.h"
 #include "solve.h"
+#include "stats.h"
 #include "utils.h"
 
 #define max_moves 20
@@ -80,6 +81,8 @@ move_t *solve(coord_cube_t *original_cube) {
 
     free(cube);
 
+    finish_stats();
+
     return solution;
 }
 
@@ -99,7 +102,8 @@ move_t *solve_phase1(coord_cube_t *cube) {
         cube_stack[i]    = get_coord_cube();
     }
 
-    /*long start_time    = get_microseconds();*/
+    long start_time = get_microseconds();
+    long end_time   = 0;
     /*int move_estimate = get_phase1_pruning(cube);*/
     /*printf("estimated number of moves: %d\n", move_estimate);*/
 
@@ -164,6 +168,15 @@ move_t *solve_phase1(coord_cube_t *cube) {
                     solution[i] = move_stack[i];
                 solution[pivot + 1] = MOVE_NULL;
 
+                end_time = get_microseconds();
+
+                solve_stats_t *stats = get_current_stat();
+                if (stats != NULL) {
+                    stats->phase1_depth      = pivot;
+                    stats->phase1_move_count = move_count;
+                    stats->phase1_solve_time = (float)(end_time - start_time) / 1000000.0;
+                }
+
                 goto solution_found;
             }
 
@@ -186,7 +199,6 @@ solution_found:
         free(cube_stack[i]);
     }
 
-    /*long end_time = get_microseconds();*/
     /*printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);*/
     /*printf("moves: %lu - ", move_count);*/
     /*printf("moves per second : %.2f\n", ((float)move_count / (end_time - start_time)) * 1000000.0);*/
@@ -212,6 +224,9 @@ move_t *solve_phase2(coord_cube_t *cube) {
     }
 
     copy_coord_cube(cube_stack[0], cube);
+
+    long start_time = get_microseconds();
+    long end_time   = 0;
 
     for (int allowed_depth = 1; allowed_depth <= max_depth; allowed_depth++) {
         int pivot = 0;
@@ -263,6 +278,15 @@ move_t *solve_phase2(coord_cube_t *cube) {
                 for (int i = 0; i <= pivot; i++)
                     solution[i] = moves[move_stack[i]];
                 solution[pivot + 1] = MOVE_NULL;
+
+                end_time = get_microseconds();
+
+                solve_stats_t *stats = get_current_stat();
+                if (stats != NULL) {
+                    stats->phase2_depth      = pivot;
+                    stats->phase2_move_count = move_count;
+                    stats->phase2_solve_time = (float)(end_time - start_time) / 1000000.0;
+                }
 
                 goto solution_found;
             }

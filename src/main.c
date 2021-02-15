@@ -9,6 +9,7 @@
 #include "move_tables.h"
 #include "pruning.h"
 #include "solve.h"
+#include "stats.h"
 #include "utils.h"
 
 static int do_benchmark   = 0;
@@ -65,6 +66,7 @@ int main(int argc, char **argv) {
 
     build_move_tables();
     build_pruning_tables();
+    init_stats();
 
     if (do_benchmark) {
         solve_cube_sample_library();
@@ -86,5 +88,8 @@ int main(int argc, char **argv) {
     }
 
     purge_cubie_move_table();
+
+    dump_stats();
+
     return 0;
 }
