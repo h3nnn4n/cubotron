@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 
+#include "file_utils.h"
 #include "pruning_cache.h"
 #include "utils.h"
 
@@ -50,16 +51,4 @@ void pruning_table_cache_store(char *cache_name, char *table_name, int *pruning_
     long end_time = get_microseconds();
     printf("%9lu bytes stored in %s in %.4f seconds\n", bytes_written, filepath,
            (float)(end_time - start_time) / 1000000.0);
-}
-
-void ensure_directory_exists(char *directory) {
-    struct stat st = {0};
-
-    if (stat("/some/directory", &st) == -1)
-        mkdir(directory, 0777);
-}
-
-int file_exists(char *filepath) {
-    struct stat buffer;
-    return (stat(filepath, &buffer) == 0);
 }

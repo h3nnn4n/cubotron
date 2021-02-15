@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "file_utils.h"
 #include "stats.h"
 
 static int            stats_pivot = 0;
@@ -45,7 +46,9 @@ void dump_stats() {
     if (solve_stats == NULL)
         return;
 
-    FILE *f = fopen("log.csv", "wt");
+    ensure_directory_exists("stats");
+
+    FILE *f = fopen("stats/log.csv", "wt");
 
     for (int i = 0; i < MAX_STATS; i++) {
         solve_stats_t *stats = &solve_stats[i];
