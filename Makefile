@@ -25,7 +25,7 @@ ifeq ($(UNAME_S),Linux)
 endif
 ifeq ($(UNAME_S),Darwin)
   CFLAGS += -Wno-unused-command-line-argument
-  LDFLAGS = -lpcg_random -Wl,-Ldeps/Unity/build/,-Ldeps/pcg-c/src/
+  LDFLAGS = -lpcg_random -Wl,-Ldeps/pcg-c/src/
 endif
 
 CC = gcc
