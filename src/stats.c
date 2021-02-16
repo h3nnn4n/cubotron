@@ -5,10 +5,11 @@
 #include "file_utils.h"
 #include "stats.h"
 
+#define STARTING_BUFFER_SIZE 100
+
+static int            buffer_size = 0;
 static int            stats_pivot = 0;
 static solve_stats_t *solve_stats = NULL;
-
-#define MAX_STATS 1000
 
 solve_stats_t *get_current_stat() {
     if (solve_stats == NULL)
@@ -18,8 +19,30 @@ solve_stats_t *get_current_stat() {
 }
 
 void init_stats() {
-    solve_stats = (solve_stats_t *)malloc(sizeof(solve_stats_t) * MAX_STATS);
-    memset(solve_stats, 0, sizeof(solve_stats_t) * MAX_STATS);
+    buffer_size = STARTING_BUFFER_SIZE;
+    solve_stats = (solve_stats_t *)malloc(sizeof(solve_stats_t) * buffer_size);
+    memset(solve_stats, 0, sizeof(solve_stats_t) * buffer_size);
+}
+
+int increase_stats_buffer() {
+    int new_size = buffer_size * 2;
+
+    solve_stats_t *new_buffer = (solve_stats_t *)realloc(solve_stats, new_size);
+
+    if (new_buffer == NULL || (int)new_buffer < 0) {
+        // Should we Panic?
+        printf("failed to increase stats buffer size!\n");
+        return 0;
+    }
+
+    for (int i = buffer_size; i < new_size; i++) {
+        solve_stats[i].used = 0;
+    }
+
+    buffer_size = new_size;
+    solve_stats = new_buffer;
+
+    return 1;
 }
 
 void finish_stats() {
@@ -37,8 +60,12 @@ void finish_stats() {
     solve_stats[stats_pivot].solve_time =
         solve_stats[stats_pivot].phase1_solve_time + solve_stats[stats_pivot].phase2_solve_time;
 
-    if (stats_pivot < MAX_STATS) {
+    if (stats_pivot < buffer_size) {
         stats_pivot += 1;
+    } else {
+        if (increase_stats_buffer()) {
+            stats_pivot += 1;
+        }
     }
 }
 
@@ -55,11 +82,8 @@ void dump_stats() {
     fprintf(f, "phase1_solve_time,phase2_solve_time,solve_time");
     fprintf(f, "\n");
 
-    for (int i = 0; i < MAX_STATS; i++) {
+    for (int i = 0; i < stats_pivot; i++) {
         solve_stats_t *stats = &solve_stats[i];
-
-        if (stats->used == 0)
-            continue;
 
         fprintf(f, "%d,%d,%d,", stats->phase1_depth, stats->phase2_depth, stats->solution_length);
         fprintf(f, "%d,%d,%d,", stats->phase1_move_count, stats->phase2_move_count, stats->move_count);
