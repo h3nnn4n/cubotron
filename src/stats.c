@@ -5,7 +5,7 @@
 #include "file_utils.h"
 #include "stats.h"
 
-#define STARTING_BUFFER_SIZE 100
+#define STARTING_BUFFER_SIZE 500
 
 static int            buffer_size = 0;
 static int            stats_pivot = 0;
