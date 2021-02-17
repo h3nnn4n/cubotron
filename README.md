@@ -17,6 +17,7 @@ DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL`, where the long string
 is the cube representation at the facelet level. The string has the 9 cube facelets
 in the order U1-U9, R1-R9, F1-F9, D1-D9, L1-L9, B1-B9.
 
+```
              |------------|
              |-U1--U2--U3-|
              |------------|
@@ -36,6 +37,7 @@ in the order U1-U9, R1-R9, F1-F9, D1-D9, L1-L9, B1-B9.
              |------------|
              |-D7--D8--D9-|
              |------------|
+```
 
 For example, a completely solved cube is represented by the string
 `UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB`.
@@ -51,7 +53,7 @@ to access performance.
 
 # Credits
 
-[Kociemba's site](http://kociemba.org/cube.htm) and
+Kociemba's [website](http://kociemba.org/cube.htm) and
 [github](https://github.com/hkociemba/RubiksCube-TwophaseSolver).
 
 # License
