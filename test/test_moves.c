@@ -13,9 +13,9 @@ void test_double_turn_moves_have_diameter_2() {
         cube_cubie_t *cube = init_cubie_cube();
 
         cubie_apply_move(cube, moves[j]);
-        TEST_ASSERT_FALSE(is_solved(cube));
+        TEST_ASSERT_FALSE(is_cubie_solved(cube));
         cubie_apply_move(cube, moves[j]);
-        TEST_ASSERT_TRUE(is_solved(cube));
+        TEST_ASSERT_TRUE(is_cubie_solved(cube));
 
         free(cube);
     }
@@ -31,12 +31,12 @@ void test_half_turn_moves_have_diameter_4() {
 
         for (int i = 0; i < 3; i++) {
             cubie_apply_move(cube, moves[j]);
-            TEST_ASSERT_FALSE(is_solved(cube));
+            TEST_ASSERT_FALSE(is_cubie_solved(cube));
         }
 
         cubie_apply_move(cube, moves[j]);
 
-        TEST_ASSERT_TRUE(is_solved(cube));
+        TEST_ASSERT_TRUE(is_cubie_solved(cube));
 
         free(cube);
     }
@@ -52,15 +52,15 @@ void test_half_turn_moves_inverses() {
 
         // Tests that U3 undoes U1
         cubie_apply_move(cube, moves[j]);
-        TEST_ASSERT_FALSE(is_solved(cube));
+        TEST_ASSERT_FALSE(is_cubie_solved(cube));
         cubie_apply_move(cube, moves[j] + 2); // U1 is 0 and U3 is U1 + 2, and so on
-        TEST_ASSERT_TRUE(is_solved(cube));
+        TEST_ASSERT_TRUE(is_cubie_solved(cube));
 
         // Tests that U1 undoes U3
         cubie_apply_move(cube, moves[j] + 2);
-        TEST_ASSERT_FALSE(is_solved(cube));
+        TEST_ASSERT_FALSE(is_cubie_solved(cube));
         cubie_apply_move(cube, moves[j]);
-        TEST_ASSERT_TRUE(is_solved(cube));
+        TEST_ASSERT_TRUE(is_cubie_solved(cube));
 
         free(cube);
     }
@@ -89,11 +89,11 @@ void test_move_sequences_diameter() {
             }
 
             if (sequence_index < 5) { // It gets solved on the last iteration
-                TEST_ASSERT_FALSE(is_solved(cube));
+                TEST_ASSERT_FALSE(is_cubie_solved(cube));
             }
         }
 
-        TEST_ASSERT_TRUE(is_solved(cube));
+        TEST_ASSERT_TRUE(is_cubie_solved(cube));
 
         free(cube);
     }
@@ -128,7 +128,7 @@ void test_move_sequences_diameter_2() {
             }
         }
 
-        TEST_ASSERT_TRUE(is_solved(cube));
+        TEST_ASSERT_TRUE(is_cubie_solved(cube));
 
         free(cube);
     }

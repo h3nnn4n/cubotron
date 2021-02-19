@@ -86,9 +86,6 @@ int is_phase1_solved(coord_cube_t *cube) {
 
 int is_phase2_solved(coord_cube_t *cube) {
     return (cube->UD6_edge_permutations + cube->corner_permutations + cube->E_sorted_slice) == 0;
-    /*return (cube->UD6_edge_permutations + cube->corner_permutations) == 0;*/
-    /*return (cube->corner_permutations + cube->E_sorted_slice) == 0;*/
-    /*return (cube->UD6_edge_permutations) == 0;*/
-    /*return (cube->corner_permutations) == 0;*/
-    /*return (cube->E_sorted_slice) == 0;*/
 }
+
+int is_coord_solved(coord_cube_t *cube) { return is_phase1_solved(cube) && is_phase2_solved(cube); }

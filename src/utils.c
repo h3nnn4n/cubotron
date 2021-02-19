@@ -69,7 +69,7 @@ int cubie_off_count(cube_cubie_t *cube) {
     return count;
 }
 
-int is_solved(cube_cubie_t *cube) { return cubie_off_count(cube) == 0; }
+int is_cubie_solved(cube_cubie_t *cube) { return cubie_off_count(cube) == 0; }
 
 char *move_to_str_enum(move_t move) {
     assert(move >= 0);

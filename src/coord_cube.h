@@ -21,5 +21,6 @@ int           are_all_coord_equal(coord_cube_t *cube1, coord_cube_t *cube2);
 int           are_phase1_coord_equal(coord_cube_t *cube1, coord_cube_t *cube2);
 int           is_phase1_solved(coord_cube_t *cube);
 int           is_phase2_solved(coord_cube_t *cube);
+int           is_coord_solved(coord_cube_t *cube);
 
 #endif /* end of include guard */

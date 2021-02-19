@@ -55,8 +55,6 @@ int get_phase2_pruning(coord_cube_t *cube) {
     int value_edge   = pruning_phase2_UD6_edge[index_edge];
     int value_corner = pruning_phase2_corner[index_corner];
 
-    // return value_edge;
-    /*return value_corner;*/
     return value_edge > value_corner ? value_edge : value_corner;
 }
 
