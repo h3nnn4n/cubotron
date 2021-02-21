@@ -66,6 +66,7 @@ test: pcg $(TEST_TARGETS)
 
 pcg:
 	$(MAKE) -C deps/pcg-c/src/
+	$(MAKE) -C deps/pcg-c/
 
 pcg_clean:
 	@$(MAKE) clean -C deps/pcg-c/src/ > /dev/null
