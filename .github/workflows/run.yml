@@ -16,4 +16,4 @@ jobs:
           fetch-depth: 1
           submodules: true
       - name: Run Makefile
-        run: make && ./cubotrons --benchmarks
+        run: make && ./cubotron --benchmarks
