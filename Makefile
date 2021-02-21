@@ -64,10 +64,12 @@ test: pcg $(TEST_TARGETS)
 	$(foreach var,$(TEST_TARGETS),$(var) && ) echo $(ECHOFLAGS) "Everything in order"
 
 pcg:
-	$(MAKE) -C deps/pcg-c/src/
+	@echo $(ECHOFLAGS) "[CC]\tpcg core"
+	@$(MAKE) -s -C deps/pcg-c/src/
 
 pcg_full:
-	$(MAKE) -C deps/pcg-c/
+	@echo $(ECHOFLAGS) "[CC]\tpcg full"
+	@$(MAKE) -s -C deps/pcg-c/
 
 pcg_clean:
 	@$(MAKE) clean -C deps/pcg-c/src/ > /dev/null
