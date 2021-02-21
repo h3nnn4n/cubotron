@@ -82,8 +82,13 @@ void dump_stats() {
     fprintf(f, "phase1_solve_time,phase2_solve_time,solve_time");
     fprintf(f, "\n");
 
-    for (int i = 0; i < stats_pivot; i++) {
+    for (int i = 0; i < buffer_size; i++) {
         solve_stats_t *stats = &solve_stats[i];
+
+        // FIXME: Somehow we are storing empty entries in the buffer. For now
+        // lets just skip over it
+        if (stats->used == 0)
+            continue;
 
         fprintf(f, "%d,%d,%d,", stats->phase1_depth, stats->phase2_depth, stats->solution_length);
         fprintf(f, "%d,%d,%d,", stats->phase1_move_count, stats->phase2_move_count, stats->move_count);
