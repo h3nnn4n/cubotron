@@ -45,6 +45,7 @@ OBJS_NO_MAIN := $(filter-out %main.o, $(OBJS)) \
 
 .PHONY: test
 .PHONY: clean
+.PHONY: pcg
 
 all: build
 
