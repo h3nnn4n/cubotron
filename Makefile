@@ -48,7 +48,7 @@ OBJS_NO_MAIN := $(filter-out %main.o, $(OBJS)) \
 
 all: build
 
-build: $(TARGET)
+build: $(pcg) $(TARGET)
 
 rebuild: clean $(TARGET)
 
