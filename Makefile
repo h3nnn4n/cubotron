@@ -45,11 +45,10 @@ OBJS_NO_MAIN := $(filter-out %main.o, $(OBJS)) \
 
 .PHONY: test
 .PHONY: clean
-.PHONY: pcg
 
 all: build
 
-build: $(pcg) $(TARGET)
+build: pcg pcg_full $(TARGET)
 
 rebuild: clean $(TARGET)
 
@@ -66,6 +65,8 @@ test: pcg $(TEST_TARGETS)
 
 pcg:
 	$(MAKE) -C deps/pcg-c/src/
+
+pcg_full:
 	$(MAKE) -C deps/pcg-c/
 
 pcg_clean:
