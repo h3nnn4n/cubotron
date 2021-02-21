@@ -79,7 +79,7 @@ $(BUILDDIR)/%.o: %.c
 	@$(CC) $(CFLAGS) -o "$@" -c "$<"
 
 $(TARGET): $(OBJS)
-	@echo $(ECHOFLAGS) "[LD]\t$<"
+	@echo $(ECHOFLAGS) "[LD]\t$@"
 	@$(CC) -o "$@" $^ $(LDFLAGS) $(OPTIMIZATION)
 
 clean:
