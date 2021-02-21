@@ -29,7 +29,7 @@ int increase_stats_buffer() {
 
     solve_stats_t *new_buffer = (solve_stats_t *)realloc(solve_stats, new_size);
 
-    if (new_buffer == NULL || (int)new_buffer < 0) {
+    if (new_buffer == NULL) {
         // Should we Panic?
         printf("failed to increase stats buffer size!\n");
         return 0;
