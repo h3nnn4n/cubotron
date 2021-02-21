@@ -1,4 +1,4 @@
-.DEFAULT_GOAL := test
+.DEFAULT_GOAL := build
 
 TARGET = $(notdir $(CURDIR))
 BUILDDIR = $(abspath $(CURDIR)/build)
