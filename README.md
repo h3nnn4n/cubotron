@@ -6,9 +6,10 @@ seconds to be found on a macbook pro 2020.
 
 # Usage
 
-Clone this repo and run `make build` to build the application.
+Clone this repo, run `git submodule update --init --recursive` and run
+`make build` to build the application.
 
-Calling `./cubotron` with no args will build the prunning and move tables, the
+Calling `./cubotron` with no args will build the prunning and move tables the
 first time it is called. The tables are cached to disk. Optionally,
 `--rebuild-tables` can be passed to force a rebuild of the tables.
 
