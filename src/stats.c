@@ -27,7 +27,7 @@ void init_stats() {
 int increase_stats_buffer() {
     int new_size = buffer_size * 2;
 
-    solve_stats_t *new_buffer = (solve_stats_t *)realloc(solve_stats, new_size);
+    solve_stats_t *new_buffer = (solve_stats_t *)realloc(solve_stats, sizeof(solve_stats_t) * new_size);
 
     if (new_buffer == NULL) {
         // Should we Panic?
