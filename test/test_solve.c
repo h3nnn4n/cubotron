@@ -33,7 +33,9 @@ void test_random_phase1_solving() {
 
         TEST_ASSERT_FALSE(is_phase1_solved(cube));
 
-        move_t *solution = solve_phase1(cube);
+        move_t *solution = solve_phase1(cube, 25, 0, 0);
+
+        TEST_ASSERT_TRUE(solution != NULL);
 
         for (int i = 0; solution[i] != MOVE_NULL; i++) {
             coord_apply_move(cube, solution[i]);
@@ -66,18 +68,22 @@ void test_random_phase2_solving() {
 
         // Apply phase1 solution
         {
-            move_t *solution = solve_phase1(cube);
+            move_t *solution = solve_phase1(cube, 25, 0, 0);
 
             for (int i = 0; solution[i] != MOVE_NULL; i++) {
                 coord_apply_move(cube, solution[i]);
             }
 
             TEST_ASSERT_TRUE(is_phase1_solved(cube));
+
+            free(solution);
         }
 
         TEST_ASSERT_FALSE(is_phase2_solved(cube));
 
-        move_t *solution = solve_phase2(cube);
+        move_t *solution = solve_phase2(cube, 0, 0);
+
+        TEST_ASSERT_TRUE(solution != NULL);
 
         for (int i = 0; solution[i] != MOVE_NULL; i++) {
             coord_apply_move(cube, solution[i]);
@@ -119,7 +125,7 @@ void test_random_full_solver_with_random_scrambles() {
 
         /*TEST_MESSAGE(buffer);*/
 
-        move_t *solution = solve(cube);
+        move_t *solution = solve_single(cube);
 
         for (int i = 0; solution[i] != MOVE_NULL; i++) {
             coord_apply_move(cube, solution[i]);
@@ -149,7 +155,7 @@ void test_random_full_solver_with_sample_cubes() {
 
         /*TEST_MESSAGE(buffer);*/
 
-        move_t *solution = solve(cube);
+        move_t *solution = solve_single(cube);
 
         for (int i = 0; solution[i] != MOVE_NULL; i++) {
             coord_apply_move(cube, solution[i]);

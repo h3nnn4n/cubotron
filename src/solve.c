@@ -10,74 +10,45 @@
 #include "stats.h"
 #include "utils.h"
 
-#define max_moves 20
+#define MAX_MOVES 30
 
 move_t *solve_facelets(char facelets[N_FACELETS]) {
     cube_cubie_t *cubie_cube = build_cubie_cube_from_str(facelets);
     coord_cube_t *cube       = make_coord_cube(cubie_cube);
-    move_t *      solution   = solve(cube);
+    move_t *      solution   = solve(cube, 40, 0, 1);
 
     return solution;
 }
 
-move_t *solve(coord_cube_t *original_cube) {
+move_t *solve_single(coord_cube_t *original_cube) {
+    move_t *solution = solve(original_cube, 40, 0, 1);
+
+    return solution;
+}
+
+// TODO: Define a way to store all solutions
+move_t *solve(coord_cube_t *original_cube, int max_depth, float timeout, int max_solutions) {
     coord_cube_t *cube = get_coord_cube();
     copy_coord_cube(cube, original_cube);
 
-    int     phase1_move_count = 0;
-    int     phase2_move_count = 0;
-    move_t *solution          = (move_t *)malloc(sizeof(move_t) * 42);
+    move_t *solution = solve_phase1(cube, max_depth, timeout, max_solutions);
 
-    /*printf("starting phase1\n");*/
-    move_t *phase1_solution = solve_phase1(cube);
-    /*printf("finished phase1\n");*/
-
-    if (phase1_solution == NULL) {
-        /*printf("failed to solve phase1\n");*/
+    if (solution == NULL) {
         free(solution);
         return NULL;
     } else {
-        /*printf("phase1 solution:\n");*/
-        for (int i = 0; phase1_solution[i] != MOVE_NULL; i++) {
-            /*printf(" %s", move_to_str(phase1_solution[i]));*/
-            coord_apply_move(cube, phase1_solution[i]);
-            solution[i] = phase1_solution[i];
-            phase1_move_count++;
+        copy_coord_cube(cube, original_cube);
+
+        int solution_length = 0;
+
+        for (int i = 0; solution[i] != MOVE_NULL; i++) {
+            solution_length += 1;
+            coord_apply_move(cube, solution[i]);
         }
-
-        free(phase1_solution);
-
-        // printf("\n coords: %4d %4d %3d %4d %4d %4d\n\n", cube->edge_orientations, cube->corner_orientations,
-        // cube->E_slice, cube->E_sorted_slice, cube->UD6_edge_permutations, cube->corner_permutations);
 
         assert(is_phase1_solved(cube));
-    }
-
-    /*printf("starting phase2\n");*/
-    move_t *phase2_solution = solve_phase2(cube);
-
-    if (phase2_solution == NULL) {
-        /*printf("failed to solve phase2\n");*/
-        free(solution);
-        return NULL;
-    } else {
-        /*printf("phase2 solution:\n");*/
-        for (int i = 0; phase2_solution[i] != MOVE_NULL; i++) {
-            /*printf(" %s", move_to_str(phase2_solution[i]));*/
-            coord_apply_move(cube, phase2_solution[i]);
-            solution[phase1_move_count + i] = phase2_solution[i];
-            phase2_move_count++;
-        }
-        solution[phase1_move_count + phase2_move_count] = MOVE_NULL;
-
-        free(phase2_solution);
-
-        // printf("\n coords: %4d %4d %3d %4d %4d %4d\n\n", cube->edge_orientations, cube->corner_orientations,
-        // cube->E_slice, cube->E_sorted_slice, cube->UD6_edge_permutations, cube->corner_permutations);
-
         assert(is_phase2_solved(cube));
     }
-    /*printf("finished phase2\n");*/
 
     free(cube);
 
@@ -86,17 +57,18 @@ move_t *solve(coord_cube_t *original_cube) {
     return solution;
 }
 
-move_t *solve_phase1(coord_cube_t *cube) {
+// FIXME: we need a decent way to get just the phase1 solution
+move_t *solve_phase1(coord_cube_t *cube, int max_depth, __attribute__((unused)) float timeout, int max_solutions) {
     move_t *solution = NULL;
 
-    move_t            move_stack[max_moves];
-    int               pruning_stack[max_moves];
-    coord_cube_t *    cube_stack[max_moves];
+    move_t            move_stack[MAX_MOVES];
+    int               pruning_stack[MAX_MOVES];
+    coord_cube_t *    cube_stack[MAX_MOVES];
     unsigned long int move_count = 0;
 
-    int max_depth = 12;
+    int solution_count = 0;
 
-    for (int i = 0; i < max_moves; i++) {
+    for (int i = 0; i < MAX_MOVES; i++) {
         move_stack[i]    = -1;
         pruning_stack[i] = -1;
         cube_stack[i]    = get_coord_cube();
@@ -161,13 +133,9 @@ move_t *solve_phase1(coord_cube_t *cube) {
             }
             */
 
+            // FIXME: Figure out how to properly do stats with multiple solutions
+
             if (is_phase1_solved(cube_stack[pivot])) {
-                solution = malloc(sizeof(move_t) * (pivot + 2));
-
-                for (int i = 0; i <= pivot; i++)
-                    solution[i] = move_stack[i];
-                solution[pivot + 1] = MOVE_NULL;
-
                 end_time = get_microseconds();
 
                 solve_stats_t *stats = get_current_stat();
@@ -176,8 +144,75 @@ move_t *solve_phase1(coord_cube_t *cube) {
                     stats->phase1_move_count = move_count;
                     stats->phase1_solve_time = (float)(end_time - start_time) / 1000000.0;
                 }
+            }
 
-                goto solution_found;
+            if (is_phase1_solved(cube_stack[pivot])) {
+                /*printf("phase1 solution found with depth %2d - ", pivot);*/
+                solution = malloc(sizeof(move_t) * (40));
+
+                for (int i = 0; i <= pivot; i++) {
+                    solution[i] = move_stack[i];
+                    /*printf(" %s", move_to_str(solution[i]));*/
+                }
+                solution[pivot + 1] = MOVE_NULL;
+                /*printf("\n");*/
+
+                // zero means just phase1 solution.
+                // -1 is find all solutions
+                if (max_solutions == 0) {
+                    /*printf("doing just phase1!\n");*/
+                    goto solution_found;
+                }
+
+                coord_cube_t *phase2_cube = get_coord_cube();
+                copy_coord_cube(phase2_cube, cube_stack[pivot]);
+
+                move_t *phase2_solution = solve_phase2(phase2_cube, pivot, 1.0);
+
+                if (phase2_solution == NULL) {
+                    /*printf("failed to solve phase2\n");*/
+                } else {
+                    solution_count += 1;
+
+                    /*printf("phase1 solution found with depth %2d - ", pivot + 1);*/
+                    for (int i = 0; i <= pivot; i++) {
+                        /*printf(" %s", move_to_str(solution[i]));*/
+                    }
+                    /*printf("\n");*/
+
+                    int phase2_move_count = 0;
+                    for (int i = 0; phase2_solution[i] != MOVE_NULL; i++)
+                        phase2_move_count++;
+
+                    /*printf("phase2 solution found with depth %2d - ", phase2_move_count);*/
+
+                    for (int i = 0; phase2_solution[i] != MOVE_NULL; i++) {
+                        /*printf(" %s", move_to_str(phase2_solution[i]));*/
+                        coord_apply_move(phase2_cube, phase2_solution[i]);
+                        solution[pivot + i + 1] = phase2_solution[i];
+                    }
+                    solution[pivot + phase2_move_count + 1] = MOVE_NULL;
+                    /*printf("\n");*/
+
+                    /*printf("solution:\n");*/
+                    /*for (int i = 0; solution[i] != MOVE_NULL; i++) {*/
+                    /*printf(" %s", move_to_str(solution[i]));*/
+                    /*}*/
+                    /*printf("\n");*/
+                    /*printf("\n");*/
+
+                    free(phase2_solution);
+
+                    assert(is_coord_solved(phase2_cube));
+                }
+
+                free(phase2_cube);
+
+                if (max_solutions != -1 && solution_count >= max_solutions) {
+                    goto solution_found;
+                } else {
+                    free(solution);
+                }
             }
 
             if (pruning_stack[pivot] + pivot < allowed_depth) {
@@ -195,7 +230,7 @@ move_t *solve_phase1(coord_cube_t *cube) {
 
 solution_found:
 
-    for (int i = 0; i < max_moves; i++) {
+    for (int i = 0; i < MAX_MOVES; i++) {
         free(cube_stack[i]);
     }
 
@@ -206,18 +241,18 @@ solution_found:
     return solution;
 }
 
-move_t *solve_phase2(coord_cube_t *cube) {
+move_t *solve_phase2(coord_cube_t *cube, int starting_depth, __attribute__((unused)) float timeout) {
     move_t *solution = NULL;
     move_t  moves[]  = {MOVE_U1, MOVE_U2, MOVE_U3, MOVE_D1, MOVE_D2, MOVE_D3, MOVE_R2, MOVE_L2, MOVE_F2, MOVE_B2};
     int     n_moves  = 10;
 
-    move_t        move_stack[max_moves];
-    coord_cube_t *cube_stack[max_moves];
-    int           pruning_stack[max_moves];
+    move_t        move_stack[MAX_MOVES];
+    coord_cube_t *cube_stack[MAX_MOVES];
+    int           pruning_stack[MAX_MOVES];
     int           move_count = 0;
-    int           max_depth  = 20;
+    int           max_depth  = MAX_MOVES;
 
-    for (int i = 0; i < max_moves; i++) {
+    for (int i = 0; i < MAX_MOVES; i++) {
         move_stack[i]    = -1;
         pruning_stack[i] = -1;
         cube_stack[i]    = get_coord_cube();
@@ -228,7 +263,7 @@ move_t *solve_phase2(coord_cube_t *cube) {
     long start_time = get_microseconds();
     long end_time   = 0;
 
-    for (int allowed_depth = 1; allowed_depth <= max_depth; allowed_depth++) {
+    for (int allowed_depth = 1; allowed_depth <= max_depth - starting_depth; allowed_depth++) {
         int pivot = 0;
         copy_coord_cube(cube_stack[0], cube);
 
@@ -306,7 +341,7 @@ move_t *solve_phase2(coord_cube_t *cube) {
 
 solution_found:
 
-    for (int i = 0; i < max_moves; i++) {
+    for (int i = 0; i < MAX_MOVES; i++) {
         free(cube_stack[i]);
     }
 
