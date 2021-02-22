@@ -12,10 +12,12 @@
 
 #define MAX_MOVES 30
 
-move_t *solve_facelets(char facelets[N_FACELETS]) {
+move_t *solve_facelets_single(char facelets[N_FACELETS]) { return solve_facelets(facelets, 30, 0, 1); }
+
+move_t *solve_facelets(char facelets[N_FACELETS], int max_depth, float timeout, int max_solutions) {
     cube_cubie_t *cubie_cube = build_cubie_cube_from_str(facelets);
     coord_cube_t *cube       = make_coord_cube(cubie_cube);
-    move_t *      solution   = solve(cube, 40, 0, 1);
+    move_t *      solution   = solve(cube, max_depth, timeout, max_solutions);
 
     return solution;
 }
@@ -167,7 +169,7 @@ move_t *solve_phase1(coord_cube_t *cube, int max_depth, __attribute__((unused)) 
                 coord_cube_t *phase2_cube = get_coord_cube();
                 copy_coord_cube(phase2_cube, cube_stack[pivot]);
 
-                move_t *phase2_solution = solve_phase2(phase2_cube, pivot, 1.0);
+                move_t *phase2_solution = solve_phase2(phase2_cube, max_depth - pivot - 1, 0);
 
                 if (phase2_solution == NULL) {
                     /*printf("failed to solve phase2\n");*/
@@ -241,7 +243,7 @@ solution_found:
     return solution;
 }
 
-move_t *solve_phase2(coord_cube_t *cube, int starting_depth, __attribute__((unused)) float timeout) {
+move_t *solve_phase2(coord_cube_t *cube, int max_depth, __attribute__((unused)) float timeout) {
     move_t *solution = NULL;
     move_t  moves[]  = {MOVE_U1, MOVE_U2, MOVE_U3, MOVE_D1, MOVE_D2, MOVE_D3, MOVE_R2, MOVE_L2, MOVE_F2, MOVE_B2};
     int     n_moves  = 10;
@@ -250,7 +252,6 @@ move_t *solve_phase2(coord_cube_t *cube, int starting_depth, __attribute__((unus
     coord_cube_t *cube_stack[MAX_MOVES];
     int           pruning_stack[MAX_MOVES];
     int           move_count = 0;
-    int           max_depth  = MAX_MOVES;
 
     for (int i = 0; i < MAX_MOVES; i++) {
         move_stack[i]    = -1;
@@ -263,7 +264,7 @@ move_t *solve_phase2(coord_cube_t *cube, int starting_depth, __attribute__((unus
     long start_time = get_microseconds();
     long end_time   = 0;
 
-    for (int allowed_depth = 1; allowed_depth <= max_depth - starting_depth; allowed_depth++) {
+    for (int allowed_depth = 1; allowed_depth <= max_depth; allowed_depth++) {
         int pivot = 0;
         copy_coord_cube(cube_stack[0], cube);
 

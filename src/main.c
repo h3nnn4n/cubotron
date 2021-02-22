@@ -15,10 +15,12 @@
 static int do_benchmark   = 0;
 static int do_solve       = 0;
 static int rebuild_tables = 0;
+static int max_depth      = 25;
 
 static struct option long_options[] = {{"benchmarks", no_argument, &do_benchmark, 1},
                                        {"rebuild-tables", no_argument, &rebuild_tables, 1},
                                        {"solve", required_argument, 0, 's'},
+                                       {"max-depth", required_argument, 0, 'm'},
                                        {0, 0, 0, 0}};
 
 int main(int argc, char **argv) {
@@ -51,6 +53,10 @@ int main(int argc, char **argv) {
                 memcpy(facelets_to_solve, optarg, sizeof(char) * (strlen(optarg) + 1));
             } break;
 
+            case 'm': {
+                max_depth = atoi(optarg);
+            } break;
+
             case '?':
                 /* getopt_long already printed an error message. */
                 break;
@@ -75,13 +81,16 @@ int main(int argc, char **argv) {
     }
 
     if (do_solve) {
-        move_t *solution = solve_facelets(facelets_to_solve);
+        move_t *solution = solve_facelets(facelets_to_solve, max_depth, 0, 1);
+
+        int length = 0;
 
         printf("solution:\n");
-        for (int i = 0; solution[i] != MOVE_NULL; i++) {
+        for (int i = 0; solution[i] != MOVE_NULL; i++, length++) {
             printf(" %s", move_to_str(solution[i]));
         }
         printf("\n");
+        printf("length: %d\n", length);
 
         free(solution);
         free(facelets_to_solve);
