@@ -16,12 +16,12 @@ static int do_benchmark   = 0;
 static int do_solve       = 0;
 static int rebuild_tables = 0;
 static int max_depth      = 25;
+static int n_solutions    = 1;
 
-static struct option long_options[] = {{"benchmarks", no_argument, &do_benchmark, 1},
-                                       {"rebuild-tables", no_argument, &rebuild_tables, 1},
-                                       {"solve", required_argument, 0, 's'},
-                                       {"max-depth", required_argument, 0, 'm'},
-                                       {0, 0, 0, 0}};
+static struct option long_options[] = {
+    {"benchmarks", no_argument, &do_benchmark, 1}, {"rebuild-tables", no_argument, &rebuild_tables, 1},
+    {"solve", required_argument, 0, 's'},          {"max-depth", required_argument, 0, 'm'},
+    {"n-solutions", required_argument, 0, 'n'},    {0, 0, 0, 0}};
 
 int main(int argc, char **argv) {
     char *facelets_to_solve = NULL;
@@ -57,6 +57,10 @@ int main(int argc, char **argv) {
                 max_depth = atoi(optarg);
             } break;
 
+            case 'n': {
+                n_solutions = atoi(optarg);
+            } break;
+
             case '?':
                 /* getopt_long already printed an error message. */
                 break;
@@ -81,7 +85,7 @@ int main(int argc, char **argv) {
     }
 
     if (do_solve) {
-        move_t *solution = solve_facelets(facelets_to_solve, max_depth, 0, 1);
+        move_t *solution = solve_facelets(facelets_to_solve, max_depth, 0, n_solutions);
 
         int length = 0;
 
