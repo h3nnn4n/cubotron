@@ -40,7 +40,7 @@ static move_t reverse_move[] = {
     /* MOVE_L1 */ MOVE_L3,
     /* MOVE_L2 */ MOVE_L2,
     /* MOVE_L3 */ MOVE_L1,
-    /* MOVE_B1 */ MOVE_B2,
+    /* MOVE_B1 */ MOVE_B3,
     /* MOVE_B2 */ MOVE_B2,
     /* MOVE_B3 */ MOVE_B1,
 };
