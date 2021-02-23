@@ -40,7 +40,7 @@ void apply_random_scramble(coord_cube_t *cube, int n_moves) {
 }
 
 void do_solve(coord_cube_t *cube) {
-    move_t *solution = solve(cube);
+    move_t *solution = solve_single(cube);
 
     if (solution == NULL) {
         printf("\nWarning: failed to solve!\n");

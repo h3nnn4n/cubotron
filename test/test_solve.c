@@ -33,7 +33,9 @@ void test_random_phase1_solving() {
 
         TEST_ASSERT_FALSE(is_phase1_solved(cube));
 
-        move_t *solution = solve_phase1(cube);
+        move_t *solution = solve_phase1(cube, 25, 0, 0);
+
+        TEST_ASSERT_TRUE(solution != NULL);
 
         for (int i = 0; solution[i] != MOVE_NULL; i++) {
             coord_apply_move(cube, solution[i]);
@@ -66,18 +68,22 @@ void test_random_phase2_solving() {
 
         // Apply phase1 solution
         {
-            move_t *solution = solve_phase1(cube);
+            move_t *solution = solve_phase1(cube, 25, 0, 0);
 
             for (int i = 0; solution[i] != MOVE_NULL; i++) {
                 coord_apply_move(cube, solution[i]);
             }
 
             TEST_ASSERT_TRUE(is_phase1_solved(cube));
+
+            free(solution);
         }
 
         TEST_ASSERT_FALSE(is_phase2_solved(cube));
 
-        move_t *solution = solve_phase2(cube);
+        move_t *solution = solve_phase2(cube, 20, 0);
+
+        TEST_ASSERT_TRUE(solution != NULL);
 
         for (int i = 0; solution[i] != MOVE_NULL; i++) {
             coord_apply_move(cube, solution[i]);
@@ -89,6 +95,26 @@ void test_random_phase2_solving() {
     }
 
     free(cube);
+}
+
+void test_facelets_solve_with_max_length() {
+    char *facelets = "DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL";
+
+    // Basic test, just gotta go fast
+    // Solution with length 19 takes too long
+    for (int max_length = 20; max_length < 22; max_length++) {
+        move_t *solution = solve_facelets(facelets, max_length, 0, 1);
+
+        TEST_ASSERT_TRUE(solution != NULL);
+
+        int length = 0;
+        for (int i = 0; solution[i] != MOVE_NULL; i++, length++) {
+        }
+
+        TEST_ASSERT_TRUE(length <= max_length);
+
+        free(solution);
+    }
 }
 
 void test_random_full_solver_with_random_scrambles() {
@@ -119,7 +145,7 @@ void test_random_full_solver_with_random_scrambles() {
 
         /*TEST_MESSAGE(buffer);*/
 
-        move_t *solution = solve(cube);
+        move_t *solution = solve_single(cube);
 
         for (int i = 0; solution[i] != MOVE_NULL; i++) {
             coord_apply_move(cube, solution[i]);
@@ -149,7 +175,7 @@ void test_random_full_solver_with_sample_cubes() {
 
         /*TEST_MESSAGE(buffer);*/
 
-        move_t *solution = solve(cube);
+        move_t *solution = solve_single(cube);
 
         for (int i = 0; solution[i] != MOVE_NULL; i++) {
             coord_apply_move(cube, solution[i]);
@@ -176,6 +202,7 @@ int main() {
 
     RUN_TEST(test_random_phase1_solving);
     RUN_TEST(test_random_phase2_solving);
+    RUN_TEST(test_facelets_solve_with_max_length);
     RUN_TEST(test_random_full_solver_with_random_scrambles);
     RUN_TEST(test_random_full_solver_with_sample_cubes);
 

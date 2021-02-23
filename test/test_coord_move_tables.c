@@ -88,9 +88,8 @@ void test_coord_orientation_changes() {
 }
 
 void test_moves_are_reversible() {
-    TEST_PASS();
-    const int n_moves = 10;
-    move_t    moves[50];
+    const int n_moves = 50;
+    move_t    moves[52];
 
     for (int i = 0; i < 1000; i++) {
         coord_cube_t *cube      = random_coord_cube();
@@ -100,18 +99,18 @@ void test_moves_are_reversible() {
         for (int i = 0; i < n_moves; i++) {
             moves[i] = pcg32_boundedrand_r(&rng, N_MOVES);
             coord_apply_move(cube, moves[i]);
-            printf("%s\n", move_to_str(moves[i]));
+            /*printf(" %s", move_to_str(moves[i]));*/
         }
 
-        printf("\n");
+        /*printf("\n");*/
 
-        // FIXME: as of now we dont have enough coordinates to diferentiate some cubes
-        /*TEST_ASSERT_FALSE(are_phase1_coord_equal(reference, cube));*/
+        TEST_ASSERT_FALSE(are_phase1_coord_equal(reference, cube));
 
         for (int i = n_moves - 1; i >= 0; i--) {
             coord_apply_move(cube, get_reverse_move(moves[i]));
-            printf("%s\n", move_to_str(moves[i]));
+            /*printf(" %s", move_to_str(get_reverse_move(moves[i])));*/
         }
+        /*printf("\n");*/
 
         TEST_ASSERT_TRUE(are_phase1_coord_equal(reference, cube));
 

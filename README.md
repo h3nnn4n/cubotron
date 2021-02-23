@@ -43,6 +43,12 @@ in the order U1-U9, R1-R9, F1-F9, D1-D9, L1-L9, B1-B9.
 For example, a completely solved cube is represented by the string
 `UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB`.
 
+It is possible to set `--max-depth MAX_DEPTH` to set an upper bound on the
+solution length. Any values equal or greater than 20 should finish in a couple
+of seconds. 19 or lower will take significantly longer, and also runs into the
+possibility of never finding a solution (i.e. optimal solution is 19 moves but
+`MAX_DEPTH` is 18).
+
 See [this](http://kociemba.org/cube.htm) for more information.
 
 Running `./cubotron --benchmarks` will solve as many cube as possible in 5
