@@ -240,12 +240,6 @@ void build_phase2_UD6_edge_table() {
 
                 int index = next_UD6_edge_permutation * N_SORTED_SLICES_PHASE2 + next_sorted_slice;
 
-                // Skip any moves that leaves phase2
-                // FIXME: This shouldn't be needed. I have no idea why or how
-                // we are leaving phase2 when only doing phase2 moves
-                if (index >= N_UD6_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2)
-                    continue;
-
                 assert(index >= 0);
                 assert(index < N_UD6_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2);
 
