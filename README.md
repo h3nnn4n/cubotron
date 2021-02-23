@@ -47,7 +47,10 @@ It is possible to set `--max-depth MAX_DEPTH` to set an upper bound on the
 solution length. Any values equal or greater than 20 should finish in a couple
 of seconds. 19 or lower will take significantly longer, and also runs into the
 possibility of never finding a solution (i.e. optimal solution is 19 moves but
-`MAX_DEPTH` is 18).
+`MAX_DEPTH` is 18). For reference, the
+`DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL` scramble solves in
+0.03s with 22 moves, 0.03s with 21 moves, 10s with 20 moves and 4~hours for 19
+moves. 24 hours was not enough to find a solution with lenght 18.
 
 See [this](http://kociemba.org/cube.htm) for more information.
 
