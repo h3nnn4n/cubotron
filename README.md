@@ -50,7 +50,7 @@ possibility of never finding a solution (i.e. optimal solution is 19 moves but
 `MAX_DEPTH` is 18). For reference, the
 `DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL` scramble solves in
 0.03s with 22 moves, 0.03s with 21 moves, 10s with 20 moves and 4~hours for 19
-moves. 24 hours was not enough to find a solution with lenght 18.
+moves. The solution with length 18 took 35 hours.
 
 See [this](http://kociemba.org/cube.htm) for more information.
 
