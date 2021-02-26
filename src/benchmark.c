@@ -40,15 +40,15 @@ void apply_random_scramble(coord_cube_t *cube, int n_moves) {
 }
 
 void do_solve(coord_cube_t *cube) {
-    move_t *solution = solve_single(cube);
+    solve_list_t *solution = solve_single(cube);
 
     if (solution == NULL) {
         printf("\nWarning: failed to solve!\n");
     } else {
         /*printf("solution:\n");*/
-        for (int i = 0; solution[i] != MOVE_NULL; i++) {
-            /*printf(" %s", move_to_str(solution[i]));*/
-            /*coord_apply_move(cube, solution[i]);*/
+        for (int i = 0; solution->solution[i] != MOVE_NULL; i++) {
+            /*printf(" %s", move_to_str(solution->solution[i]));*/
+            /*coord_apply_move(cube, solution->solution[i]);*/
         }
         /*printf("\n");*/
     }
