@@ -125,14 +125,14 @@ void test_random_full_solver_with_random_scrambles_single_solution() {
 
         int    n_moves   = 50;
         move_t moves[50] = {0};
-        for (int i = 0; i < n_moves; i++) {
-            moves[i] = pcg32_boundedrand(N_MOVES);
+        for (int j = 0; j < n_moves; j++) {
+            moves[j] = pcg32_boundedrand(N_MOVES);
 
             do {
-                moves[i] = pcg32_boundedrand(N_MOVES);
-            } while (i > 0 && moves[i] == moves[i - 1]);
+                moves[j] = pcg32_boundedrand(N_MOVES);
+            } while (j > 0 && moves[j] == moves[j - 1]);
 
-            coord_apply_move(cube, moves[i]);
+            coord_apply_move(cube, moves[j]);
         }
 
         TEST_ASSERT_FALSE(is_phase1_solved(cube));
@@ -168,14 +168,14 @@ void test_random_full_solver_with_random_scrambles_multiple_solution() {
 
         int    n_moves   = 50;
         move_t moves[50] = {0};
-        for (int i = 0; i < n_moves; i++) {
-            moves[i] = pcg32_boundedrand(N_MOVES);
+        for (int j = 0; j < n_moves; j++) {
+            moves[j] = pcg32_boundedrand(N_MOVES);
 
             do {
-                moves[i] = pcg32_boundedrand(N_MOVES);
-            } while (i > 0 && moves[i] == moves[i - 1]);
+                moves[j] = pcg32_boundedrand(N_MOVES);
+            } while (j > 0 && moves[j] == moves[j - 1]);
 
-            coord_apply_move(cube, moves[i]);
+            coord_apply_move(cube, moves[j]);
         }
 
         TEST_ASSERT_FALSE(is_phase1_solved(cube));
@@ -194,8 +194,8 @@ void test_random_full_solver_with_random_scrambles_multiple_solution() {
             coord_cube_t *cube_copy = get_coord_cube();
             copy_coord_cube(cube_copy, cube);
 
-            for (int i = 0; solution->solution[i] != MOVE_NULL; i++) {
-                coord_apply_move(cube_copy, solution->solution[i]);
+            for (int j = 0; solution->solution[j] != MOVE_NULL; j++) {
+                coord_apply_move(cube_copy, solution->solution[j]);
             }
 
             TEST_ASSERT_TRUE(is_phase1_solved(cube_copy));
@@ -241,43 +241,6 @@ void test_random_full_solver_with_sample_cubes_single_solution() {
     }
 }
 
-void test_random_full_solver_with_sample_cubes_multiple_solutions() {
-    for (int i = 0; i < N_FACELETS_SAMPLES / 20; i++) {
-        cube_cubie_t *cubie_cube = build_cubie_cube_from_str(sample_facelets[i]);
-        coord_cube_t *cube       = make_coord_cube(cubie_cube);
-
-        TEST_ASSERT_FALSE(is_phase1_solved(cube));
-        TEST_ASSERT_FALSE(is_phase2_solved(cube));
-
-        /*char buffer[512];*/
-
-        /*sprintf(buffer, "%4d %4d %3d %4d %4d", cube->edge_orientations, cube->corner_orientations, cube->E_slice,*/
-        /*cube->E_sorted_slice, cube->corner_permutations);*/
-
-        /*TEST_MESSAGE(buffer);*/
-
-        solve_list_t *solution = solve(cube, 25, 0, 5);
-
-        do {
-            coord_cube_t *cube_copy = get_coord_cube();
-            copy_coord_cube(cube_copy, cube);
-
-            for (int j = 0; solution->solution[j] != MOVE_NULL; j++) {
-                coord_apply_move(cube_copy, solution->solution[j]);
-            }
-
-            TEST_ASSERT_TRUE(is_phase1_solved(cube_copy));
-            TEST_ASSERT_TRUE(is_phase2_solved(cube_copy));
-
-            solution = solution->next;
-
-            free(cube_copy);
-        } while (solution != NULL && solution->solution != NULL);
-
-        free(cube);
-    }
-}
-
 void setUp() {}
 void tearDown() {}
 
@@ -295,7 +258,6 @@ int main() {
     RUN_TEST(test_random_full_solver_with_random_scrambles_single_solution);
     RUN_TEST(test_random_full_solver_with_random_scrambles_multiple_solution);
     RUN_TEST(test_random_full_solver_with_sample_cubes_single_solution);
-    RUN_TEST(test_random_full_solver_with_sample_cubes_multiple_solutions);
 
     return UNITY_END();
 }
