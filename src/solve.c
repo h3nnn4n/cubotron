@@ -12,28 +12,59 @@
 
 #define MAX_MOVES 30
 
-move_t *solve_facelets_single(char facelets[N_FACELETS]) { return solve_facelets(facelets, 30, 0, 1); }
+solve_list_t *new_solve_list_node() {
+    solve_list_t *node = (solve_list_t *)malloc(sizeof(solve_list_t));
 
-move_t *solve_facelets(char facelets[N_FACELETS], int max_depth, float timeout, int max_solutions) {
+    node->next            = NULL;
+    node->stats           = NULL;
+    node->phase1_solution = NULL;
+    node->phase2_solution = NULL;
+    node->solution        = NULL;
+
+    return node;
+}
+
+void destroy_solve_list_node(solve_list_t *node) {
+    if (node->phase1_solution != NULL) {
+        free(node->phase1_solution);
+        node->phase1_solution = NULL;
+    }
+
+    if (node->phase2_solution != NULL) {
+        free(node->phase2_solution);
+        node->phase2_solution = NULL;
+    }
+
+    if (node->solution != NULL) {
+        free(node->solution);
+        node->solution = NULL;
+    }
+
+    free(node);
+}
+
+solve_list_t *solve_facelets_single(char facelets[N_FACELETS]) { return solve_facelets(facelets, 30, 0, 1); }
+
+solve_list_t *solve_facelets(char facelets[N_FACELETS], int max_depth, float timeout, int max_solutions) {
     cube_cubie_t *cubie_cube = build_cubie_cube_from_str(facelets);
     coord_cube_t *cube       = make_coord_cube(cubie_cube);
-    move_t *      solution   = solve(cube, max_depth, timeout, max_solutions);
+    solve_list_t *solution   = solve(cube, max_depth, timeout, max_solutions);
 
     return solution;
 }
 
-move_t *solve_single(coord_cube_t *original_cube) {
-    move_t *solution = solve(original_cube, 40, 0, 1);
+solve_list_t *solve_single(coord_cube_t *original_cube) {
+    solve_list_t *solution = solve(original_cube, 40, 0, 1);
 
     return solution;
 }
 
-// TODO: Define a way to store all solutions
-move_t *solve(coord_cube_t *original_cube, int max_depth, float timeout, int max_solutions) {
-    coord_cube_t *cube = get_coord_cube();
+solve_list_t *solve(coord_cube_t *original_cube, int max_depth, float timeout, int max_solutions) {
+    solve_list_t *solves = new_solve_list_node();
+    coord_cube_t *cube   = get_coord_cube();
     copy_coord_cube(cube, original_cube);
 
-    move_t *solution = solve_phase1(cube, max_depth, timeout, max_solutions);
+    move_t *solution = solve_phase1(cube, max_depth, timeout, max_solutions, solves);
 
     if (solution == NULL) {
         free(solution);
@@ -54,11 +85,12 @@ move_t *solve(coord_cube_t *original_cube, int max_depth, float timeout, int max
 
     free(cube);
 
-    return solution;
+    return solves;
 }
 
 // FIXME: we need a decent way to get just the phase1 solution
-move_t *solve_phase1(coord_cube_t *cube, int max_depth, __attribute__((unused)) float timeout, int max_solutions) {
+move_t *solve_phase1(coord_cube_t *cube, int max_depth, __attribute__((unused)) float timeout, int max_solutions,
+                     solve_list_t *solves) {
     move_t *solution = NULL;
 
     move_t            move_stack[MAX_MOVES];
@@ -142,18 +174,25 @@ move_t *solve_phase1(coord_cube_t *cube, int max_depth, __attribute__((unused)) 
                     stats->phase1_depth      = pivot + 1;
                     stats->phase1_move_count = move_count;
                     stats->phase1_solve_time = (float)(end_time - phase2_time - start_time) / 1000000.0;
+
+                    if (solves != NULL) {
+                        solves->stats = stats;
+                    }
                 }
             }
 
             if (is_phase1_solved(cube_stack[pivot])) {
                 /*printf("phase1 solution found with depth %2d - ", pivot);*/
-                solution = malloc(sizeof(move_t) * (40));
+                solution                = malloc(sizeof(move_t) * (40));
+                move_t *phase1_solution = malloc(sizeof(move_t) * (40));
 
                 for (int i = 0; i <= pivot; i++) {
-                    solution[i] = move_stack[i];
+                    solution[i]        = move_stack[i];
+                    phase1_solution[i] = move_stack[i];
                     /*printf(" %s", move_to_str(solution[i]));*/
                 }
-                solution[pivot + 1] = MOVE_NULL;
+                solution[pivot + 1]        = MOVE_NULL;
+                phase1_solution[pivot + 1] = MOVE_NULL;
                 /*printf("\n");*/
 
                 // zero means just phase1 solution.
@@ -207,7 +246,17 @@ move_t *solve_phase1(coord_cube_t *cube, int max_depth, __attribute__((unused)) 
                     /*printf("length: %d\n", length);*/
                     /*printf("\n");*/
 
-                    free(phase2_solution);
+                    if (solves != NULL) {
+                        solves->phase1_solution = phase1_solution;
+                        solves->phase2_solution = phase2_solution;
+                        solves->solution        = solution;
+
+                        solves->next = new_solve_list_node();
+                        solves       = solves->next;
+                    } else {
+                        free(phase1_solution);
+                        free(phase2_solution);
+                    }
 
                     assert(is_coord_solved(phase2_cube));
 
@@ -245,6 +294,13 @@ solution_found:
     /*printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);*/
     /*printf("moves: %lu - ", move_count);*/
     /*printf("moves per second : %.2f\n", ((float)move_count / (end_time - start_time)) * 1000000.0);*/
+
+    // We allocate a new node eargely, but the last to be allocated will always
+    // have to be discarted, otherwise we would have an empty node at the end.
+    if (solves != NULL && solves->next != NULL) {
+        destroy_solve_list_node(solves->next);
+        solves->next = NULL;
+    }
 
     return solution;
 }

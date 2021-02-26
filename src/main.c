@@ -85,18 +85,23 @@ int main(int argc, char **argv) {
     }
 
     if (do_solve) {
-        move_t *solution = solve_facelets(facelets_to_solve, max_depth, 0, n_solutions);
+        solve_list_t *solution = solve_facelets(facelets_to_solve, max_depth, 0, n_solutions);
 
-        int length = 0;
+        do {
+            int length = 0;
 
-        printf("solution:\n");
-        for (int i = 0; solution[i] != MOVE_NULL; i++, length++) {
-            printf(" %s", move_to_str(solution[i]));
-        }
-        printf("\n");
-        printf("length: %d\n", length);
+            printf("solution:\n");
+            for (int i = 0; solution->solution[i] != MOVE_NULL; i++, length++) {
+                printf(" %s", move_to_str(solution->solution[i]));
+            }
+            printf("\n");
+            printf("length: %d\n", length);
 
-        free(solution);
+            /*solve_list_t *old_solution = solution;*/
+            solution = solution->next;
+            /*destroy_solve_list_node(old_solution);*/
+        } while (solution != NULL && solution->solution != NULL);
+
         free(facelets_to_solve);
     }
 
