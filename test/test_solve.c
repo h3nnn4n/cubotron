@@ -262,8 +262,8 @@ void test_random_full_solver_with_sample_cubes_multiple_solutions() {
             coord_cube_t *cube_copy = get_coord_cube();
             copy_coord_cube(cube_copy, cube);
 
-            for (int i = 0; solution->solution[i] != MOVE_NULL; i++) {
-                coord_apply_move(cube_copy, solution->solution[i]);
+            for (int j = 0; solution->solution[j] != MOVE_NULL; j++) {
+                coord_apply_move(cube_copy, solution->solution[j]);
             }
 
             TEST_ASSERT_TRUE(is_phase1_solved(cube_copy));
