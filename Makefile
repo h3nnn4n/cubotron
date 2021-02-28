@@ -1,4 +1,4 @@
-.DEFAULT_GOAL := test
+.DEFAULT_GOAL := build
 
 TARGET = $(notdir $(CURDIR))
 BUILDDIR = $(abspath $(CURDIR)/build)
@@ -25,7 +25,7 @@ ifeq ($(UNAME_S),Linux)
 endif
 ifeq ($(UNAME_S),Darwin)
   CFLAGS += -Wno-unused-command-line-argument
-  LDFLAGS = -lpcg_random -Wl,-Ldeps/Unity/build/,-Ldeps/pcg-c/src/
+  LDFLAGS = -lpcg_random -Wl,-Ldeps/pcg-c/src/
 endif
 
 CC = gcc
@@ -48,7 +48,7 @@ OBJS_NO_MAIN := $(filter-out %main.o, $(OBJS)) \
 
 all: build
 
-build: $(TARGET)
+build: pcg pcg_full $(TARGET)
 
 rebuild: clean $(TARGET)
 
@@ -64,7 +64,12 @@ test: pcg $(TEST_TARGETS)
 	$(foreach var,$(TEST_TARGETS),$(var) && ) echo $(ECHOFLAGS) "Everything in order"
 
 pcg:
-	$(MAKE) -C deps/pcg-c/src/
+	@echo $(ECHOFLAGS) "[CC]\tpcg core"
+	@$(MAKE) -s -C deps/pcg-c/src/
+
+pcg_full:
+	@echo $(ECHOFLAGS) "[CC]\tpcg full"
+	@$(MAKE) -s -C deps/pcg-c/
 
 pcg_clean:
 	@$(MAKE) clean -C deps/pcg-c/src/ > /dev/null
@@ -79,7 +84,7 @@ $(BUILDDIR)/%.o: %.c
 	@$(CC) $(CFLAGS) -o "$@" -c "$<"
 
 $(TARGET): $(OBJS)
-	@echo $(ECHOFLAGS) "[LD]\t$<"
+	@echo $(ECHOFLAGS) "[LD]\t$@"
 	@$(CC) -o "$@" $^ $(LDFLAGS) $(OPTIMIZATION)
 
 clean:

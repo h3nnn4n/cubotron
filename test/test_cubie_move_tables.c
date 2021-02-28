@@ -37,7 +37,7 @@ void test_cubie_apply_move_null_does_nothing() {
 
     cubie_apply_move(cube, MOVE_NULL);
 
-    TEST_ASSERT_TRUE(is_solved(cube));
+    TEST_ASSERT_TRUE(is_cubie_solved(cube));
 
     free(cube);
 }
@@ -50,7 +50,7 @@ void test_cubie_apply_move_U1_times_four_is_identity() {
     cubie_apply_move(cube, MOVE_U1);
     cubie_apply_move(cube, MOVE_U1);
 
-    TEST_ASSERT_TRUE(is_solved(cube));
+    TEST_ASSERT_TRUE(is_cubie_solved(cube));
 
     free(cube);
 }
@@ -63,7 +63,7 @@ void test_cubie_apply_move_U3_times_four_is_identity() {
     cubie_apply_move(cube, MOVE_U3);
     cubie_apply_move(cube, MOVE_U3);
 
-    TEST_ASSERT_TRUE(is_solved(cube));
+    TEST_ASSERT_TRUE(is_cubie_solved(cube));
 
     free(cube);
 }
@@ -74,7 +74,7 @@ void test_cubie_apply_move_U2_times_two_is_identity() {
     cubie_apply_move(cube, MOVE_U2);
     cubie_apply_move(cube, MOVE_U2);
 
-    TEST_ASSERT_TRUE(is_solved(cube));
+    TEST_ASSERT_TRUE(is_cubie_solved(cube));
 
     free(cube);
 }
@@ -85,12 +85,12 @@ void test_cubie_apply_move_U1_is_inverse_of_U3() {
     cubie_apply_move(cube, MOVE_U1);
     cubie_apply_move(cube, MOVE_U3);
 
-    TEST_ASSERT_TRUE(is_solved(cube));
+    TEST_ASSERT_TRUE(is_cubie_solved(cube));
 
     cubie_apply_move(cube, MOVE_U3);
     cubie_apply_move(cube, MOVE_U1);
 
-    TEST_ASSERT_TRUE(is_solved(cube));
+    TEST_ASSERT_TRUE(is_cubie_solved(cube));
 
     free(cube);
 }

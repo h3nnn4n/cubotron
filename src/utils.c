@@ -1,6 +1,12 @@
+#if !defined(__APPLE__)
+#define _XOPEN_SOURCE 500
+#endif
+
 #include <assert.h>
+#include <ftw.h>
 #include <stdio.h>
 #include <time.h>
+#include <unistd.h>
 
 #include <pcg_variants.h>
 
@@ -34,7 +40,7 @@ static move_t reverse_move[] = {
     /* MOVE_L1 */ MOVE_L3,
     /* MOVE_L2 */ MOVE_L2,
     /* MOVE_L3 */ MOVE_L1,
-    /* MOVE_B1 */ MOVE_B2,
+    /* MOVE_B1 */ MOVE_B3,
     /* MOVE_B2 */ MOVE_B2,
     /* MOVE_B3 */ MOVE_B1,
 };
@@ -63,7 +69,7 @@ int cubie_off_count(cube_cubie_t *cube) {
     return count;
 }
 
-int is_solved(cube_cubie_t *cube) { return cubie_off_count(cube) == 0; }
+int is_cubie_solved(cube_cubie_t *cube) { return cubie_off_count(cube) == 0; }
 
 char *move_to_str_enum(move_t move) {
     assert(move >= 0);
@@ -152,33 +158,6 @@ long get_microseconds(void) {
     return (long)(ts.tv_sec * 1000000000L + ts.tv_nsec) / 1000;
 }
 
-void coord_benchmark() {
-    coord_cube_t *cube = get_coord_cube();
-
-    move_t moves[1000];
-
-    for (int i = 0; i < 1000; i++)
-        moves[i] = pcg32_boundedrand(N_MOVES);
-
-    int  move_count = 0;
-    long start      = get_microseconds();
-    long end;
-
-    do {
-        for (int j = 0; j < 1000; j++) {
-            for (int i = 0; i < 1000; i++) {
-                coord_apply_move(cube, moves[i]);
-                move_count++;
-            }
-        }
-        end = get_microseconds();
-    } while (end - start < 1000000);
-
-    printf("elapsed time: %ld microseconds\n", end - start);
-    printf("moves: %d\n", move_count);
-    printf("moves / second : %.2f\n", ((float)move_count / (end - start)) * 1000000.0);
-}
-
 int Cnk(int n, int k) {
     int i, j, s;
 
@@ -213,3 +192,16 @@ void rotate_right(int *pieces, int l, int r) {
 
     pieces[l] = t;
 }
+
+// Copy paste from https://stackoverflow.com/a/5467788
+int unlink_cb(const char *fpath, __attribute__((unused)) const struct stat *sb, __attribute__((unused)) int typeflag,
+              __attribute__((unused)) struct FTW *ftwbuf) {
+    int rv = remove(fpath);
+
+    if (rv)
+        perror(fpath);
+
+    return rv;
+}
+
+int rmrf(char *path) { return nftw(path, unlink_cb, 64, FTW_DEPTH | FTW_PHYS); }

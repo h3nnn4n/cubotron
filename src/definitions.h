@@ -21,6 +21,15 @@
 #define N_FACELETS 54
 
 typedef enum {
+    U = 0,
+    R = 1,
+    F = 2,
+    D = 3,
+    L = 4,
+    B = 5,
+} color_t;
+
+typedef enum {
     URF = 0,
     UFL = 1,
     ULB = 2,

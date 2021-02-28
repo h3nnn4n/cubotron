@@ -6,7 +6,7 @@
 
 int is_bad_move(move_t move1, move_t move2);
 
-int   is_solved(cube_cubie_t *cube);
+int   is_cubie_solved(cube_cubie_t *cube);
 int   cubie_off_count(cube_cubie_t *cube);
 char *move_to_str_enum(move_t move);
 char *move_to_str(move_t move);
@@ -18,10 +18,11 @@ coord_cube_t *random_coord_cube();
 move_t get_reverse_move(move_t move);
 
 long get_microseconds(void);
-void coord_benchmark();
 
 int  Cnk(int n, int k);
 void rotate_left(int *pieces, int l, int r);
 void rotate_right(int *pieces, int l, int r);
+
+int rmrf(char *path);
 
 #endif /* end of include guard */

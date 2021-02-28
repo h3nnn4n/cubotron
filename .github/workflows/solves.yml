@@ -1,4 +1,4 @@
-name: Unit Tests
+name: Solves
 
 on: push
 
@@ -16,4 +16,4 @@ jobs:
           fetch-depth: 1
           submodules: true
       - name: Run Makefile
-        run: make test
+        run: make && ./solve_samples.sh

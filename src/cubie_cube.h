@@ -6,7 +6,7 @@
 #include "cubie_cube.h"
 #include "definitions.h"
 
-// Represents the cube at the cubie level, as a series of permutations
+// Represents the cube at the cubie level, as a series of permutations and orientations
 typedef struct {
     corner_t corner_permutations[8];
     edge_t   edge_permutations[12];

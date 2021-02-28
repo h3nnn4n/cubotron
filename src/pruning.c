@@ -55,8 +55,6 @@ int get_phase2_pruning(coord_cube_t *cube) {
     int value_edge   = pruning_phase2_UD6_edge[index_edge];
     int value_corner = pruning_phase2_corner[index_corner];
 
-    // return value_edge;
-    /*return value_corner;*/
     return value_edge > value_corner ? value_edge : value_corner;
 }
 
@@ -241,12 +239,6 @@ void build_phase2_UD6_edge_table() {
                 int next_sorted_slice         = sorted_slice_move_table[sorted_slice * N_MOVES + move];
 
                 int index = next_UD6_edge_permutation * N_SORTED_SLICES_PHASE2 + next_sorted_slice;
-
-                // Skip any moves that leaves phase2
-                // FIXME: This shouldn't be needed. I have no idea why or how
-                // we are leaving phase2 when only doing phase2 moves
-                if (index >= N_UD6_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2)
-                    continue;
 
                 assert(index >= 0);
                 assert(index < N_UD6_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2);

@@ -7,7 +7,7 @@
 void test_random_cubie_cube_not_solved() {
     cube_cubie_t *cube = random_cubie_cube();
 
-    TEST_ASSERT_FALSE(is_solved(cube));
+    TEST_ASSERT_FALSE(is_cubie_solved(cube));
 }
 
 void test_random_cubie_cube() {
