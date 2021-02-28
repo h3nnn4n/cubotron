@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdio.h>
 
 #include "coord_cube.h"
 #include "cubie_cube.h"

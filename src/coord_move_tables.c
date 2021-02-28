@@ -222,7 +222,12 @@ void build_UD7_edge_permutations_move_table() {
         for (int move = 0; move < N_MOVES; move++) {
             set_UD7_edges(cube, permutations);
             cubie_apply_move(cube, move);
-            move_table_UD7_edge_permutations[permutations * N_MOVES + move] = get_UD7_edges(cube);
+            int value = get_UD7_edges(cube);
+
+            assert(value >= 0);
+            assert(value < N_UD7_PHASE1_PERMUTATIONS);
+
+            move_table_UD7_edge_permutations[permutations * N_MOVES + move] = value;
         }
     }
 
