@@ -207,7 +207,12 @@ int get_UD7_edges(cube_cubie_t *cubiecube) {
     assert(permutation >= 0);
     assert(permutation < 5040);
 
-    return 5040 * combination + permutation;
+    int result = 5040 * combination + permutation;
+
+    assert(result >= 0);
+    assert(result < N_UD7_PHASE1_PERMUTATIONS);
+
+    return result;
 }
 
 void set_UD7_edges(cube_cubie_t *cubiecube, int idx) {
@@ -215,6 +220,12 @@ void set_UD7_edges(cube_cubie_t *cubiecube, int idx) {
     edge_t other_edges[5] = {DB, FR, FL, BL, BR};
     int    permutation    = idx % 5040;
     int    combination    = idx / 5040;
+
+    assert(combination >= 0);
+    assert(combination <= 791);
+
+    assert(permutation >= 0);
+    assert(permutation < 5040);
 
     for (int i = 0; i < N_EDGES; i++) {
         cubiecube->edge_permutations[i] = BR;
@@ -248,6 +259,8 @@ void set_UD7_edges(cube_cubie_t *cubiecube, int idx) {
             seen += 1;
         }
     }
+
+    assert(is_valid(cubiecube));
 }
 
 int get_UD6_edges(cube_cubie_t *cubiecube) {

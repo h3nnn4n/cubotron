@@ -54,7 +54,7 @@ void test_coord_sanity_brute_force() {
     coord_cube_t *coord_cube = get_coord_cube();
     cube_cubie_t *cubie_cube = init_cubie_cube();
 
-    for (int i = 0; i < 100000; i++) {
+    for (int i = 0; i < 250000; i++) {
         move_t move = pcg32_boundedrand_r(&rng, N_MOVES);
 
         cubie_apply_move(cubie_cube, move);

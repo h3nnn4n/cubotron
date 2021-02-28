@@ -374,21 +374,25 @@ void test_set_UD7_edges_and_get_UD7_edges() {
 void test_get_UD7_edges_and_set_UD7_edges() {
     cube_cubie_t *cube1 = init_cubie_cube();
     cube_cubie_t *cube2 = init_cubie_cube();
+    cube_cubie_t *cube3 = init_cubie_cube();
 
-    // Take 100k cubes and suffle them with 30 moves
-    for (int i = 0; i < 100000; i++) {
-        for (int j = 0; j < 30; j++)
-            cubie_apply_move(cube1, pcg32_boundedrand_r(&rng, N_MOVES));
+    // Apply 250 random moves to the test cube
+    for (int i = 0; i < 250000; i++) {
+        cubie_apply_move(cube1, pcg32_boundedrand_r(&rng, N_MOVES));
 
         int slice = get_UD7_edges(cube1);
         set_UD7_edges(cube2, slice);
         int slice2 = get_UD7_edges(cube2);
+        set_UD7_edges(cube3, slice2);
+        int slice3 = get_UD7_edges(cube3);
 
         TEST_ASSERT_EQUAL_INT(slice, slice2);
+        TEST_ASSERT_EQUAL_INT(slice, slice3);
     }
 
     free(cube1);
     free(cube2);
+    free(cube3);
 }
 
 void test_set_corner_permutations_only_makes_valid_cubes() {

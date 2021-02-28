@@ -15,6 +15,7 @@ void reset_coord_cube(coord_cube_t *cube) {
     cube->E_sorted_slice        = 0;
     cube->parity                = 0;
     cube->UD6_edge_permutations = 0;
+    cube->UD7_edge_permutations = 0;
     cube->corner_permutations   = 0;
 }
 
@@ -27,6 +28,7 @@ coord_cube_t *make_coord_cube(cube_cubie_t *cubie) {
     coord_cube->E_sorted_slice        = get_E_sorted_slice(cubie);
     coord_cube->parity                = get_edge_parity(cubie);
     coord_cube->UD6_edge_permutations = get_UD6_edges(cubie);
+    coord_cube->UD7_edge_permutations = get_UD7_edges(cubie);
     coord_cube->corner_permutations   = get_corner_permutations(cubie);
 
     return coord_cube;
@@ -39,6 +41,7 @@ void copy_coord_cube(coord_cube_t *dest, coord_cube_t *source) {
     dest->E_sorted_slice        = source->E_sorted_slice;
     dest->parity                = source->parity;
     dest->UD6_edge_permutations = source->UD6_edge_permutations;
+    dest->UD7_edge_permutations = source->UD7_edge_permutations;
     dest->corner_permutations   = source->corner_permutations;
 }
 
@@ -59,6 +62,9 @@ int are_all_coord_equal(coord_cube_t *cube1, coord_cube_t *cube2) {
         return 0;
 
     if (cube1->UD6_edge_permutations != cube2->UD6_edge_permutations)
+        return 0;
+
+    if (cube1->UD7_edge_permutations != cube2->UD7_edge_permutations)
         return 0;
 
     if (cube1->corner_permutations != cube2->corner_permutations)
