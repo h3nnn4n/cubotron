@@ -346,6 +346,55 @@ void test_get_UD6_edges_and_set_UD6_edges() {
     free(cube2);
 }
 
+void test_set_UD7_edges_only_makes_valid_cubes() {
+    cube_cubie_t *cube = init_cubie_cube();
+
+    for (int i = 0; i < N_UD7_PHASE1_PERMUTATIONS; i++) {
+        set_UD7_edges(cube, i);
+
+        TEST_ASSERT_TRUE(is_valid(cube));
+    }
+
+    free(cube);
+}
+
+void test_set_UD7_edges_and_get_UD7_edges() {
+    cube_cubie_t *cube = init_cubie_cube();
+
+    for (int i = 0; i < N_UD7_PHASE1_PERMUTATIONS; i++) {
+        set_UD7_edges(cube, i);
+        int slice = get_UD7_edges(cube);
+
+        TEST_ASSERT_EQUAL_INT(i, slice);
+    }
+
+    free(cube);
+}
+
+void test_get_UD7_edges_and_set_UD7_edges() {
+    cube_cubie_t *cube1 = init_cubie_cube();
+    cube_cubie_t *cube2 = init_cubie_cube();
+    cube_cubie_t *cube3 = init_cubie_cube();
+
+    // Apply 250 random moves to the test cube
+    for (int i = 0; i < 250000; i++) {
+        cubie_apply_move(cube1, pcg32_boundedrand_r(&rng, N_MOVES));
+
+        int slice = get_UD7_edges(cube1);
+        set_UD7_edges(cube2, slice);
+        int slice2 = get_UD7_edges(cube2);
+        set_UD7_edges(cube3, slice2);
+        int slice3 = get_UD7_edges(cube3);
+
+        TEST_ASSERT_EQUAL_INT(slice, slice2);
+        TEST_ASSERT_EQUAL_INT(slice, slice3);
+    }
+
+    free(cube1);
+    free(cube2);
+    free(cube3);
+}
+
 void test_set_corner_permutations_only_makes_valid_cubes() {
     cube_cubie_t *cube = init_cubie_cube();
 
@@ -473,6 +522,10 @@ int main() {
     RUN_TEST(test_set_UD6_edges_only_makes_valid_cubes);
     RUN_TEST(test_set_UD6_edges_and_get_UD6_edges);
     RUN_TEST(test_get_UD6_edges_and_set_UD6_edges);
+
+    RUN_TEST(test_set_UD7_edges_only_makes_valid_cubes);
+    RUN_TEST(test_set_UD7_edges_and_get_UD7_edges);
+    RUN_TEST(test_get_UD7_edges_and_set_UD7_edges);
 
     RUN_TEST(test_set_corner_permutations_only_makes_valid_cubes);
     RUN_TEST(test_set_corner_permutations_and_get_corner_permutations);
