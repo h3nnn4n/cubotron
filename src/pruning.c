@@ -11,6 +11,7 @@
 static int *pruning_phase1_edge     = NULL;
 static int *pruning_phase1_corner   = NULL;
 static int *pruning_phase2_UD6_edge = NULL;
+static int *pruning_phase2_UD7_edge = NULL;
 static int *pruning_phase2_corner   = NULL;
 
 void build_pruning_tables() {
@@ -18,6 +19,7 @@ void build_pruning_tables() {
     build_phase1_edge_table();
 
     build_phase2_UD6_edge_table();
+    build_phase2_UD7_edge_table();
     build_phase2_corner_table();
 }
 
@@ -38,24 +40,37 @@ int get_phase1_pruning(coord_cube_t *cube) {
     return value1 > value2 ? value1 : value2;
 }
 
+#define USE_UD7
 int get_phase2_pruning(coord_cube_t *cube) {
-    assert(pruning_phase2_UD6_edge != NULL);
     assert(pruning_phase2_corner != NULL);
-    assert(is_phase1_solved(cube)); // UD6_slices only works for phase2
+    assert(is_phase1_solved(cube)); // UD6_slices and UD7_slices only works for phase2
 
-    int index_edge   = cube->UD6_edge_permutations * N_SORTED_SLICES_PHASE2 + cube->E_sorted_slice;
     int index_corner = cube->corner_permutations * N_SORTED_SLICES_PHASE2 + cube->E_sorted_slice;
 
-    assert(index_edge >= 0);
     assert(index_corner >= 0);
-
-    assert(index_edge < N_UD6_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2);
     assert(index_corner < N_CORNER_PERMUTATIONS * N_SORTED_SLICES_PHASE2);
 
-    int value_edge   = pruning_phase2_UD6_edge[index_edge];
     int value_corner = pruning_phase2_corner[index_corner];
 
-    return value_edge > value_corner ? value_edge : value_corner;
+    int value_edge = 0;
+
+#if defined(USE_UD7)
+    assert(pruning_phase2_UD7_edge != NULL);
+    int index_UD7_edge = cube->UD7_edge_permutations * N_SORTED_SLICES_PHASE2 + cube->E_sorted_slice;
+    assert(index_UD7_edge >= 0);
+    assert(index_UD7_edge < N_UD7_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2);
+    int value_UD7_edge = pruning_phase2_UD7_edge[index_UD7_edge];
+    value_edge         = value_UD7_edge;
+#else
+    assert(pruning_phase2_UD6_edge != NULL);
+    int index_UD6_edge = cube->UD6_edge_permutations * N_SORTED_SLICES_PHASE2 + cube->E_sorted_slice;
+    assert(index_UD6_edge >= 0);
+    assert(index_UD6_edge < N_UD6_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2);
+    int value_UD6_edge = pruning_phase2_UD6_edge[index_UD6_edge];
+    value_edge         = value_UD6_edge;
+#endif
+
+    return MAX(value_corner, value_edge);
 }
 
 void build_phase1_corner_table() {
@@ -202,7 +217,7 @@ void build_phase2_UD6_edge_table() {
                                  N_UD6_PHASE2_PERMUTATIONS * N_SORTED_SLICES))
         return;
 
-    printf("bulding phase2 UD6_edge orientations pruning table\n");
+    printf("bulding phase2 UD6_edge permutations pruning table\n");
 
     long start_time         = get_microseconds();
     pruning_phase2_UD6_edge = (int *)malloc(sizeof(int) * N_UD6_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2);
@@ -254,7 +269,7 @@ void build_phase2_UD6_edge_table() {
 
         printf("finished depth %2d: %8d %8d %8d\n", depth, depth_dist[depth],
                (N_UD6_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2) - missing, missing);
-        assert(depth <= 13);
+        assert(depth <= 9);
         depth++;
     }
 
@@ -274,6 +289,88 @@ void build_phase2_UD6_edge_table() {
 
     pruning_table_cache_store("pruning_tables", "phase2_UD6_edge", pruning_phase2_UD6_edge,
                               N_UD6_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2);
+}
+
+void build_phase2_UD7_edge_table() {
+    if (pruning_phase2_UD7_edge != NULL)
+        return;
+
+    if (pruning_table_cache_load("pruning_tables", "phase2_UD7_edge", &pruning_phase2_UD7_edge,
+                                 N_UD7_PHASE2_PERMUTATIONS * N_SORTED_SLICES))
+        return;
+
+    printf("bulding phase2 UD7_edge permutations pruning table\n");
+
+    long start_time         = get_microseconds();
+    pruning_phase2_UD7_edge = (int *)malloc(sizeof(int) * N_UD7_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2);
+
+    for (int i = 0; i < N_UD7_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2; i++)
+        pruning_phase2_UD7_edge[i] = -1;
+
+    // The solved phase2 cube has coord zero and can be solved in zero moves
+    pruning_phase2_UD7_edge[0] = 0;
+
+    int *sorted_slice_move_table          = get_move_table_E_sorted_slice();
+    int *UD7_edge_permutations_move_table = get_move_table_UD7_edge_permutations();
+
+    int missing = N_UD7_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2 - 1;
+    int depth   = 0;
+
+    int depth_dist[20] = {0};
+
+    move_t moves[] = {MOVE_U1, MOVE_U2, MOVE_U3, MOVE_R2, MOVE_F2, MOVE_D1, MOVE_D2, MOVE_D3, MOVE_L2, MOVE_B2};
+    int    n_moves = 10;
+
+    while (missing > 0) {
+        for (int i = 0; i < N_UD7_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2; i++) {
+            if (pruning_phase2_UD7_edge[i] != depth)
+                continue;
+
+            int UD7_edge_permutation = i / N_SORTED_SLICES_PHASE2;
+            int sorted_slice         = i % N_SORTED_SLICES_PHASE2;
+
+            for (int move_index = 0; move_index < n_moves; move_index++) {
+                int move = moves[move_index];
+
+                int next_UD7_edge_permutation = UD7_edge_permutations_move_table[UD7_edge_permutation * N_MOVES + move];
+                int next_sorted_slice         = sorted_slice_move_table[sorted_slice * N_MOVES + move];
+
+                int index = next_UD7_edge_permutation * N_SORTED_SLICES_PHASE2 + next_sorted_slice;
+
+                assert(index >= 0);
+                assert(index < N_UD7_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2);
+
+                if (pruning_phase2_UD7_edge[index] == -1) {
+                    pruning_phase2_UD7_edge[index] = depth + 1;
+
+                    missing--;
+                    depth_dist[depth]++;
+                }
+            }
+        }
+
+        printf("finished depth %2d: %8d %8d %8d\n", depth, depth_dist[depth],
+               (N_UD7_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2) - missing, missing);
+        assert(depth <= 11);
+        depth++;
+    }
+
+    long end_time = get_microseconds();
+
+    printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);
+    printf("nodes per second : %.2f\n",
+           ((float)(N_UD7_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2) / (end_time - start_time)) * 1000000.0);
+    printf("\n");
+
+    for (int i = 0; i < N_UD7_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2; i++) {
+        if (pruning_phase2_UD7_edge[i] == -1) {
+            printf("phase2 edge pruning is not correctly populated!\n");
+            abort();
+        }
+    }
+
+    pruning_table_cache_store("pruning_tables", "phase2_UD7_edge", pruning_phase2_UD7_edge,
+                              N_UD7_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2);
 }
 
 void build_phase2_corner_table() {

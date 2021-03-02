@@ -4,6 +4,9 @@
 #include "coord_cube.h"
 #include "cubie_cube.h"
 
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
+
 int is_bad_move(move_t move1, move_t move2);
 
 int   is_cubie_solved(cube_cubie_t *cube);
