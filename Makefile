@@ -13,8 +13,33 @@ INCLUDES = -Isrc \
            -Ideps/pcg-c/include \
            -Ideps/pcg-c/extras
 
-OPTIMIZATION=-O3
-#OPTIMIZATION=-O0 -g
+# For profiling builds with gproftools
+OPTIMIZATION=-DWITHGPERFTOOLS \
+             -lprofiler \
+             -g \
+             -O2 \
+             -DNDEBUG \
+             -fno-inline-functions \
+             -fno-inline-functions-called-once \
+             -fno-optimize-sibling-calls \
+
+# For profiling builds with valgrind / callgrind
+OPTIMIZATION=-g \
+             -O2 \
+             -DNDEBUG \
+             -fno-inline-functions \
+             -fno-inline-functions-called-once \
+             -fno-optimize-sibling-calls \
+             #-fno-default-inline \
+             #-fno-inline
+
+# For "production" builds
+OPTIMIZATION=-O3 \
+             -DNDEBUG
+
+# For Debug builds
+#OPTIMIZATION=-O0 -g -pg
+
 
 override CFLAGS += -Wall -Wextra -pedantic -std=gnu11 $(OPTIMIZATION) $(OPTIONS) $(INCLUDES)
 
