@@ -1,4 +1,6 @@
+#include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "coord_cube.h"
 
@@ -9,14 +11,8 @@ coord_cube_t *get_coord_cube() {
 }
 
 void reset_coord_cube(coord_cube_t *cube) {
-    cube->edge_orientations     = 0;
-    cube->corner_orientations   = 0;
-    cube->E_slice               = 0;
-    cube->E_sorted_slice        = 0;
-    cube->parity                = 0;
-    cube->UD6_edge_permutations = 0;
-    cube->UD7_edge_permutations = 0;
-    cube->corner_permutations   = 0;
+    assert(cube != NULL);
+    memset(cube, 0, sizeof(coord_cube_t));
 }
 
 coord_cube_t *make_coord_cube(cube_cubie_t *cubie) {
@@ -35,14 +31,9 @@ coord_cube_t *make_coord_cube(cube_cubie_t *cubie) {
 }
 
 void copy_coord_cube(coord_cube_t *dest, coord_cube_t *source) {
-    dest->edge_orientations     = source->edge_orientations;
-    dest->corner_orientations   = source->corner_orientations;
-    dest->E_slice               = source->E_slice;
-    dest->E_sorted_slice        = source->E_sorted_slice;
-    dest->parity                = source->parity;
-    dest->UD6_edge_permutations = source->UD6_edge_permutations;
-    dest->UD7_edge_permutations = source->UD7_edge_permutations;
-    dest->corner_permutations   = source->corner_permutations;
+    assert(dest != NULL);
+    assert(source != NULL);
+    memcpy(dest, source, sizeof(coord_cube_t));
 }
 
 int are_all_coord_equal(coord_cube_t *cube1, coord_cube_t *cube2) {
