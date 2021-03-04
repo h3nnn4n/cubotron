@@ -13,32 +13,9 @@ INCLUDES = -Isrc \
            -Ideps/pcg-c/include \
            -Ideps/pcg-c/extras
 
-# For profiling builds with gproftools
-OPTIMIZATION=-DWITHGPERFTOOLS \
-             -lprofiler \
-             -g \
-             -O2 \
-             -DNDEBUG \
-             -fno-inline-functions \
-             -fno-inline-functions-called-once \
-             -fno-optimize-sibling-calls \
 
-# For profiling builds with valgrind / callgrind
-OPTIMIZATION=-g \
-             -O2 \
-             -DNDEBUG \
-             -fno-inline-functions \
-             -fno-inline-functions-called-once \
-             -fno-optimize-sibling-calls \
-             #-fno-default-inline \
-             #-fno-inline
-
-# For "production" builds
-OPTIMIZATION=-O3 \
-             -DNDEBUG
-
-# For Debug builds
-#OPTIMIZATION=-O0 -g -pg
+OPTIMIZATION=-O0 -g -pg
+OPTIMIZATION=-O3
 
 
 override CFLAGS += -Wall -Wextra -pedantic -std=gnu11 $(OPTIMIZATION) $(OPTIONS) $(INCLUDES)
@@ -74,6 +51,16 @@ OBJS_NO_MAIN := $(filter-out %main.o, $(OBJS)) \
 all: build
 
 build: pcg pcg_full $(TARGET)
+
+gperftools: gperftools_prepare build
+
+gperftools_prepare:
+	$(eval OPTIMIZATION=-DWITHGPERFTOOLS -lprofiler -ltcmalloc -g -O2 -DNDEBUG -fno-inline-functions -fno-inline-functions-called-once -fno-optimize-sibling-calls)
+
+callgrind: callgrind_prepare build
+
+callgrind_prepare:
+	$(eval OPTIMIZATION=-g -O2 -DNDEBUG -fno-inline-functions -fno-inline-functions-called-once -fno-optimize-sibling-calls -fno-default-inline -fno-inline)
 
 rebuild: clean $(TARGET)
 
