@@ -13,8 +13,6 @@ jobs:
           submodules: true
       - name: Install gproftools
         run: sudo apt-get install -y google-perftools libgoogle-perftools-dev && sudo ln -s /usr/lib/x86_64-linux-gnu/libtcmalloc.so /usr/lib/libtcmalloc.so
-      - name: Debug
-        run: echo $(which pprof)
       - name: Build
         run: make clean && make gperftools
       - name: Detect Leaks
