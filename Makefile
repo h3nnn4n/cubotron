@@ -34,8 +34,7 @@ OPTIMIZATION=-g \
              #-fno-inline
 
 # For "production" builds
-OPTIMIZATION=-O3 \
-             -DNDEBUG
+OPTIMIZATION=-O3 # -DNDEBUG
 
 # For Debug builds
 #OPTIMIZATION=-O0 -g -pg
