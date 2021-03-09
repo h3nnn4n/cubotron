@@ -155,4 +155,6 @@ void coord_benchmark() {
     printf("moves: %d\n", move_count);
     printf("moves per second : %.2f\n", ((float)move_count / (end_time - start_time)) * 1000000.0);
     printf("\n");
+
+    free(cube);
 }
