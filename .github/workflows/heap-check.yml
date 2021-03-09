@@ -19,6 +19,7 @@ jobs:
         run: make gperftools
 
   heapcheck-solve:
+    runs-on: ubuntu-20.04
     needs: build
     steps:
       - name: Detect Leaks (Solve)
@@ -27,6 +28,7 @@ jobs:
           HEAPCHECK: normal
 
   heapcheck-benchmarks:
+    runs-on: ubuntu-20.04
     needs: build
     steps:
       - name: Detect Leaks (benchmarks)
