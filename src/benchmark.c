@@ -41,18 +41,26 @@ void apply_random_scramble(coord_cube_t *cube, int n_moves) {
 
 void do_solve(coord_cube_t *cube) {
     solve_list_t *solution = solve_single(cube);
+    /*solve_list_t *solution = solve(cube, 22, 0, 1);*/
+    /*static int    solve_count = 0;*/
 
     if (solution == NULL) {
         printf("\nWarning: failed to solve!\n");
     } else {
-        /*printf("solution:\n");*/
-        for (int i = 0; solution->solution[i] != MOVE_NULL; i++) {
-            /*printf(" %s", move_to_str(solution->solution[i]));*/
-            /*coord_apply_move(cube, solution->solution[i]);*/
-        }
-        /*printf("\n");*/
+        /*solve_count++;*/
+        /*printf("%3d solution: ", solve_count);*/
+        /*int len = 0;*/
+        /*for (int i = 0; solution->solution[i] != MOVE_NULL; i++, len++) {*/
+        /*printf(" %s", move_to_str(solution->solution[i]));*/
+        /*coord_apply_move(cube, solution->solution[i]);*/
+        /*}*/
+        /*printf("  length: %2d\n", len);*/
     }
 
+    free(solution->next);
+    free(solution->phase1_solution);
+    free(solution->phase2_solution);
+    free(solution->solution);
     free(solution);
 
     /*assert(is_phase1_solved(cube));*/
@@ -104,6 +112,7 @@ void solve_cube_sample_library() {
         /*printf("\n");*/
         solve_count += 1;
 
+        free(cubie_cube);
         free(cube);
     }
 
