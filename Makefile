@@ -14,7 +14,6 @@ INCLUDES = -Isrc \
            -Ideps/pcg-c/extras
 
 
-OPTIMIZATION=-O0 -g -pg
 OPTIMIZATION=-O3
 
 
@@ -52,6 +51,11 @@ all: build
 
 build: pcg pcg_full $(TARGET)
 
+debug: debug_prepare build
+
+debug_prepare:
+	$(eval OPTIMIZATION=-g -pg -O0)
+
 gperftools: gperftools_prepare build
 
 gperftools_prepare:
@@ -69,7 +73,7 @@ retest: clean test
 run: $(TARGET)
 	$(CURDIR)/$(TARGET)
 
-gdb: $(TARGET)
+gdb: clean debug_prepare $(TARGET)
 	gdb $(CURDIR)/$(TARGET)
 
 test: pcg $(TEST_TARGETS)

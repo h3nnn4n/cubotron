@@ -33,7 +33,8 @@ void test_random_phase1_solving() {
 
         TEST_ASSERT_FALSE(is_phase1_solved(cube));
 
-        move_t *solution = solve_phase1(cube, 25, 0, 0, NULL);
+        solve_context_t *solve_context = make_solve_context(cube);
+        move_t *         solution      = solve_phase1(solve_context, 25, 0, 0, NULL);
 
         TEST_ASSERT_TRUE(solution != NULL);
 
@@ -66,9 +67,10 @@ void test_random_phase2_solving() {
             coord_apply_move(cube, moves[i]);
         }
 
+        solve_context_t *solve_context = make_solve_context(cube);
         // Apply phase1 solution
         {
-            move_t *solution = solve_phase1(cube, 25, 0, 0, NULL);
+            move_t *solution = solve_phase1(solve_context, 25, 0, 0, NULL);
 
             for (int i = 0; solution[i] != MOVE_NULL; i++) {
                 coord_apply_move(cube, solution[i]);
@@ -81,7 +83,8 @@ void test_random_phase2_solving() {
 
         TEST_ASSERT_FALSE(is_phase2_solved(cube));
 
-        move_t *solution = solve_phase2(cube, 20, 0);
+        copy_coord_cube(solve_context->phase2_context->cube, cube);
+        move_t *solution = solve_phase2(solve_context->phase2_context, 20, 0);
 
         TEST_ASSERT_TRUE(solution != NULL);
 

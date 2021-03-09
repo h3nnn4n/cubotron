@@ -10,8 +10,6 @@
 #include "stats.h"
 #include "utils.h"
 
-#define MAX_MOVES 30
-
 solve_list_t *new_solve_list_node() {
     solve_list_t *node = (solve_list_t *)malloc(sizeof(solve_list_t));
 
@@ -65,9 +63,10 @@ solve_list_t *solve_single(coord_cube_t *original_cube) {
 solve_list_t *solve(coord_cube_t *original_cube, int max_depth, float timeout, int max_solutions) {
     solve_list_t *solves = new_solve_list_node();
     coord_cube_t *cube   = get_coord_cube();
-    copy_coord_cube(cube, original_cube);
 
-    move_t *solution = solve_phase1(cube, max_depth, timeout, max_solutions, solves);
+    solve_context_t *solve_context = make_solve_context(original_cube);
+
+    move_t *solution = solve_phase1(solve_context, max_depth, timeout, max_solutions, solves);
 
     if (solution == NULL) {
         free(solution);
@@ -88,26 +87,23 @@ solve_list_t *solve(coord_cube_t *original_cube, int max_depth, float timeout, i
 
     free(cube);
 
+    destroy_solve_context(solve_context);
+
     return solves;
 }
 
 // FIXME: we need a decent way to get just the phase1 solution
-move_t *solve_phase1(coord_cube_t *cube, int max_depth, __attribute__((unused)) float timeout, int max_solutions,
-                     solve_list_t *solves) {
+move_t *solve_phase1(solve_context_t *solve_context, int max_depth, __attribute__((unused)) float timeout,
+                     int max_solutions, solve_list_t *solves) {
     move_t *solution = NULL;
 
-    move_t            move_stack[MAX_MOVES];
-    int               pruning_stack[MAX_MOVES];
-    coord_cube_t *    cube_stack[MAX_MOVES];
-    unsigned long int move_count = 0;
+    coord_cube_t * cube          = solve_context->cube;
+    move_t *       move_stack    = solve_context->move_stack;
+    coord_cube_t **cube_stack    = solve_context->cube_stack;
+    int *          pruning_stack = solve_context->pruning_stack;
 
-    int solution_count = 0;
-
-    for (int i = 0; i < MAX_MOVES; i++) {
-        move_stack[i]    = -1;
-        pruning_stack[i] = -1;
-        cube_stack[i]    = get_coord_cube();
-    }
+    int  solution_count = 0;
+    long move_count     = 0;
 
     long phase2_time = 0;
     long start_time  = get_microseconds();
@@ -205,11 +201,11 @@ move_t *solve_phase1(coord_cube_t *cube, int max_depth, __attribute__((unused)) 
                     goto solution_found;
                 }
 
-                coord_cube_t *phase2_cube = get_coord_cube();
-                copy_coord_cube(phase2_cube, cube_stack[pivot]);
+                copy_coord_cube(solve_context->phase2_context->cube, cube_stack[pivot]);
+                coord_cube_t *phase2_cube = solve_context->phase2_context->cube;
 
                 long    phase2_start    = get_microseconds();
-                move_t *phase2_solution = solve_phase2(phase2_cube, max_depth - pivot - 1, 0);
+                move_t *phase2_solution = solve_phase2(solve_context->phase2_context, max_depth - pivot - 1, 0);
                 long    phase2_end      = get_microseconds();
                 phase2_time += phase2_end - phase2_start;
 
@@ -272,12 +268,11 @@ move_t *solve_phase1(coord_cube_t *cube, int max_depth, __attribute__((unused)) 
                     finish_stats();
                 }
 
-                free(phase2_cube);
-
                 if (max_solutions != -1 && solution_count >= max_solutions) {
                     goto solution_found;
                 } else {
                     /*free(solution);*/
+                    /*solution = NULL;*/
                 }
             }
 
@@ -296,10 +291,6 @@ move_t *solve_phase1(coord_cube_t *cube, int max_depth, __attribute__((unused)) 
 
 solution_found:
 
-    for (int i = 0; i < MAX_MOVES; i++) {
-        free(cube_stack[i]);
-    }
-
     /*printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);*/
     /*printf("moves: %lu - ", move_count);*/
     /*printf("moves per second : %.2f\n", ((float)move_count / (end_time - start_time)) * 1000000.0);*/
@@ -314,23 +305,25 @@ solution_found:
     return solution;
 }
 
-move_t *solve_phase2(coord_cube_t *cube, int max_depth, __attribute__((unused)) float timeout) {
+move_t *solve_phase2(solve_context_t *solve_context, int max_depth, __attribute__((unused)) float timeout) {
     move_t *solution = NULL;
     move_t  moves[]  = {MOVE_U1, MOVE_U2, MOVE_U3, MOVE_D1, MOVE_D2, MOVE_D3, MOVE_R2, MOVE_L2, MOVE_F2, MOVE_B2};
     int     n_moves  = 10;
 
-    move_t        move_stack[MAX_MOVES];
-    coord_cube_t *cube_stack[MAX_MOVES];
-    int           pruning_stack[MAX_MOVES];
-    int           move_count = 0;
-
     for (int i = 0; i < MAX_MOVES; i++) {
-        move_stack[i]    = -1;
-        pruning_stack[i] = -1;
-        cube_stack[i]    = get_coord_cube();
+        solve_context->move_stack[i]    = -1;
+        solve_context->pruning_stack[i] = -1;
+        reset_coord_cube(solve_context->cube_stack[i]);
     }
 
-    copy_coord_cube(cube_stack[0], cube);
+    copy_coord_cube(solve_context->cube_stack[0], solve_context->cube);
+
+    long move_count = 0;
+
+    coord_cube_t * cube          = solve_context->cube;
+    move_t *       move_stack    = solve_context->move_stack;
+    coord_cube_t **cube_stack    = solve_context->cube_stack;
+    int *          pruning_stack = solve_context->pruning_stack;
 
     long start_time = get_microseconds();
     long end_time   = 0;
@@ -413,9 +406,49 @@ move_t *solve_phase2(coord_cube_t *cube, int max_depth, __attribute__((unused)) 
 
 solution_found:
 
+    return solution;
+}
+
+solve_context_t *make_solve_context(coord_cube_t *cube) {
+    solve_context_t *phase1_context = (solve_context_t *)malloc(sizeof(solve_context_t));
+    solve_context_t *phase2_context = (solve_context_t *)malloc(sizeof(solve_context_t));
+
     for (int i = 0; i < MAX_MOVES; i++) {
-        free(cube_stack[i]);
+        phase1_context->cube_stack[i] = get_coord_cube();
+        phase2_context->cube_stack[i] = get_coord_cube();
     }
 
-    return solution;
+    clear_solve_context(phase1_context);
+    clear_solve_context(phase2_context);
+
+    phase1_context->cube = get_coord_cube();
+    phase2_context->cube = get_coord_cube();
+
+    copy_coord_cube(phase1_context->cube, cube);
+
+    phase1_context->phase2_context = phase2_context;
+    phase2_context->phase2_context = NULL;
+
+    return phase1_context;
+}
+
+void clear_solve_context(solve_context_t *solve_context) {
+    for (int i = 0; i < MAX_MOVES; i++) {
+        solve_context->move_stack[i]    = -1;
+        solve_context->pruning_stack[i] = -1;
+    }
+}
+
+void destroy_solve_context(solve_context_t *context) {
+    assert(context != NULL);
+
+    if (context->phase2_context != NULL)
+        destroy_solve_context(context->phase2_context);
+
+    for (int i = 0; i < MAX_MOVES; i++) {
+        free(context->cube_stack[i]);
+    }
+
+    free(context->cube);
+    free(context);
 }
