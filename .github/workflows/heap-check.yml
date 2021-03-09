@@ -18,6 +18,17 @@ jobs:
       - name: Build
         run: make gperftools
 
+     - name: Cache Move Tables
+       id: cache-move-tables
+       uses: actions/cache@v2
+       with:
+         path: move_tables
+         key: cache-move-tables
+
+      - name: Build Tables
+        if: steps.cache-move-tables.outputs.cache-hit != 'true'
+        run: ./cubotron --rebuild-tables
+
   heapcheck-solve:
     runs-on: ubuntu-20.04
     needs: build
