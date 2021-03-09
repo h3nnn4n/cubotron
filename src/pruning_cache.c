@@ -8,7 +8,7 @@
 
 int pruning_table_cache_load(char *cache_name, char *table_name, int **pruning_table, int table_size) {
     char filepath[512];
-    snprintf(filepath, 511, "%s/%s", cache_name, table_name);
+    snprintf(filepath, 511, "cache/%s/%s", cache_name, table_name);
 
     if (!file_exists(filepath))
         return 0;
@@ -39,10 +39,13 @@ int pruning_table_cache_load(char *cache_name, char *table_name, int **pruning_t
 
 void pruning_table_cache_store(char *cache_name, char *table_name, int *pruning_table, int table_size) {
     char filepath[512];
-    snprintf(filepath, 511, "%s/%s", cache_name, table_name);
+    char cachepath[512];
+
+    snprintf(filepath, 511, "cache/%s/%s", cache_name, table_name);
+    snprintf(cachepath, 511, "cache/%s", cache_name);
 
     long start_time = get_microseconds();
-    ensure_directory_exists(cache_name);
+    ensure_directory_exists(cachepath);
 
     FILE *        f             = fopen(filepath, "wb");
     unsigned long bytes_written = fwrite(pruning_table, sizeof(int), table_size, f);
