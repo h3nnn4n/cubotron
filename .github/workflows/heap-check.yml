@@ -11,14 +11,24 @@ jobs:
         with:
           fetch-depth: 1
           submodules: true
+
       - name: Install gproftools
         run: sudo apt-get install -y google-perftools libgoogle-perftools-dev && sudo ln -s /usr/lib/x86_64-linux-gnu/libtcmalloc.so /usr/lib/libtcmalloc.so
+
       - name: Debug
         run: echo $(which pprof)
+
       - name: Build
         run: make clean && make gperftools
-      - name: Detect Leaks
+
+      - name: Detect Leaks (Solve)
         run: ./cubotron --solve DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL --max-depth=21 --n-solutions=2
+        env:
+          PPROF_PATH: $(which pprof)
+          HEAPCHECK: normal
+
+      - name: Detect Leaks (benchmarks)
+        run: ./cubotron --benchmarks
         env:
           PPROF_PATH: $(which pprof)
           HEAPCHECK: normal
