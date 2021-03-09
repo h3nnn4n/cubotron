@@ -423,6 +423,7 @@ solve_context_t *make_solve_context(coord_cube_t *cube) {
     copy_coord_cube(phase1_context->cube, cube);
 
     phase1_context->phase2_context = phase2_context;
+    phase2_context->phase2_context = NULL;
 
     return phase1_context;
 }
