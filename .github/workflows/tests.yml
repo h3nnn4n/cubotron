@@ -16,6 +16,9 @@ jobs:
           fetch-depth: 1
           submodules: true
 
+      - name: Build
+        run: make
+
       - name: Cache Tables
         id: cache-tables
         uses: actions/cache@v2
@@ -27,5 +30,5 @@ jobs:
         if: steps.cache-tables.outputs.cache-hit != 'true'
         run: ./cubotron --rebuild-tables
 
-      - name: Run Makefile
+      - name: Run Tests
         run: make test
