@@ -48,6 +48,8 @@ solve_list_t *solve_facelets(char facelets[N_FACELETS], int max_depth, float tim
     coord_cube_t *cube       = make_coord_cube(cubie_cube);
     solve_list_t *solution   = solve(cube, max_depth, timeout, max_solutions);
 
+    free(cubie_cube);
+
     return solution;
 }
 
@@ -83,6 +85,8 @@ solve_list_t *solve(coord_cube_t *original_cube, int max_depth, float timeout, i
     }
 
     free(cube);
+
+    destroy_solve_context(solve_context);
 
     return solves;
 }
@@ -279,10 +283,6 @@ move_t *solve_phase1(solve_context_t *solve_context, int max_depth, __attribute_
 
 solution_found:
 
-    for (int i = 0; i < MAX_MOVES; i++) {
-        free(cube_stack[i]);
-    }
-
     /*printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);*/
     /*printf("moves: %lu - ", move_count);*/
     /*printf("moves per second : %.2f\n", ((float)move_count / (end_time - start_time)) * 1000000.0);*/
@@ -305,7 +305,7 @@ move_t *solve_phase2(solve_context_t *solve_context, int max_depth, __attribute_
     for (int i = 0; i < MAX_MOVES; i++) {
         solve_context->move_stack[i]    = -1;
         solve_context->pruning_stack[i] = -1;
-        solve_context->cube_stack[i]    = get_coord_cube();
+        reset_coord_cube(solve_context->cube_stack[i]);
     }
 
     copy_coord_cube(solve_context->cube_stack[0], solve_context->cube);
@@ -398,10 +398,6 @@ move_t *solve_phase2(solve_context_t *solve_context, int max_depth, __attribute_
 
 solution_found:
 
-    for (int i = 0; i < MAX_MOVES; i++) {
-        free(cube_stack[i]);
-    }
-
     return solution;
 }
 
@@ -432,4 +428,18 @@ void clear_solve_context(solve_context_t *solve_context) {
         solve_context->move_stack[i]    = -1;
         solve_context->pruning_stack[i] = -1;
     }
+}
+
+void destroy_solve_context(solve_context_t *context) {
+    assert(context != NULL);
+
+    if (context->phase2_context != NULL)
+        destroy_solve_context(context->phase2_context);
+
+    for (int i = 0; i < MAX_MOVES; i++) {
+        free(context->cube_stack[i]);
+    }
+
+    free(context->cube);
+    free(context);
 }
