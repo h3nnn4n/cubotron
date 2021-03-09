@@ -1,0 +1,29 @@
+name: Memory leak check
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@master
+        with:
+          fetch-depth: 1
+          submodules: true
+
+      - name: Install gproftools
+        run: sudo apt-get install -y google-perftools libgoogle-perftools-dev && sudo ln -s /usr/lib/x86_64-linux-gnu/libtcmalloc.so /usr/lib/libtcmalloc.so
+
+      - name: Build
+        run: make clean && make gperftools
+
+      - name: Detect Leaks (Solve)
+        run: ./cubotron --solve DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL --max-depth=21 --n-solutions=5
+        env:
+          HEAPCHECK: normal
+
+      - name: Detect Leaks (benchmarks)
+        run: ./cubotron --benchmarks
+        env:
+          HEAPCHECK: normal

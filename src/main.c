@@ -97,11 +97,17 @@ int main(int argc, char **argv) {
             printf("\n");
             printf("length: %d\n", length);
 
-            /*solve_list_t *old_solution = solution;*/
+            solve_list_t *old_solution = solution;
+
             solution = solution->next;
-            /*destroy_solve_list_node(old_solution);*/
+
+            free(old_solution->phase1_solution);
+            free(old_solution->phase2_solution);
+            free(old_solution->solution);
+            free(old_solution);
         } while (solution != NULL && solution->solution != NULL);
 
+        free(solution);
         free(facelets_to_solve);
     }
 
