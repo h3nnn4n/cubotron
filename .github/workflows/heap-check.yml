@@ -19,14 +19,14 @@ jobs:
         run: make gperftools
 
       - name: Cache Move Tables
-        id: cache-move-tables
+        id: cache-tables
         uses: actions/cache@v2
         with:
           path: cache
-          key: cache-move-tables
+          key: cache-tables
 
       - name: Build Tables
-        if: steps.cache-move-tables.outputs.cache-hit != 'true'
+        if: steps.cache-tables.outputs.cache-hit != 'true'
         run: ./cubotron --rebuild-tables
 
       - name: Detect Leaks (Solve)
@@ -50,14 +50,14 @@ jobs:
         run: make gperftools
 
       - name: Cache Move Tables
-        id: cache-move-tables
+        id: cache-tables
         uses: actions/cache@v2
         with:
           path: cache
-          key: cache-move-tables
+          key: cache-tables
 
       - name: Build Tables
-        if: steps.cache-move-tables.outputs.cache-hit != 'true'
+        if: steps.cache-tables.outputs.cache-hit != 'true'
         run: ./cubotron --rebuild-tables
 
       - name: Detect Leaks (benchmarks)
