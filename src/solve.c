@@ -293,6 +293,10 @@ move_t *solve_phase1(coord_cube_t *cube, int max_depth, __attribute__((unused)) 
 
 solution_found:
 
+    for (int i = 0; i < MAX_MOVES; i++) {
+        free(cube_stack[i]);
+    }
+
     /*printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);*/
     /*printf("moves: %lu - ", move_count);*/
     /*printf("moves per second : %.2f\n", ((float)move_count / (end_time - start_time)) * 1000000.0);*/
@@ -405,6 +409,10 @@ move_t *solve_phase2(coord_cube_t *cube, int max_depth, __attribute__((unused)) 
     }
 
 solution_found:
+
+    for (int i = 0; i < MAX_MOVES; i++) {
+        free(cube_stack[i]);
+    }
 
     return solution;
 }
