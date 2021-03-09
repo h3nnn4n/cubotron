@@ -51,6 +51,7 @@ solve_list_t *solve_facelets(char facelets[N_FACELETS], int max_depth, float tim
     solve_list_t *solution   = solve(cube, max_depth, timeout, max_solutions);
 
     free(cubie_cube);
+    free(cube);
 
     return solution;
 }
