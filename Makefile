@@ -13,9 +13,7 @@ INCLUDES = -Isrc \
            -Ideps/pcg-c/include \
            -Ideps/pcg-c/extras
 
-
 OPTIMIZATION=-O3
-
 
 override CFLAGS += -Wall -Wextra -pedantic -std=gnu11 $(OPTIMIZATION) $(OPTIONS) $(INCLUDES)
 
@@ -91,8 +89,8 @@ pcg_clean:
 	@$(MAKE) clean -C deps/pcg-c/src/ > /dev/null
 
 $(TEST_TARGETS): $(OBJS_NO_MAIN) $(OBJS_TEST)
-	@echo $(ECHOFLAGS) "[LD]\t$<"
-	$(CC) -o "$@" $@.o $(OBJS_NO_MAIN) $(LDFLAGS) $(OPTIMIZATION)
+	@echo $(ECHOFLAGS) "[LD]\t$@"
+	@$(CC) -o "$@" $@.o $(OBJS_NO_MAIN) $(LDFLAGS) $(OPTIMIZATION)
 
 $(BUILDDIR)/%.o: %.c
 	@echo $(ECHOFLAGS) "[CC]\t$<"
