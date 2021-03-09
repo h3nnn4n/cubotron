@@ -19,6 +19,7 @@ jobs:
         run: make gperftools
 
   heapcheck-solve:
+    needs: build
     steps:
       - name: Detect Leaks (Solve)
         run: ./cubotron --solve DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL --max-depth=21 --n-solutions=5
@@ -26,6 +27,7 @@ jobs:
           HEAPCHECK: normal
 
   heapcheck-benchmarks:
+    needs: build
     steps:
       - name: Detect Leaks (benchmarks)
         run: ./cubotron --benchmarks
