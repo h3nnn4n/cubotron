@@ -1,9 +1,9 @@
-name: Solves
+name: Run Solver on cube library
 
 on: push
 
 jobs:
-  build:
+  run-solver:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -15,5 +15,20 @@ jobs:
         with:
           fetch-depth: 1
           submodules: true
-      - name: Run Makefile
-        run: make && ./solve_samples.sh
+
+      - name: Cache Tables
+        id: cache-tables
+        uses: actions/cache@v2
+        with:
+          path: cache
+          key: cache-tables
+
+      - name: Build Tables
+        if: steps.cache-tables.outputs.cache-hit != 'true'
+        run: ./cubotron --rebuild-tables
+
+      - name: Build
+        run: make
+
+      - name: Run Solver
+        run: ./solve_samples.sh
