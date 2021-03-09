@@ -1,9 +1,9 @@
-name: Benchmarks
+name: Run Benchmarks
 
 on: push
 
 jobs:
-  build:
+  run-benchmarks:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -15,5 +15,20 @@ jobs:
         with:
           fetch-depth: 1
           submodules: true
-      - name: Run Makefile
-        run: make && ./cubotron --benchmarks
+
+      - name: Cache Tables
+        id: cache-tables
+        uses: actions/cache@v2
+        with:
+          path: cache
+          key: cache-tables
+
+      - name: Build Tables
+        if: steps.cache-tables.outputs.cache-hit != 'true'
+        run: ./cubotron --rebuild-tables
+
+      - name: Build
+        run: make
+
+      - name: Run benchmarks
+        run: ./cubotron --benchmarks
