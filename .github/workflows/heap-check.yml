@@ -3,7 +3,7 @@ name: Memory leak check
 on: push
 
 jobs:
-  build:
+  heapcheck-solve:
     runs-on: ubuntu-20.04
 
     steps:
@@ -29,10 +29,6 @@ jobs:
         if: steps.cache-move-tables.outputs.cache-hit != 'true'
         run: ./cubotron --rebuild-tables
 
-  heapcheck-solve:
-    runs-on: ubuntu-20.04
-    needs: build
-    steps:
       - name: Detect Leaks (Solve)
         run: ./cubotron --solve DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL --max-depth=21 --n-solutions=5
         env:
@@ -40,8 +36,30 @@ jobs:
 
   heapcheck-benchmarks:
     runs-on: ubuntu-20.04
-    needs: build
+
     steps:
+      - uses: actions/checkout@master
+        with:
+          fetch-depth: 1
+          submodules: true
+
+      - name: Install gproftools
+        run: sudo apt-get install -y google-perftools libgoogle-perftools-dev && sudo ln -s /usr/lib/x86_64-linux-gnu/libtcmalloc.so /usr/lib/libtcmalloc.so
+
+      - name: Build
+        run: make gperftools
+
+     - name: Cache Move Tables
+       id: cache-move-tables
+       uses: actions/cache@v2
+       with:
+         path: move_tables
+         key: cache-move-tables
+
+      - name: Build Tables
+        if: steps.cache-move-tables.outputs.cache-hit != 'true'
+        run: ./cubotron --rebuild-tables
+
       - name: Detect Leaks (benchmarks)
         run: ./cubotron --benchmarks
         env:
