@@ -43,5 +43,6 @@ void          destroy_solve_list_node(solve_list_t *node);
 
 solve_context_t *make_solve_context(coord_cube_t *cube);
 void             clear_solve_context(solve_context_t *solve_context);
+void             destroy_solve_context(solve_context_t *context);
 
 #endif /* end of include guard */
