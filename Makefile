@@ -55,7 +55,7 @@ build: pcg pcg_full $(TARGET)
 gperftools: gperftools_prepare build
 
 gperftools_prepare:
-	$(eval OPTIMIZATION=-DWITHGPERFTOOLS -lprofiler -ltcmalloc -g -O2 -DNDEBUG -fno-inline-functions -fno-inline-functions-called-once -fno-optimize-sibling-calls)
+	$(eval OPTIMIZATION=-DWITHGPERFTOOLS -lprofiler -ltcmalloc -g -pg -O2 -DNDEBUG -fno-inline-functions -fno-inline-functions-called-once -fno-optimize-sibling-calls)
 
 callgrind: callgrind_prepare build
 
