@@ -214,8 +214,12 @@ move_t *solve_phase1(coord_cube_t *cube, int max_depth, __attribute__((unused)) 
                 phase2_time += phase2_end - phase2_start;
 
                 if (phase2_solution == NULL) {
+                    free(solution);
+                    solution = NULL;
+
                     free(phase1_solution);
                     phase1_solution = NULL;
+
                     /*printf("failed to solve phase2\n");*/
                 } else {
                     solution_count += 1;
@@ -273,8 +277,7 @@ move_t *solve_phase1(coord_cube_t *cube, int max_depth, __attribute__((unused)) 
                 if (max_solutions != -1 && solution_count >= max_solutions) {
                     goto solution_found;
                 } else {
-                    free(solution);
-                    solution = NULL;
+                    /*free(solution);*/
                 }
             }
 
