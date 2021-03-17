@@ -34,7 +34,9 @@ void test_random_phase1_solving() {
         TEST_ASSERT_FALSE(is_phase1_solved(cube));
 
         solve_context_t *solve_context = make_solve_context(cube);
-        move_t *         solution      = solve_phase1(solve_context, 25, 0, 0, NULL);
+        config_t *       config        = get_config();
+        config->n_solutions            = 0;
+        move_t *solution               = solve_phase1(solve_context, config, NULL);
 
         TEST_ASSERT_TRUE(solution != NULL);
 
@@ -70,7 +72,9 @@ void test_random_phase2_solving() {
         solve_context_t *solve_context = make_solve_context(cube);
         // Apply phase1 solution
         {
-            move_t *solution = solve_phase1(solve_context, 25, 0, 0, NULL);
+            config_t *config    = get_config();
+            config->n_solutions = 0;
+            move_t *solution    = solve_phase1(solve_context, config, NULL);
 
             for (int i = 0; solution[i] != MOVE_NULL; i++) {
                 coord_apply_move(cube, solution[i]);
@@ -84,7 +88,8 @@ void test_random_phase2_solving() {
         TEST_ASSERT_FALSE(is_phase2_solved(cube));
 
         copy_coord_cube(solve_context->phase2_context->cube, cube);
-        move_t *solution = solve_phase2(solve_context->phase2_context, 20, 0);
+        config_t *config   = get_config();
+        move_t *  solution = solve_phase2(solve_context->phase2_context, config, 20);
 
         TEST_ASSERT_TRUE(solution != NULL);
 
@@ -106,7 +111,9 @@ void test_facelets_solve_with_max_length() {
     // Basic test, just gotta go fast
     // Solution with length 19 takes too long
     for (int max_length = 20; max_length < 22; max_length++) {
-        solve_list_t *solution = solve_facelets(facelets, max_length, 0, 1);
+        config_t *config       = get_config();
+        config->max_depth      = max_length;
+        solve_list_t *solution = solve_facelets(facelets, config);
 
         TEST_ASSERT_TRUE(solution != NULL);
 
@@ -244,7 +251,7 @@ void test_random_full_solver_with_sample_cubes_single_solution() {
     }
 }
 
-void setUp() {}
+void setUp() { init_config(); }
 void tearDown() {}
 
 int main() {

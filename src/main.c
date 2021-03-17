@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "benchmark.h"
+#include "config.h"
 #include "coord_cube.h"
 #include "cubie_cube.h"
 #include "facelets.h"
@@ -12,19 +13,20 @@
 #include "stats.h"
 #include "utils.h"
 
-static int do_benchmark   = 0;
-static int do_solve       = 0;
-static int rebuild_tables = 0;
-static int max_depth      = 25;
-static int n_solutions    = 1;
-
-static struct option long_options[] = {
-    {"benchmarks", no_argument, &do_benchmark, 1}, {"rebuild-tables", no_argument, &rebuild_tables, 1},
-    {"solve", required_argument, 0, 's'},          {"max-depth", required_argument, 0, 'm'},
-    {"n-solutions", required_argument, 0, 'n'},    {0, 0, 0, 0}};
+static config_t *config;
 
 int main(int argc, char **argv) {
     char *facelets_to_solve = NULL;
+
+    init_config();
+    config = get_config();
+
+    struct option long_options[] = {{"benchmarks", no_argument, &config->do_benchmark, 1},
+                                    {"rebuild-tables", no_argument, &config->rebuild_tables, 1},
+                                    {"solve", required_argument, 0, 's'},
+                                    {"max-depth", required_argument, 0, 'm'},
+                                    {"n-solutions", required_argument, 0, 'n'},
+                                    {0, 0, 0, 0}};
 
     while (1) {
         int c;
@@ -48,17 +50,17 @@ int main(int argc, char **argv) {
                 break;
 
             case 's': {
-                do_solve          = 1;
+                config->do_solve  = 1;
                 facelets_to_solve = malloc(sizeof(char) * (strlen(optarg) + 2));
                 memcpy(facelets_to_solve, optarg, sizeof(char) * (strlen(optarg) + 1));
             } break;
 
             case 'm': {
-                max_depth = atoi(optarg);
+                config->max_depth = atoi(optarg);
             } break;
 
             case 'n': {
-                n_solutions = atoi(optarg);
+                config->n_solutions = atoi(optarg);
             } break;
 
             case '?':
@@ -69,7 +71,7 @@ int main(int argc, char **argv) {
         }
     }
 
-    if (rebuild_tables) {
+    if (config->rebuild_tables) {
         rmrf("move_tables");
         rmrf("pruning_tables");
     }
@@ -78,14 +80,14 @@ int main(int argc, char **argv) {
     build_pruning_tables();
     init_stats();
 
-    if (do_benchmark) {
+    if (config->do_benchmark) {
         solve_cube_sample_library();
         solve_random_cubes();
         coord_benchmark();
     }
 
-    if (do_solve) {
-        solve_list_t *solution = solve_facelets(facelets_to_solve, max_depth, 0, n_solutions);
+    if (config->do_solve) {
+        solve_list_t *solution = solve_facelets(facelets_to_solve, config);
 
         do {
             int length = 0;

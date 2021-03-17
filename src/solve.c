@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "config.h"
 #include "coord_move_tables.h"
 #include "cubie_cube.h"
 #include "facelets.h"
@@ -41,12 +42,15 @@ void destroy_solve_list_node(solve_list_t *node) {
     free(node);
 }
 
-solve_list_t *solve_facelets_single(char facelets[N_FACELETS]) { return solve_facelets(facelets, 30, 0, 1); }
+solve_list_t *solve_facelets_single(char facelets[N_FACELETS]) {
+    config_t *config = get_config();
+    return solve_facelets(facelets, config);
+}
 
-solve_list_t *solve_facelets(char facelets[N_FACELETS], int max_depth, float timeout, int max_solutions) {
+solve_list_t *solve_facelets(char facelets[N_FACELETS], config_t *config) {
     cube_cubie_t *cubie_cube = build_cubie_cube_from_str(facelets);
     coord_cube_t *cube       = make_coord_cube(cubie_cube);
-    solve_list_t *solution   = solve(cube, max_depth, timeout, max_solutions);
+    solve_list_t *solution   = solve(cube, config);
 
     free(cubie_cube);
     free(cube);
@@ -55,18 +59,19 @@ solve_list_t *solve_facelets(char facelets[N_FACELETS], int max_depth, float tim
 }
 
 solve_list_t *solve_single(coord_cube_t *original_cube) {
-    solve_list_t *solution = solve(original_cube, 40, 0, 1);
+    config_t *   config   = get_config();
+    solve_list_t *solution = solve(original_cube, config);
 
     return solution;
 }
 
-solve_list_t *solve(coord_cube_t *original_cube, int max_depth, float timeout, int max_solutions) {
+solve_list_t *solve(coord_cube_t *original_cube, config_t *config) {
     solve_list_t *solves = new_solve_list_node();
     coord_cube_t *cube   = get_coord_cube();
 
     solve_context_t *solve_context = make_solve_context(original_cube);
 
-    move_t *solution = solve_phase1(solve_context, max_depth, timeout, max_solutions, solves);
+    move_t *solution = solve_phase1(solve_context, config, solves);
 
     if (solution == NULL) {
         free(solution);
@@ -93,8 +98,7 @@ solve_list_t *solve(coord_cube_t *original_cube, int max_depth, float timeout, i
 }
 
 // FIXME: we need a decent way to get just the phase1 solution
-move_t *solve_phase1(solve_context_t *solve_context, int max_depth, __attribute__((unused)) float timeout,
-                     int max_solutions, solve_list_t *solves) {
+move_t *solve_phase1(solve_context_t *solve_context, config_t *config, solve_list_t *solves) {
     move_t *solution = NULL;
 
     coord_cube_t * cube          = solve_context->cube;
@@ -111,7 +115,7 @@ move_t *solve_phase1(solve_context_t *solve_context, int max_depth, __attribute_
     /*int move_estimate = get_phase1_pruning(cube);*/
     /*printf("estimated number of moves: %d\n", move_estimate);*/
 
-    for (int allowed_depth = 1; allowed_depth <= max_depth; allowed_depth++) {
+    for (int allowed_depth = 1; allowed_depth <= config->max_depth; allowed_depth++) {
         int pivot = 0;
         /*printf("searching with max depth: %d\n", allowed_depth);*/
 
@@ -196,7 +200,7 @@ move_t *solve_phase1(solve_context_t *solve_context, int max_depth, __attribute_
 
                 // zero means just phase1 solution.
                 // -1 is find all solutions
-                if (max_solutions == 0) {
+                if (config->n_solutions == 0) {
                     /*printf("doing just phase1!\n");*/
                     goto solution_found;
                 }
@@ -204,9 +208,10 @@ move_t *solve_phase1(solve_context_t *solve_context, int max_depth, __attribute_
                 copy_coord_cube(solve_context->phase2_context->cube, cube_stack[pivot]);
                 coord_cube_t *phase2_cube = solve_context->phase2_context->cube;
 
-                long    phase2_start    = get_microseconds();
-                move_t *phase2_solution = solve_phase2(solve_context->phase2_context, max_depth - pivot - 1, 0);
-                long    phase2_end      = get_microseconds();
+                long    phase2_start = get_microseconds();
+                move_t *phase2_solution =
+                    solve_phase2(solve_context->phase2_context, config, config->max_depth - pivot - 1);
+                long phase2_end = get_microseconds();
                 phase2_time += phase2_end - phase2_start;
 
                 if (phase2_solution == NULL) {
@@ -268,7 +273,7 @@ move_t *solve_phase1(solve_context_t *solve_context, int max_depth, __attribute_
                     finish_stats();
                 }
 
-                if (max_solutions != -1 && solution_count >= max_solutions) {
+                if (config->n_solutions != -1 && solution_count >= config->n_solutions) {
                     goto solution_found;
                 } else {
                     /*free(solution);*/
@@ -305,7 +310,7 @@ solution_found:
     return solution;
 }
 
-move_t *solve_phase2(solve_context_t *solve_context, int max_depth, __attribute__((unused)) float timeout) {
+move_t *solve_phase2(solve_context_t *solve_context, __attribute__((unused)) config_t *config, int max_depth) {
     move_t *solution = NULL;
     move_t  moves[]  = {MOVE_U1, MOVE_U2, MOVE_U3, MOVE_D1, MOVE_D2, MOVE_D3, MOVE_R2, MOVE_L2, MOVE_F2, MOVE_B2};
     int     n_moves  = 10;
