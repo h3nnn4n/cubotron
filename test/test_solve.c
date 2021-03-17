@@ -251,6 +251,71 @@ void test_random_full_solver_with_sample_cubes_single_solution() {
     }
 }
 
+void test_solve_with_move_blacklist() {
+    for (move_t base_move = 0; base_move < N_MOVES; base_move += 3) {
+        init_config();
+
+        char buffer[512];
+        sprintf(buffer, "basemove: %2d %s  blacklist:", base_move, move_to_str(base_move));
+
+        config_t *config  = get_config();
+        config->max_depth = 30; // solves with blacklists take longer
+        for (int move_offset = 0; move_offset < 3; move_offset++) {
+            move_t move                   = base_move + move_offset;
+            config->move_black_list[move] = move;
+
+            sprintf(buffer, "%s %s", buffer, move_to_str(move));
+        }
+
+        TEST_MESSAGE(buffer);
+
+        char blacklisted_char = move_to_str(base_move)[0];
+
+        for (int i = 0; i < 10; i++) {
+            coord_cube_t *cube = get_coord_cube();
+
+            int    n_moves   = 50;
+            move_t moves[50] = {0};
+            for (int j = 0; j < n_moves; j++) {
+                moves[j] = pcg32_boundedrand(N_MOVES);
+
+                do {
+                    moves[j] = pcg32_boundedrand(N_MOVES);
+                } while (j > 0 && moves[j] == moves[j - 1]);
+
+                coord_apply_move(cube, moves[j]);
+            }
+
+            TEST_ASSERT_FALSE(is_phase1_solved(cube));
+            TEST_ASSERT_FALSE(is_phase2_solved(cube));
+
+            solve_list_t *solution = solve(cube, config);
+
+            for (int i = 0; solution->solution[i] != MOVE_NULL; i++) {
+                coord_apply_move(cube, solution->solution[i]);
+
+                if (move_to_str(solution->solution[i])[0] == blacklisted_char) {
+                    sprintf(buffer, "solution has blacklisted move:");
+
+                    for (int i = 0; solution->solution[i] != MOVE_NULL; i++) {
+                        sprintf(buffer, "%s %s", buffer, move_to_str(solution->solution[i]));
+                    }
+
+                    TEST_MESSAGE(buffer);
+
+                    TEST_FAIL();
+                }
+            }
+
+            TEST_ASSERT_TRUE(is_phase1_solved(cube));
+            TEST_ASSERT_TRUE(is_phase2_solved(cube));
+
+            free(solution);
+            free(cube);
+        }
+    }
+}
+
 void setUp() { init_config(); }
 void tearDown() {}
 
@@ -268,6 +333,7 @@ int main() {
     RUN_TEST(test_random_full_solver_with_random_scrambles_single_solution);
     RUN_TEST(test_random_full_solver_with_random_scrambles_multiple_solution);
     RUN_TEST(test_random_full_solver_with_sample_cubes_single_solution);
+    RUN_TEST(test_solve_with_move_blacklist);
 
     return UNITY_END();
 }

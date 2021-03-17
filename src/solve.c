@@ -122,7 +122,9 @@ move_t *solve_phase1(solve_context_t *solve_context, config_t *config, solve_lis
         copy_coord_cube(cube_stack[0], cube);
 
         do {
-            move_stack[pivot]++;
+            do {
+                move_stack[pivot]++;
+            } while (config->move_black_list[move_stack[pivot]] != MOVE_NULL && move_stack[pivot] < N_MOVES);
 
             if (move_stack[pivot] >= N_MOVES) {
                 pruning_stack[pivot] = -1; // ?
@@ -340,7 +342,10 @@ move_t *solve_phase2(solve_context_t *solve_context, __attribute__((unused)) con
         /*printf("searching with max depth: %d\n", allowed_depth);*/
 
         do {
-            move_stack[pivot]++;
+            do {
+                move_stack[pivot]++;
+            } while (config->move_black_list[moves[move_stack[pivot]]] != MOVE_NULL &&
+                     (int)move_stack[pivot] < n_moves);
 
             if ((int)move_stack[pivot] >= n_moves) {
                 pruning_stack[pivot] = -1; // ?

@@ -106,6 +106,13 @@ void test_is_bad_move_false_cases() {
     }
 }
 
+void test_str_to_move() {
+    // This actually tests that str_to_move and move_to_str are identity
+    for (move_t move = MOVE_U1; move < MOVE_NULL; move++) {
+        TEST_ASSERT_TRUE(str_to_move(move_to_str(move)) == move);
+    }
+}
+
 void setUp() { build_move_tables(); }
 void tearDown() {}
 
@@ -125,6 +132,8 @@ int main() {
 
     RUN_TEST(test_is_bad_move_true_cases);
     RUN_TEST(test_is_bad_move_false_cases);
+
+    RUN_TEST(test_str_to_move);
 
     return UNITY_END();
 }

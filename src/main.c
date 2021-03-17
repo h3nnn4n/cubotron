@@ -26,6 +26,7 @@ int main(int argc, char **argv) {
                                     {"solve", required_argument, 0, 's'},
                                     {"max-depth", required_argument, 0, 'm'},
                                     {"n-solutions", required_argument, 0, 'n'},
+                                    {"move-blacklist", required_argument, 0, 'b'},
                                     {0, 0, 0, 0}};
 
     while (1) {
@@ -53,6 +54,20 @@ int main(int argc, char **argv) {
                 config->do_solve  = 1;
                 facelets_to_solve = malloc(sizeof(char) * (strlen(optarg) + 2));
                 memcpy(facelets_to_solve, optarg, sizeof(char) * (strlen(optarg) + 1));
+            } break;
+
+            case 'b': {
+                char *move_black_list_str = malloc(sizeof(char) * (strlen(optarg) + 2));
+                memcpy(move_black_list_str, optarg, sizeof(char) * (strlen(optarg) + 1));
+
+                for (int i = 0; i < strlen(move_black_list_str); i++) {
+                    move_t move = str_to_move(&move_black_list_str[i]);
+
+                    if (move == MOVE_NULL)
+                        continue;
+
+                    config->move_black_list[move] = move;
+                }
             } break;
 
             case 'm': {
