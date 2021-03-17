@@ -59,7 +59,7 @@ solve_list_t *solve_facelets(char facelets[N_FACELETS], config_t *config) {
 }
 
 solve_list_t *solve_single(coord_cube_t *original_cube) {
-    config_t *   config   = get_config();
+    config_t *    config   = get_config();
     solve_list_t *solution = solve(original_cube, config);
 
     return solution;

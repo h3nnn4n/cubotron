@@ -11,7 +11,7 @@ typedef struct {
     float timeout;
 } config_t;
 
-void       init_config();
+void      init_config();
 config_t *get_config();
 
 #endif /* end of include guard */
