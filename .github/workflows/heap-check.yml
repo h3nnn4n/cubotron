@@ -34,6 +34,37 @@ jobs:
         env:
           HEAPCHECK: normal
 
+  heapcheck-solve-blacklist:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@master
+        with:
+          fetch-depth: 1
+          submodules: true
+
+      - name: Install gproftools
+        run: sudo apt-get install -y google-perftools libgoogle-perftools-dev && sudo ln -s /usr/lib/x86_64-linux-gnu/libtcmalloc.so /usr/lib/libtcmalloc.so
+
+      - name: Build
+        run: make gperftools
+
+      - name: Cache Tables
+        id: cache-tables
+        uses: actions/cache@v2
+        with:
+          path: cache
+          key: cache-tables
+
+      - name: Build Tables
+        if: steps.cache-tables.outputs.cache-hit != 'true'
+        run: ./cubotron --rebuild-tables
+
+      - name: Detect Leaks (Solve, with blacklist)
+        run: ./cubotron --solve DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL --max-depth=27 --n-solutions=5 --move-blacklist="U U2 U'"
+        env:
+          HEAPCHECK: normal
+
   heapcheck-benchmarks:
     runs-on: ubuntu-20.04
 
