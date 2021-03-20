@@ -68,6 +68,8 @@ int main(int argc, char **argv) {
 
                     config->move_black_list[move] = move;
                 }
+
+                free(move_black_list_str);
             } break;
 
             case 'm': {
