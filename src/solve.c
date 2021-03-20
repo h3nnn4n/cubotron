@@ -344,8 +344,8 @@ move_t *solve_phase2(solve_context_t *solve_context, __attribute__((unused)) con
         do {
             do {
                 move_stack[pivot]++;
-            } while (config->move_black_list[moves[move_stack[pivot]]] != MOVE_NULL &&
-                     (int)move_stack[pivot] < n_moves);
+            } while ((int)move_stack[pivot] < n_moves &&
+                     config->move_black_list[moves[move_stack[pivot]]] != MOVE_NULL);
 
             if ((int)move_stack[pivot] >= n_moves) {
                 pruning_stack[pivot] = -1; // ?
