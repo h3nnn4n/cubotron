@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
                 char *move_black_list_str = malloc(sizeof(char) * (strlen(optarg) + 2));
                 memcpy(move_black_list_str, optarg, sizeof(char) * (strlen(optarg) + 1));
 
-                for (int i = 0; i < strlen(move_black_list_str); i++) {
+                for (size_t i = 0; i < strlen(move_black_list_str); i++) {
                     move_t move = str_to_move(&move_black_list_str[i]);
 
                     if (move == MOVE_NULL)
