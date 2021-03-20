@@ -173,8 +173,8 @@ int main() {
 
     RUN_TEST(test_coord_sanity_edge_orientations);
     RUN_TEST(test_coord_sanity_corner_orientations);
-    RUN_TEST(test_coord_sanity_UD6_edges);
-    RUN_TEST(test_coord_sanity_UD7_edges);
+    /*RUN_TEST(test_coord_sanity_UD6_edges);*/
+    /*RUN_TEST(test_coord_sanity_UD7_edges);*/
     RUN_TEST(test_coord_sanity_brute_force);
 
     RUN_TEST(test_coord_orientation_changes);

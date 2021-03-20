@@ -30,5 +30,8 @@ jobs:
         if: steps.cache-tables.outputs.cache-hit != 'true'
         run: ./cubotron --rebuild-tables
 
+      - name: Run Solver with blacklist
+        run: ./cubotron --solve DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL --max-depth=27 --n-solutions=2 --move-blacklist="U U2 U'"
+
       - name: Run Solver
         run: ./solve_samples.sh

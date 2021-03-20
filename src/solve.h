@@ -1,6 +1,7 @@
 #ifndef _SOLVE
 #define _SOLVE
 
+#include "config.h"
 #include "coord_cube.h"
 #include "stats.h"
 
@@ -31,12 +32,11 @@ typedef struct solve_context_s {
 } solve_context_t;
 
 solve_list_t *solve_facelets_single(char facelets[N_FACELETS]);
-solve_list_t *solve_facelets(char facelets[N_FACELETS], int max_depth, float timeout, int max_solutions);
-solve_list_t *solve(coord_cube_t *original_cube, int max_depth, float timeout, int max_solutions);
+solve_list_t *solve_facelets(char facelets[N_FACELETS], config_t *config);
+solve_list_t *solve(coord_cube_t *original_cube, config_t *config);
 solve_list_t *solve_single(coord_cube_t *original_cube);
-move_t *      solve_phase1(solve_context_t *solve_context, int max_depth, float timeout, int max_solutions,
-                           solve_list_t *solves);
-move_t *      solve_phase2(solve_context_t *solve_context, int max_depth, float timeout);
+move_t *      solve_phase1(solve_context_t *solve_context, config_t *config, solve_list_t *solves);
+move_t *      solve_phase2(solve_context_t *solve_context, config_t *config, int current_depth);
 
 solve_list_t *new_solve_list_node();
 void          destroy_solve_list_node(solve_list_t *node);

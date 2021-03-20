@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <ftw.h>
 #include <stdio.h>
+#include <string.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -205,3 +206,13 @@ int unlink_cb(const char *fpath, __attribute__((unused)) const struct stat *sb, 
 }
 
 int rmrf(char *path) { return nftw(path, unlink_cb, 64, FTW_DEPTH | FTW_PHYS); }
+
+move_t str_to_move(char *move_str) {
+    for (move_t move = 0; move < N_MOVES; move++) {
+        if (strncmp(move_str, move_to_str(move), 2) == 0) {
+            return move;
+        }
+    }
+
+    return MOVE_NULL;
+}

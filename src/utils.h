@@ -26,6 +26,8 @@ int  Cnk(int n, int k);
 void rotate_left(int *pieces, int l, int r);
 void rotate_right(int *pieces, int l, int r);
 
+move_t str_to_move(char *);
+
 int rmrf(char *path);
 
 #endif /* end of include guard */
