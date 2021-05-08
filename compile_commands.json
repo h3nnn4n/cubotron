@@ -1,1 +1,342 @@
-[]
+[
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-Wall",
+            "-Wextra",
+            "-pedantic",
+            "-std=gnu11",
+            "-O3",
+            "-Isrc",
+            "-Ideps/Unity/src",
+            "-Ideps/pcg-c/include",
+            "-Ideps/pcg-c/extras",
+            "-o",
+            "/home/h3nnn4n/progs/cubotron/build/src/main.o",
+            "src/main.c"
+        ],
+        "directory": "/home/h3nnn4n/progs/cubotron",
+        "file": "src/main.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-Wall",
+            "-Wextra",
+            "-pedantic",
+            "-std=gnu11",
+            "-O3",
+            "-Isrc",
+            "-Ideps/Unity/src",
+            "-Ideps/pcg-c/include",
+            "-Ideps/pcg-c/extras",
+            "-o",
+            "/home/h3nnn4n/progs/cubotron/build/src/pruning_cache.o",
+            "src/pruning_cache.c"
+        ],
+        "directory": "/home/h3nnn4n/progs/cubotron",
+        "file": "src/pruning_cache.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-Wall",
+            "-Wextra",
+            "-pedantic",
+            "-std=gnu11",
+            "-O3",
+            "-Isrc",
+            "-Ideps/Unity/src",
+            "-Ideps/pcg-c/include",
+            "-Ideps/pcg-c/extras",
+            "-o",
+            "/home/h3nnn4n/progs/cubotron/build/src/pruning.o",
+            "src/pruning.c"
+        ],
+        "directory": "/home/h3nnn4n/progs/cubotron",
+        "file": "src/pruning.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-Wall",
+            "-Wextra",
+            "-pedantic",
+            "-std=gnu11",
+            "-O3",
+            "-Isrc",
+            "-Ideps/Unity/src",
+            "-Ideps/pcg-c/include",
+            "-Ideps/pcg-c/extras",
+            "-o",
+            "/home/h3nnn4n/progs/cubotron/build/src/config.o",
+            "src/config.c"
+        ],
+        "directory": "/home/h3nnn4n/progs/cubotron",
+        "file": "src/config.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-Wall",
+            "-Wextra",
+            "-pedantic",
+            "-std=gnu11",
+            "-O3",
+            "-Isrc",
+            "-Ideps/Unity/src",
+            "-Ideps/pcg-c/include",
+            "-Ideps/pcg-c/extras",
+            "-o",
+            "/home/h3nnn4n/progs/cubotron/build/src/utils.o",
+            "src/utils.c"
+        ],
+        "directory": "/home/h3nnn4n/progs/cubotron",
+        "file": "src/utils.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-Wall",
+            "-Wextra",
+            "-pedantic",
+            "-std=gnu11",
+            "-O3",
+            "-Isrc",
+            "-Ideps/Unity/src",
+            "-Ideps/pcg-c/include",
+            "-Ideps/pcg-c/extras",
+            "-o",
+            "/home/h3nnn4n/progs/cubotron/build/src/stats.o",
+            "src/stats.c"
+        ],
+        "directory": "/home/h3nnn4n/progs/cubotron",
+        "file": "src/stats.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-Wall",
+            "-Wextra",
+            "-pedantic",
+            "-std=gnu11",
+            "-O3",
+            "-Isrc",
+            "-Ideps/Unity/src",
+            "-Ideps/pcg-c/include",
+            "-Ideps/pcg-c/extras",
+            "-o",
+            "/home/h3nnn4n/progs/cubotron/build/src/move_tables.o",
+            "src/move_tables.c"
+        ],
+        "directory": "/home/h3nnn4n/progs/cubotron",
+        "file": "src/move_tables.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-Wall",
+            "-Wextra",
+            "-pedantic",
+            "-std=gnu11",
+            "-O3",
+            "-Isrc",
+            "-Ideps/Unity/src",
+            "-Ideps/pcg-c/include",
+            "-Ideps/pcg-c/extras",
+            "-o",
+            "/home/h3nnn4n/progs/cubotron/build/src/cubie_cube.o",
+            "src/cubie_cube.c"
+        ],
+        "directory": "/home/h3nnn4n/progs/cubotron",
+        "file": "src/cubie_cube.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-Wall",
+            "-Wextra",
+            "-pedantic",
+            "-std=gnu11",
+            "-O3",
+            "-Isrc",
+            "-Ideps/Unity/src",
+            "-Ideps/pcg-c/include",
+            "-Ideps/pcg-c/extras",
+            "-o",
+            "/home/h3nnn4n/progs/cubotron/build/src/solve.o",
+            "src/solve.c"
+        ],
+        "directory": "/home/h3nnn4n/progs/cubotron",
+        "file": "src/solve.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-Wall",
+            "-Wextra",
+            "-pedantic",
+            "-std=gnu11",
+            "-O3",
+            "-Isrc",
+            "-Ideps/Unity/src",
+            "-Ideps/pcg-c/include",
+            "-Ideps/pcg-c/extras",
+            "-o",
+            "/home/h3nnn4n/progs/cubotron/build/src/benchmark.o",
+            "src/benchmark.c"
+        ],
+        "directory": "/home/h3nnn4n/progs/cubotron",
+        "file": "src/benchmark.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-Wall",
+            "-Wextra",
+            "-pedantic",
+            "-std=gnu11",
+            "-O3",
+            "-Isrc",
+            "-Ideps/Unity/src",
+            "-Ideps/pcg-c/include",
+            "-Ideps/pcg-c/extras",
+            "-o",
+            "/home/h3nnn4n/progs/cubotron/build/src/facelets.o",
+            "src/facelets.c"
+        ],
+        "directory": "/home/h3nnn4n/progs/cubotron",
+        "file": "src/facelets.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-Wall",
+            "-Wextra",
+            "-pedantic",
+            "-std=gnu11",
+            "-O3",
+            "-Isrc",
+            "-Ideps/Unity/src",
+            "-Ideps/pcg-c/include",
+            "-Ideps/pcg-c/extras",
+            "-o",
+            "/home/h3nnn4n/progs/cubotron/build/src/cubie_move_table.o",
+            "src/cubie_move_table.c"
+        ],
+        "directory": "/home/h3nnn4n/progs/cubotron",
+        "file": "src/cubie_move_table.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-Wall",
+            "-Wextra",
+            "-pedantic",
+            "-std=gnu11",
+            "-O3",
+            "-Isrc",
+            "-Ideps/Unity/src",
+            "-Ideps/pcg-c/include",
+            "-Ideps/pcg-c/extras",
+            "-o",
+            "/home/h3nnn4n/progs/cubotron/build/src/coord_move_tables.o",
+            "src/coord_move_tables.c"
+        ],
+        "directory": "/home/h3nnn4n/progs/cubotron",
+        "file": "src/coord_move_tables.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-Wall",
+            "-Wextra",
+            "-pedantic",
+            "-std=gnu11",
+            "-O3",
+            "-Isrc",
+            "-Ideps/Unity/src",
+            "-Ideps/pcg-c/include",
+            "-Ideps/pcg-c/extras",
+            "-o",
+            "/home/h3nnn4n/progs/cubotron/build/src/file_utils.o",
+            "src/file_utils.c"
+        ],
+        "directory": "/home/h3nnn4n/progs/cubotron",
+        "file": "src/file_utils.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-Wall",
+            "-Wextra",
+            "-pedantic",
+            "-std=gnu11",
+            "-O3",
+            "-Isrc",
+            "-Ideps/Unity/src",
+            "-Ideps/pcg-c/include",
+            "-Ideps/pcg-c/extras",
+            "-o",
+            "/home/h3nnn4n/progs/cubotron/build/deps/pcg-c/extras/entropy.o",
+            "deps/pcg-c/extras/entropy.c"
+        ],
+        "directory": "/home/h3nnn4n/progs/cubotron",
+        "file": "deps/pcg-c/extras/entropy.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-Wall",
+            "-Wextra",
+            "-pedantic",
+            "-std=gnu11",
+            "-O3",
+            "-Isrc",
+            "-Ideps/Unity/src",
+            "-Ideps/pcg-c/include",
+            "-Ideps/pcg-c/extras",
+            "-o",
+            "/home/h3nnn4n/progs/cubotron/build/src/coord_cube.o",
+            "src/coord_cube.c"
+        ],
+        "directory": "/home/h3nnn4n/progs/cubotron",
+        "file": "src/coord_cube.c"
+    },
+    {
+        "arguments": [
+            "cc",
+            "-c",
+            "-Wall",
+            "-Wextra",
+            "-pedantic",
+            "-std=gnu11",
+            "-O3",
+            "-Isrc",
+            "-Ideps/Unity/src",
+            "-Ideps/pcg-c/include",
+            "-Ideps/pcg-c/extras",
+            "-o",
+            "/home/h3nnn4n/progs/cubotron/build/src/sample_facelets.o",
+            "src/sample_facelets.c"
+        ],
+        "directory": "/home/h3nnn4n/progs/cubotron",
+        "file": "src/sample_facelets.c"
+    }
+]
