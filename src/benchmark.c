@@ -99,8 +99,8 @@ void solve_random_cubes() {
 
     coord_cube_t *cube = get_coord_cube();
 
-    int  solve_count = 0;
-    long start_time  = get_microseconds();
+    int      solve_count = 0;
+    uint64_t start_time  = get_microseconds();
 
     while (1) {
         int n = pcg32_boundedrand(n_scramble_moves / 2) + n_scramble_moves / 2;
@@ -113,7 +113,7 @@ void solve_random_cubes() {
             break;
     }
 
-    long end_time = get_microseconds();
+    uint64_t end_time = get_microseconds();
     printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);
     printf("solve_count: %d - ", solve_count);
     printf("solves per second : %.2f\n", ((float)solve_count / (end_time - start_time)) * 1000000.0);
@@ -124,8 +124,8 @@ void solve_random_cubes() {
 
 void solve_cube_sample_library() {
     printf("BENCHMARK: Solve 100 sample cubes\n");
-    int  solve_count = 0;
-    long start_time  = get_microseconds();
+    int      solve_count = 0;
+    uint64_t start_time  = get_microseconds();
 
     for (int i = 0; i < N_FACELETS_SAMPLES; i++) {
         cube_cubie_t *cubie_cube = build_cubie_cube_from_str(sample_facelets[i]);
@@ -139,7 +139,7 @@ void solve_cube_sample_library() {
         free(cube);
     }
 
-    long end_time = get_microseconds();
+    uint64_t end_time = get_microseconds();
     printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);
     printf("solve_count: %d - ", solve_count);
     printf("solves per second : %.2f\n", ((float)solve_count / (end_time - start_time)) * 1000000.0);
@@ -158,9 +158,9 @@ void coord_benchmark() {
     for (int i = 0; i < n_moves; i++)
         moves[i] = pcg32_boundedrand(N_MOVES);
 
-    int  move_count = 0;
-    long start_time = get_microseconds();
-    long end_time;
+    int      move_count = 0;
+    uint64_t start_time = get_microseconds();
+    uint64_t end_time;
 
     do {
         for (int j = 0; j < 10000; j++) {

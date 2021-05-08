@@ -36,7 +36,7 @@ int pruning_table_cache_load(char *cache_name, char *table_name, int **pruning_t
     if (!file_exists(filepath))
         return 0;
 
-    long start_time = get_microseconds();
+    uint64_t start_time = get_microseconds();
 
     printf("loading: %35s   ", filepath);
     fflush(stdout);
@@ -44,8 +44,8 @@ int pruning_table_cache_load(char *cache_name, char *table_name, int **pruning_t
 
     *pruning_table = (int *)malloc(sizeof(int) * table_size);
 
-    unsigned long bytes_read       = -1;
-    unsigned long total_bytes_read = 0;
+    uint64_t bytes_read       = -1;
+    uint64_t total_bytes_read = 0;
 
     do {
         bytes_read = fread(*pruning_table, sizeof(int), table_size, f);
@@ -54,8 +54,8 @@ int pruning_table_cache_load(char *cache_name, char *table_name, int **pruning_t
 
     fclose(f);
 
-    long end_time = get_microseconds();
-    printf("%9lu bytes loaded in %.4f seconds\n", total_bytes_read, (float)(end_time - start_time) / 1000000.0);
+    uint64_t end_time = get_microseconds();
+    printf("%9llu bytes loaded in %.4f seconds\n", total_bytes_read, (float)(end_time - start_time) / 1000000.0);
 
     return 1;
 }
@@ -67,14 +67,14 @@ void pruning_table_cache_store(char *cache_name, char *table_name, int *pruning_
     snprintf(filepath, 511, "cache/%s/%s", cache_name, table_name);
     snprintf(cachepath, 511, "cache/%s", cache_name);
 
-    long start_time = get_microseconds();
+    uint64_t start_time = get_microseconds();
     ensure_directory_exists(cachepath);
 
-    FILE *        f             = fopen(filepath, "wb");
-    unsigned long bytes_written = fwrite(pruning_table, sizeof(int), table_size, f);
+    FILE *   f             = fopen(filepath, "wb");
+    uint64_t bytes_written = fwrite(pruning_table, sizeof(int), table_size, f);
     fclose(f);
 
-    long end_time = get_microseconds();
-    printf("%9lu bytes stored in %s in %.4f seconds\n", bytes_written, filepath,
+    uint64_t end_time = get_microseconds();
+    printf("%9llu bytes stored in %s in %.4f seconds\n", bytes_written, filepath,
            (float)(end_time - start_time) / 1000000.0);
 }

@@ -129,12 +129,12 @@ move_t *solve_phase1(solve_context_t *solve_context, config_t *config, solve_lis
     coord_cube_t **cube_stack    = solve_context->cube_stack;
     int *          pruning_stack = solve_context->pruning_stack;
 
-    int  solution_count = 0;
-    long move_count     = 0;
+    int      solution_count = 0;
+    uint64_t move_count     = 0;
 
-    long phase2_time = 0;
-    long start_time  = get_microseconds();
-    long end_time    = 0;
+    uint64_t phase2_time = 0;
+    uint64_t start_time  = get_microseconds();
+    uint64_t end_time    = 0;
     /*int move_estimate = get_phase1_pruning(cube);*/
     /*printf("estimated number of moves: %d\n", move_estimate);*/
 
@@ -186,7 +186,7 @@ move_t *solve_phase1(solve_context_t *solve_context, config_t *config, solve_lis
                     sprintf(buffer, "%s %s", buffer, move_to_str(move_stack[i]));
                 printf("%s", buffer);
 
-                long end_time = get_microseconds();
+                uint64_t end_time = get_microseconds();
                 printf("  :  elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);
                 printf("moves: %lu - ", move_count);
                 printf("moves per second : %.2f", ((float)move_count / (end_time - start_time)) * 1000000.0);
@@ -233,10 +233,10 @@ move_t *solve_phase1(solve_context_t *solve_context, config_t *config, solve_lis
                 copy_coord_cube(solve_context->phase2_context->cube, cube_stack[pivot]);
                 coord_cube_t *phase2_cube = solve_context->phase2_context->cube;
 
-                long    phase2_start = get_microseconds();
-                move_t *phase2_solution =
+                uint64_t phase2_start = get_microseconds();
+                move_t * phase2_solution =
                     solve_phase2(solve_context->phase2_context, config, config->max_depth - pivot - 1);
-                long phase2_end = get_microseconds();
+                uint64_t phase2_end = get_microseconds();
                 phase2_time += phase2_end - phase2_start;
 
                 if (phase2_solution == NULL) {
@@ -348,15 +348,15 @@ move_t *solve_phase2(solve_context_t *solve_context, __attribute__((unused)) con
 
     copy_coord_cube(solve_context->cube_stack[0], solve_context->cube);
 
-    long move_count = 0;
+    uint64_t move_count = 0;
 
     coord_cube_t * cube          = solve_context->cube;
     move_t *       move_stack    = solve_context->move_stack;
     coord_cube_t **cube_stack    = solve_context->cube_stack;
     int *          pruning_stack = solve_context->pruning_stack;
 
-    long start_time = get_microseconds();
-    long end_time   = 0;
+    uint64_t start_time = get_microseconds();
+    uint64_t end_time   = 0;
 
     for (int allowed_depth = 1; allowed_depth <= max_depth; allowed_depth++) {
         int pivot = 0;

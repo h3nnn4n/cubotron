@@ -176,10 +176,10 @@ move_t get_reverse_move(move_t move) {
     return reverse_move[move];
 }
 
-long get_microseconds(void) {
+uint64_t get_microseconds(void) {
     struct timespec ts;
     timespec_get(&ts, TIME_UTC);
-    return (long)(ts.tv_sec * 1000000000L + ts.tv_nsec) / 1000;
+    return (uint64_t)(ts.tv_sec * 1000000000L + ts.tv_nsec) / 1000;
 }
 
 int Cnk(int n, int k) {

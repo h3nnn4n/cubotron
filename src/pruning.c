@@ -106,7 +106,7 @@ void build_phase1_corner_table() {
 
     printf("bulding phase1 corner orientations pruning table\n");
 
-    long start_time       = get_microseconds();
+    uint64_t start_time   = get_microseconds();
     pruning_phase1_corner = (int *)malloc(sizeof(int) * N_CORNER_ORIENTATIONS * N_SLICES);
 
     for (int i = 0; i < N_CORNER_ORIENTATIONS * N_SLICES; i++)
@@ -147,7 +147,7 @@ void build_phase1_corner_table() {
         depth++;
     }
 
-    long end_time = get_microseconds();
+    uint64_t end_time = get_microseconds();
 
     printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);
     printf("nodes per second : %.2f\n",
@@ -174,7 +174,7 @@ void build_phase1_edge_table() {
 
     printf("bulding phase1 edge orientations pruning table\n");
 
-    long start_time     = get_microseconds();
+    uint64_t start_time = get_microseconds();
     pruning_phase1_edge = (int *)malloc(sizeof(int) * N_EDGE_ORIENTATIONS * N_SLICES);
 
     for (int i = 0; i < N_EDGE_ORIENTATIONS * N_SLICES; i++)
@@ -215,7 +215,7 @@ void build_phase1_edge_table() {
         depth++;
     }
 
-    long end_time = get_microseconds();
+    uint64_t end_time = get_microseconds();
 
     printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);
     printf("nodes per second : %.2f\n",
@@ -242,7 +242,7 @@ void build_phase2_UD6_edge_table() {
 
     printf("bulding phase2 UD6_edge permutations pruning table\n");
 
-    long start_time         = get_microseconds();
+    uint64_t start_time     = get_microseconds();
     pruning_phase2_UD6_edge = (int *)malloc(sizeof(int) * N_UD6_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2);
 
     for (int i = 0; i < N_UD6_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2; i++)
@@ -296,7 +296,7 @@ void build_phase2_UD6_edge_table() {
         depth++;
     }
 
-    long end_time = get_microseconds();
+    uint64_t end_time = get_microseconds();
 
     printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);
     printf("nodes per second : %.2f\n",
@@ -324,7 +324,7 @@ void build_phase2_UD7_edge_table() {
 
     printf("bulding phase2 UD7_edge permutations pruning table\n");
 
-    long start_time         = get_microseconds();
+    uint64_t start_time     = get_microseconds();
     pruning_phase2_UD7_edge = (int *)malloc(sizeof(int) * N_UD7_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2);
 
     for (int i = 0; i < N_UD7_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2; i++)
@@ -378,7 +378,7 @@ void build_phase2_UD7_edge_table() {
         depth++;
     }
 
-    long end_time = get_microseconds();
+    uint64_t end_time = get_microseconds();
 
     printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);
     printf("nodes per second : %.2f\n",
@@ -406,7 +406,7 @@ void build_phase2_corner_table() {
 
     printf("bulding phase2 corner orientations pruning table\n");
 
-    long start_time       = get_microseconds();
+    uint64_t start_time   = get_microseconds();
     pruning_phase2_corner = (int *)malloc(sizeof(int) * N_CORNER_PERMUTATIONS * N_SORTED_SLICES_PHASE2);
 
     for (int i = 0; i < N_CORNER_PERMUTATIONS * N_SORTED_SLICES_PHASE2; i++)
@@ -460,7 +460,7 @@ void build_phase2_corner_table() {
         depth++;
     }
 
-    long end_time = get_microseconds();
+    uint64_t end_time = get_microseconds();
 
     printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);
     printf("nodes per second : %.2f\n",
