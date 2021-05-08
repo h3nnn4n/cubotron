@@ -28,6 +28,7 @@
 #include <pcg_variants.h>
 #include <stdio.h>
 
+#include "benchmark.h"
 #include "cubie_cube.h"
 #include "facelets.h"
 #include "move_tables.h"

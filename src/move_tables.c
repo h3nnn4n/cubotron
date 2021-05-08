@@ -21,6 +21,7 @@
  *
  */
 
+#include "move_tables.h"
 #include "coord_move_tables.h"
 #include "cubie_move_table.h"
 
