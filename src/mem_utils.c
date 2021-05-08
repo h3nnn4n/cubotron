@@ -24,6 +24,8 @@
 #include <assert.h>
 #include <string.h>
 
+#include "mem_utils.h"
+
 void *memcpy_(void *dest, const void *src, size_t count) {
     assert(dest != NULL);
     assert(src != NULL);
