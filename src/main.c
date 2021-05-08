@@ -75,12 +75,22 @@ int main(int argc, char **argv) {
                 break;
 
             case 's': {
+                if (optarg == NULL) {
+                    fprintf(stderr, "optarg is missing for solve");
+                    break;
+                }
+
                 config->do_solve  = 1;
                 facelets_to_solve = malloc(sizeof(char) * (strlen(optarg) + 2));
                 memcpy_(facelets_to_solve, optarg, sizeof(char) * (strlen(optarg) + 1));
             } break;
 
             case 'b': {
+                if (optarg == NULL) {
+                    fprintf(stderr, "optarg is missing for benchmark");
+                    break;
+                }
+
                 char *move_black_list_str = malloc(sizeof(char) * (strlen(optarg) + 2));
                 memcpy_(move_black_list_str, optarg, sizeof(char) * (strlen(optarg) + 1));
 
@@ -97,10 +107,20 @@ int main(int argc, char **argv) {
             } break;
 
             case 'm': {
+                if (optarg == NULL) {
+                    fprintf(stderr, "optarg is missing for max_depth");
+                    break;
+                }
+
                 config->max_depth = atoi(optarg);
             } break;
 
             case 'n': {
+                if (optarg == NULL) {
+                    fprintf(stderr, "optarg is missing for number of sulutions");
+                    break;
+                }
+
                 config->n_solutions = atoi(optarg);
             } break;
 
