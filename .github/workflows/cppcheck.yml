@@ -27,5 +27,8 @@ jobs:
           make clean
           intercept-build make
 
+      - name: run cppcheck --check-config
+        run: cppcheck --enable=all --suppress=unusedFunction --std=c11 --language=c --error-exitcode=1 --check-config
+
       - name: run cppcheck
         run: cppcheck --enable=all --suppress=unusedFunction --std=c11 --language=c --error-exitcode=1 src/*.c src/**/*.c
