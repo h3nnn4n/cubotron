@@ -97,7 +97,6 @@ cube_cubie_t *build_cubie_cube_from_str(char facelets[N_FACELETS]) {
 
         for (int j = 0; j < N_CORNERS; j++) {
             if (color_a == corner_colors[j][1] && color_b == corner_colors[j][2]) {
-
                 cubie_cube->corner_permutations[i] = j;
                 cubie_cube->corner_orientations[i] = orientation;
             }
