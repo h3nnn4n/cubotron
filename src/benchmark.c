@@ -81,13 +81,13 @@ void do_solve(coord_cube_t *cube) {
         /*coord_apply_move(cube, solution->solution[i]);*/
         /*}*/
         /*printf("  length: %2d\n", len);*/
-    }
 
-    free(solution->next);
-    free(solution->phase1_solution);
-    free(solution->phase2_solution);
-    free(solution->solution);
-    free(solution);
+        free(solution->next);
+        free(solution->phase1_solution);
+        free(solution->phase2_solution);
+        free(solution->solution);
+        free(solution);
+    }
 
     /*assert(is_phase1_solved(cube));*/
     /*assert(is_phase2_solved(cube));*/
