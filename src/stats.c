@@ -60,7 +60,7 @@ int increase_stats_buffer() {
     }
 
     for (int i = buffer_size; i < new_size; i++) {
-        solve_stats[i].used = 0;
+        new_buffer[i].used = 0;
     }
 
     buffer_size = new_size;
