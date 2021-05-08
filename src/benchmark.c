@@ -26,6 +26,7 @@
 #include <assert.h>
 #include <entropy.h>
 #include <pcg_variants.h>
+#include <stdint.h>
 #include <stdio.h>
 
 #include "benchmark.h"

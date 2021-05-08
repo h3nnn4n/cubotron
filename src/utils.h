@@ -24,6 +24,8 @@
 #ifndef _UTILS
 #define _UTILS
 
+#include <stdint.h>
+
 #include "coord_cube.h"
 #include "cubie_cube.h"
 
@@ -43,7 +45,7 @@ coord_cube_t *random_coord_cube();
 
 move_t get_reverse_move(move_t move);
 
-long get_microseconds(void);
+uint64_t get_microseconds(void);
 
 int  Cnk(int n, int k);
 void rotate_left(int *pieces, int l, int r);

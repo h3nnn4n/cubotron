@@ -22,6 +22,7 @@
  */
 
 #include <assert.h>
+#include <stdint.h>
 #include <stdio.h>
 
 #include "coord_cube.h"
