@@ -21,26 +21,23 @@
  *
  */
 
-#ifndef _COORD_MOVE_TABLES
-#define _COORD_MOVE_TABLES
+#include <assert.h>
+#include <string.h>
 
-#include "coord_cube.h"
-#include "cubie_cube.h"
-#include "definitions.h"
+#include "mem_utils.h"
 
-void coord_build_move_tables();
-void coord_apply_move(coord_cube_t *cube, move_t move);
+void *memcpy_(void *dest, const void *src, size_t count) {
+    assert(dest != NULL);
+    assert(src != NULL);
+    assert(count > 0);
 
-int *get_move_table_edge_orientations();
-int *get_move_table_corner_orientations();
-int *get_move_table_E_slice();
-int *get_move_table_E_sorted_slice();
-int *get_move_table_UD6_edge_permutations();
-int *get_move_table_UD7_edge_permutations();
-int *get_move_table_corner_permutations();
-int *get_move_table_parity();
+    // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
+    return memcpy(dest, src, count);
+}
 
-void build_UD6_edge_permutations_move_table();
-void build_UD7_edge_permutations_move_table();
+void *memset_(void *dest, int ch, size_t count) {
+    assert(dest != NULL);
 
-#endif /* end of include guard */
+    // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
+    return memset(dest, ch, count);
+}

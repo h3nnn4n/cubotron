@@ -4,7 +4,7 @@ on: push
 
 jobs:
   heapcheck-solve:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-18.04
 
     steps:
       - uses: actions/checkout@master
@@ -13,7 +13,9 @@ jobs:
           submodules: true
 
       - name: Install gproftools
-        run: sudo apt-get install -y google-perftools libgoogle-perftools-dev && sudo ln -s /usr/lib/x86_64-linux-gnu/libtcmalloc.so /usr/lib/libtcmalloc.so
+        run: |
+          sudo apt-get install -y google-perftools libgoogle-perftools-dev
+          sudo ln -s /usr/lib/x86_64-linux-gnu/libtcmalloc.so /usr/lib/libtcmalloc.so
 
       - name: Build
         run: make gperftools
@@ -35,7 +37,7 @@ jobs:
           HEAPCHECK: normal
 
   heapcheck-solve-blacklist:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-18.04
 
     steps:
       - uses: actions/checkout@master
@@ -66,7 +68,7 @@ jobs:
           HEAPCHECK: normal
 
   heapcheck-benchmarks:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-18.04
 
     steps:
       - uses: actions/checkout@master

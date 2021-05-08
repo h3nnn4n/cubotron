@@ -1,0 +1,31 @@
+name: clang-tidy
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@master
+        with:
+          fetch-depth: 1
+          submodules: true
+
+      - name: Install deps
+        run: |
+          sudo apt-get update
+          sudo apt-get -y -qq install curl
+          sudo apt-get -y -qq install clang-tidy cmake jq clang cppcheck
+          python -m pip install scan-build
+
+      - name: Update Path
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Update compile database
+        run: |
+          make clean
+          intercept-build make
+
+      - name: run clang-tidy
+        run: clang-tidy src/*.c --warnings-as-errors --checks=bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-cplusplus-*,clang-analyzer-*,cppcoreguidelines-*
