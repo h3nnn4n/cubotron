@@ -39,6 +39,7 @@
 #include "utils.h"
 
 #define n_scramble_moves 50
+#define n_moves_chunk    1000
 
 void apply_random_scramble(coord_cube_t *cube, int n_moves) {
     assert(cube != NULL);
@@ -153,11 +154,9 @@ void coord_benchmark() {
 
     coord_cube_t *cube = get_coord_cube();
 
-#define n_moves 1000
+    move_t moves[n_moves_chunk];
 
-    move_t moves[n_moves];
-
-    for (int i = 0; i < n_moves; i++)
+    for (int i = 0; i < n_moves_chunk; i++)
         moves[i] = pcg32_boundedrand(N_MOVES);
 
     int      move_count = 0;
@@ -166,11 +165,11 @@ void coord_benchmark() {
 
     do {
         for (int j = 0; j < 10000; j++) {
-            for (int i = 0; i < n_moves; i++) {
+            for (int i = 0; i < n_moves_chunk; i++) {
                 coord_apply_move(cube, moves[i]);
             }
 
-            move_count += n_moves;
+            move_count += n_moves_chunk;
         }
 
         end_time = get_microseconds();
