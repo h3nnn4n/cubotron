@@ -5,3 +5,5 @@ cubotron
 *.csv
 
 .ipynb_checkpoints
+
+.cache/
