@@ -26,6 +26,7 @@
 
 #include <stdlib.h>
 
-void *memcopy(void *dest, const void *src, size_t count);
+void *memcpy_(void *dest, const void *src, size_t count);
+void *memset_(void *dest, int ch, size_t count);
 
 #endif /* SRC_MEM_UTILS_H_ */

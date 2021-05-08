@@ -26,6 +26,7 @@
 #include <string.h>
 
 #include "file_utils.h"
+#include "mem_utils.h"
 #include "stats.h"
 
 #define STARTING_BUFFER_SIZE 500
@@ -44,7 +45,7 @@ solve_stats_t *get_current_stat() {
 void init_stats() {
     buffer_size = STARTING_BUFFER_SIZE;
     solve_stats = (solve_stats_t *)malloc(sizeof(solve_stats_t) * buffer_size);
-    memset(solve_stats, 0, sizeof(solve_stats_t) * buffer_size);
+    memset_(solve_stats, 0, sizeof(solve_stats_t) * buffer_size);
 }
 
 int increase_stats_buffer() {

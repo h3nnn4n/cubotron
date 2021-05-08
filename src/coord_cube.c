@@ -36,7 +36,7 @@ coord_cube_t *get_coord_cube() {
 
 void reset_coord_cube(coord_cube_t *cube) {
     assert(cube != NULL);
-    memset(cube, 0, sizeof(coord_cube_t));
+    memset_(cube, 0, sizeof(coord_cube_t));
 }
 
 coord_cube_t *make_coord_cube(cube_cubie_t *cubie) {
@@ -57,7 +57,7 @@ coord_cube_t *make_coord_cube(cube_cubie_t *cubie) {
 void copy_coord_cube(coord_cube_t *dest, coord_cube_t *source) {
     assert(dest != NULL);
     assert(source != NULL);
-    memcopy(dest, source, sizeof(coord_cube_t));
+    memcpy_(dest, source, sizeof(coord_cube_t));
 }
 
 int are_all_coord_equal(coord_cube_t *cube1, coord_cube_t *cube2) {

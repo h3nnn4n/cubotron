@@ -21,9 +21,21 @@
  *
  */
 
+#include <assert.h>
 #include <string.h>
 
-void *memcopy(void *dest, const void *src, size_t count) {
-    // NOLINT(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
+void *memcpy_(void *dest, const void *src, size_t count) {
+    assert(dest != NULL);
+    assert(src != NULL);
+    assert(count > 0);
+
+    // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
     return memcpy(dest, src, count);
+}
+
+void *memset_(void *dest, int ch, size_t count) {
+    assert(dest != NULL);
+
+    // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
+    return memset(dest, ch, count);
 }
