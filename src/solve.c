@@ -99,6 +99,7 @@ solve_list_t *solve(coord_cube_t *original_cube, config_t *config) {
 
     if (solution == NULL) {
         printf("Failed to solve");
+        free(solves);
         return NULL;
     } else {
         copy_coord_cube(cube, original_cube);
