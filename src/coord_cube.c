@@ -26,6 +26,7 @@
 #include <string.h>
 
 #include "coord_cube.h"
+#include "mem_utils.h"
 
 coord_cube_t *get_coord_cube() {
     coord_cube_t *coord_cube = (coord_cube_t *)malloc(sizeof(coord_cube_t));
@@ -56,7 +57,7 @@ coord_cube_t *make_coord_cube(cube_cubie_t *cubie) {
 void copy_coord_cube(coord_cube_t *dest, coord_cube_t *source) {
     assert(dest != NULL);
     assert(source != NULL);
-    memcpy(dest, source, sizeof(coord_cube_t));
+    memcopy(dest, source, sizeof(coord_cube_t));
 }
 
 int are_all_coord_equal(coord_cube_t *cube1, coord_cube_t *cube2) {
