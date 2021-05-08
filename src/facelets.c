@@ -65,7 +65,7 @@ int verify_valid_facelets(char facelets[N_FACELETS]) {
 }
 
 color_t *build_facelet(char facelets[N_FACELETS]) {
-    color_t *facelet_cube = (color_t *)malloc(sizeof(facelet_t) * N_FACELETS);
+    color_t *facelet_cube = (color_t *)malloc(sizeof(color_t) * N_FACELETS);
 
     for (int i = 0; i < N_FACELETS; i++) {
         switch (facelets[i]) {
