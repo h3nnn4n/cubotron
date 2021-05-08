@@ -1,4 +1,4 @@
-name: Memory leak check
+name: Memory Leak Check
 
 on: push
 
