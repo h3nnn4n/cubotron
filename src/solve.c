@@ -98,7 +98,6 @@ solve_list_t *solve(coord_cube_t *original_cube, config_t *config) {
     move_t *solution = solve_phase1(solve_context, config, solves);
 
     if (solution == NULL) {
-        free(solution);
         return NULL;
     } else {
         copy_coord_cube(cube, original_cube);
