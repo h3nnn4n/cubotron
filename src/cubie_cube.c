@@ -400,9 +400,7 @@ int get_corner_permutations(cube_cubie_t *cube) {
 void set_corner_permutations(cube_cubie_t *cube, int permutations) {
     corner_t perm[N_CORNERS] = {URF, UFL, ULB, UBR, DFR, DLF, DBL, DRB};
 
-    int k;
-
-    for (int i = 1; i < N_CORNERS; i++) {
+    for (int k, i = 1; i < N_CORNERS; i++) {
         k = permutations % (i + 1);
         permutations /= i + 1;
         while (k > 0) {
