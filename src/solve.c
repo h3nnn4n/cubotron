@@ -103,10 +103,7 @@ solve_list_t *solve(coord_cube_t *original_cube, config_t *config) {
     } else {
         copy_coord_cube(cube, original_cube);
 
-        int solution_length = 0;
-
         for (int i = 0; solution[i] != MOVE_NULL; i++) {
-            solution_length += 1;
             coord_apply_move(cube, solution[i]);
         }
 
