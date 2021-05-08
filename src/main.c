@@ -35,6 +35,7 @@
 #include "solve.h"
 #include "stats.h"
 #include "utils.h"
+#include "mem_utils.h"
 
 static config_t *config;
 
@@ -76,12 +77,12 @@ int main(int argc, char **argv) {
             case 's': {
                 config->do_solve  = 1;
                 facelets_to_solve = malloc(sizeof(char) * (strlen(optarg) + 2));
-                memcpy(facelets_to_solve, optarg, sizeof(char) * (strlen(optarg) + 1));
+                memcpy_(facelets_to_solve, optarg, sizeof(char) * (strlen(optarg) + 1));
             } break;
 
             case 'b': {
                 char *move_black_list_str = malloc(sizeof(char) * (strlen(optarg) + 2));
-                memcpy(move_black_list_str, optarg, sizeof(char) * (strlen(optarg) + 1));
+                memcpy_(move_black_list_str, optarg, sizeof(char) * (strlen(optarg) + 1));
 
                 for (size_t i = 0; i < strlen(move_black_list_str); i++) {
                     move_t move = str_to_move(&move_black_list_str[i]);

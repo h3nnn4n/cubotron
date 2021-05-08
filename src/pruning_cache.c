@@ -32,6 +32,7 @@
 
 int pruning_table_cache_load(char *cache_name, char *table_name, int **pruning_table, int table_size) {
     char filepath[512];
+    // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
     snprintf(filepath, sizeof(filepath), "cache/%s/%s", cache_name, table_name);
 
     if (!file_exists(filepath))
@@ -65,7 +66,9 @@ void pruning_table_cache_store(char *cache_name, char *table_name, int *pruning_
     char filepath[512];
     char cachepath[512];
 
+    // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
     snprintf(filepath, sizeof(filepath), "cache/%s/%s", cache_name, table_name);
+    // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
     snprintf(cachepath, sizeof(cachepath), "cache/%s", cache_name);
 
     uint64_t start_time = get_microseconds();

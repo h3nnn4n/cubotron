@@ -61,6 +61,7 @@ int mkdir_p(const char *path) {
         return -1;
     }
 
+    // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
     snprintf(_path, sizeof(_path), "%s", path);
 
     for (p = _path + 1; *p; p++) {
