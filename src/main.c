@@ -30,12 +30,12 @@
 #include "coord_cube.h"
 #include "cubie_cube.h"
 #include "facelets.h"
+#include "mem_utils.h"
 #include "move_tables.h"
 #include "pruning.h"
 #include "solve.h"
 #include "stats.h"
 #include "utils.h"
-#include "mem_utils.h"
 
 static config_t *config;
 
