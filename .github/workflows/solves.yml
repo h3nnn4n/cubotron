@@ -1,4 +1,4 @@
-name: Run Solver on cube library
+name: Sample Solves Test
 
 on: push
 
