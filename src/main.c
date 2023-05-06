@@ -1,3 +1,26 @@
+/*
+ * Copyright <2021> <Renan S Silva, aka h3nnn4n>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 #include <getopt.h>
 #include <stdio.h>
 #include <string.h>
@@ -7,6 +30,7 @@
 #include "coord_cube.h"
 #include "cubie_cube.h"
 #include "facelets.h"
+#include "mem_utils.h"
 #include "move_tables.h"
 #include "pruning.h"
 #include "solve.h"
@@ -51,14 +75,24 @@ int main(int argc, char **argv) {
                 break;
 
             case 's': {
+                if (optarg == NULL) {
+                    fprintf(stderr, "optarg is missing for solve");
+                    break;
+                }
+
                 config->do_solve  = 1;
                 facelets_to_solve = malloc(sizeof(char) * (strlen(optarg) + 2));
-                memcpy(facelets_to_solve, optarg, sizeof(char) * (strlen(optarg) + 1));
+                memcpy_(facelets_to_solve, optarg, sizeof(char) * (strlen(optarg) + 1));
             } break;
 
             case 'b': {
+                if (optarg == NULL) {
+                    fprintf(stderr, "optarg is missing for benchmark");
+                    break;
+                }
+
                 char *move_black_list_str = malloc(sizeof(char) * (strlen(optarg) + 2));
-                memcpy(move_black_list_str, optarg, sizeof(char) * (strlen(optarg) + 1));
+                memcpy_(move_black_list_str, optarg, sizeof(char) * (strlen(optarg) + 1));
 
                 for (size_t i = 0; i < strlen(move_black_list_str); i++) {
                     move_t move = str_to_move(&move_black_list_str[i]);
@@ -73,10 +107,20 @@ int main(int argc, char **argv) {
             } break;
 
             case 'm': {
+                if (optarg == NULL) {
+                    fprintf(stderr, "optarg is missing for max_depth");
+                    break;
+                }
+
                 config->max_depth = atoi(optarg);
             } break;
 
             case 'n': {
+                if (optarg == NULL) {
+                    fprintf(stderr, "optarg is missing for number of sulutions");
+                    break;
+                }
+
                 config->n_solutions = atoi(optarg);
             } break;
 
