@@ -4,7 +4,7 @@ on: push
 
 jobs:
   heapcheck-solve:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     steps:
       - uses: actions/checkout@master
@@ -37,7 +37,7 @@ jobs:
           HEAPCHECK: normal
 
   heapcheck-solve-blacklist:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     steps:
       - uses: actions/checkout@master
@@ -68,7 +68,7 @@ jobs:
           HEAPCHECK: normal
 
   heapcheck-benchmarks:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     steps:
       - uses: actions/checkout@master
