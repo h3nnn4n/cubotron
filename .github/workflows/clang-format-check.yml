@@ -9,11 +9,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - uses: DoozyX/clang-format-lint-action@v0.20
-      with:
-        source: '.'
-        exclude: './deps'
-        extensions: 'h,c'
-        clangFormatVersion: 20
-        style: file
-        assumeFilename: 'file.c'
+    - name: Install clang-format-20
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y clang-format-20
+
+    - name: Check formatting
+      run: |
+        # Check if files are properly formatted
+        ./format.sh --check || (echo "Files are not properly formatted. Run './format.sh' to fix." && exit 1)
