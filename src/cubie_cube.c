@@ -1,3 +1,26 @@
+/*
+ * Copyright <2021> <Renan S Silva, aka h3nnn4n>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 #include <assert.h>
 #include <stdio.h>
 
@@ -91,8 +114,8 @@ int get_E_slice(cube_cubie_t *cube) {
 }
 
 void set_E_slice(cube_cubie_t *cube, int slice) {
-    static int slice_edges[4] = {FR, FL, BL, BR};
-    static int other_edges[8] = {UR, UF, UL, UB, DR, DF, DL, DB};
+    static const int slice_edges[4] = {FR, FL, BL, BR};
+    static const int other_edges[8] = {UR, UF, UL, UB, DR, DF, DL, DB};
 
     for (int i = 0; i < N_EDGES; i++)
         cube->edge_permutations[i] = -1;
@@ -325,7 +348,7 @@ void set_UD6_edges(cube_cubie_t *cubiecube, int idx) {
     }
 }
 
-int get_corner_parity(cube_cubie_t *cube) {
+int get_corner_parity(const cube_cubie_t *cube) {
     int parity = 0;
 
     for (int i = DRB; i >= URF + 1; i--) {
@@ -339,7 +362,7 @@ int get_corner_parity(cube_cubie_t *cube) {
     return parity % 2;
 }
 
-int get_edge_parity(cube_cubie_t *cube) {
+int get_edge_parity(const cube_cubie_t *cube) {
     int parity = 0;
 
     for (int i = BR; i >= UR + 1; i--) {
@@ -377,9 +400,7 @@ int get_corner_permutations(cube_cubie_t *cube) {
 void set_corner_permutations(cube_cubie_t *cube, int permutations) {
     corner_t perm[N_CORNERS] = {URF, UFL, ULB, UBR, DFR, DLF, DBL, DRB};
 
-    int k;
-
-    for (int i = 1; i < N_CORNERS; i++) {
+    for (int k, i = 1; i < N_CORNERS; i++) {
         k = permutations % (i + 1);
         permutations /= i + 1;
         while (k > 0) {
@@ -447,9 +468,6 @@ void multiply_cube_cubie_corners(cube_cubie_t *cube1, cube_cubie_t *cube2) {
                 orientation += 3;
         } else if (orientation_a >= 3 && 3 >= orientation_b) {
             orientation = orientation_a - orientation_b;
-
-            if (orientation < 0)
-                orientation += 3;
         } else {
             // This should never happen
             abort();
@@ -464,7 +482,7 @@ void multiply_cube_cubie_corners(cube_cubie_t *cube1, cube_cubie_t *cube2) {
     }
 }
 
-int are_cubie_equal(cube_cubie_t *cube1, cube_cubie_t *cube2) {
+int are_cubie_equal(const cube_cubie_t *cube1, const cube_cubie_t *cube2) {
     for (int i = 0; i < N_EDGES; i++) {
         if (cube1->edge_permutations[i] != cube2->edge_permutations[i])
             return 0;

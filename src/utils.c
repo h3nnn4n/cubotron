@@ -1,9 +1,33 @@
+/*
+ * Copyright <2021> <Renan S Silva, aka h3nnn4n>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 #if !defined(__APPLE__)
 #define _XOPEN_SOURCE 500
 #endif
 
 #include <assert.h>
 #include <ftw.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
@@ -15,6 +39,7 @@
 #include "coord_move_tables.h"
 #include "cubie_cube.h"
 #include "cubie_move_table.h"
+#include "utils.h"
 
 static char *_move_t_to_str_enum[] = {
     "MOVE_U1", "MOVE_U2", "MOVE_U3", "MOVE_R1", "MOVE_R2", "MOVE_R3", "MOVE_F1", "MOVE_F2", "MOVE_F3",   "MOVE_D1",
@@ -48,7 +73,7 @@ static move_t reverse_move[] = {
 
 int is_bad_move(move_t move1, move_t move2) { return move1 / 3 == move2 / 3; }
 
-int cubie_off_count(cube_cubie_t *cube) {
+int cubie_off_count(const cube_cubie_t *cube) {
     int count = 0;
 
     for (int i = 0; i < 8; i++) {
@@ -70,7 +95,7 @@ int cubie_off_count(cube_cubie_t *cube) {
     return count;
 }
 
-int is_cubie_solved(cube_cubie_t *cube) { return cubie_off_count(cube) == 0; }
+int is_cubie_solved(const cube_cubie_t *cube) { return cubie_off_count(cube) == 0; }
 
 char *move_to_str_enum(move_t move) {
     assert(move >= 0);
@@ -153,10 +178,10 @@ move_t get_reverse_move(move_t move) {
     return reverse_move[move];
 }
 
-long get_microseconds(void) {
+uint64_t get_microseconds(void) {
     struct timespec ts;
     timespec_get(&ts, TIME_UTC);
-    return (long)(ts.tv_sec * 1000000000L + ts.tv_nsec) / 1000;
+    return (uint64_t)(ts.tv_sec * 1000000000L + ts.tv_nsec) / 1000;
 }
 
 int Cnk(int n, int k) {
@@ -207,7 +232,7 @@ int unlink_cb(const char *fpath, __attribute__((unused)) const struct stat *sb, 
 
 int rmrf(char *path) { return nftw(path, unlink_cb, 64, FTW_DEPTH | FTW_PHYS); }
 
-move_t str_to_move(char *move_str) {
+move_t str_to_move(const char *move_str) {
     for (move_t move = 0; move < N_MOVES; move++) {
         if (strncmp(move_str, move_to_str(move), 2) == 0) {
             return move;

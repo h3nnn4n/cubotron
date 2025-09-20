@@ -13,7 +13,9 @@ jobs:
           submodules: true
 
       - name: Install gproftools
-        run: sudo apt-get install -y google-perftools libgoogle-perftools-dev && sudo ln -s /usr/lib/x86_64-linux-gnu/libtcmalloc.so /usr/lib/libtcmalloc.so
+        run: |
+          sudo apt-get install -y google-perftools libgoogle-perftools-dev
+          sudo ln -s /usr/lib/x86_64-linux-gnu/libtcmalloc.so /usr/lib/libtcmalloc.so
 
       - name: Build
         run: make gperftools
@@ -44,7 +46,9 @@ jobs:
           submodules: true
 
       - name: Install gproftools
-        run: sudo apt-get install -y google-perftools libgoogle-perftools-dev && sudo ln -s /usr/lib/x86_64-linux-gnu/libtcmalloc.so /usr/lib/libtcmalloc.so
+        run: |
+          sudo apt-get install -y google-perftools libgoogle-perftools-dev
+          sudo ln -s /usr/lib/x86_64-linux-gnu/libtcmalloc.so /usr/lib/libtcmalloc.so
 
       - name: Build
         run: make gperftools
@@ -75,7 +79,9 @@ jobs:
           submodules: true
 
       - name: Install gproftools
-        run: sudo apt-get install -y google-perftools libgoogle-perftools-dev && sudo ln -s /usr/lib/x86_64-linux-gnu/libtcmalloc.so /usr/lib/libtcmalloc.so
+        run: |
+          sudo apt-get install -y google-perftools libgoogle-perftools-dev
+          sudo ln -s /usr/lib/x86_64-linux-gnu/libtcmalloc.so /usr/lib/libtcmalloc.so
 
       - name: Build
         run: make gperftools

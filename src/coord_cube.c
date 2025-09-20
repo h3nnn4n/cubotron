@@ -1,8 +1,32 @@
+/*
+ * Copyright <2021> <Renan S Silva, aka h3nnn4n>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "coord_cube.h"
+#include "mem_utils.h"
 
 coord_cube_t *get_coord_cube() {
     coord_cube_t *coord_cube = (coord_cube_t *)malloc(sizeof(coord_cube_t));
@@ -12,7 +36,7 @@ coord_cube_t *get_coord_cube() {
 
 void reset_coord_cube(coord_cube_t *cube) {
     assert(cube != NULL);
-    memset(cube, 0, sizeof(coord_cube_t));
+    memset_(cube, 0, sizeof(coord_cube_t));
 }
 
 coord_cube_t *make_coord_cube(cube_cubie_t *cubie) {
@@ -30,13 +54,13 @@ coord_cube_t *make_coord_cube(cube_cubie_t *cubie) {
     return coord_cube;
 }
 
-void copy_coord_cube(coord_cube_t *dest, coord_cube_t *source) {
+void copy_coord_cube(coord_cube_t *dest, const coord_cube_t *source) {
     assert(dest != NULL);
     assert(source != NULL);
-    memcpy(dest, source, sizeof(coord_cube_t));
+    memcpy_(dest, source, sizeof(coord_cube_t));
 }
 
-int are_all_coord_equal(coord_cube_t *cube1, coord_cube_t *cube2) {
+int are_all_coord_equal(const coord_cube_t *cube1, const coord_cube_t *cube2) {
     if (cube1->edge_orientations != cube2->edge_orientations)
         return 0;
 
@@ -64,7 +88,7 @@ int are_all_coord_equal(coord_cube_t *cube1, coord_cube_t *cube2) {
     return 1;
 }
 
-int are_phase1_coord_equal(coord_cube_t *cube1, coord_cube_t *cube2) {
+int are_phase1_coord_equal(const coord_cube_t *cube1, const coord_cube_t *cube2) {
     if (cube1->edge_orientations != cube2->edge_orientations)
         return 0;
 
@@ -77,12 +101,12 @@ int are_phase1_coord_equal(coord_cube_t *cube1, coord_cube_t *cube2) {
     return 1;
 }
 
-int is_phase1_solved(coord_cube_t *cube) {
+int is_phase1_solved(const coord_cube_t *cube) {
     return (cube->edge_orientations + cube->corner_orientations + cube->E_slice) == 0;
 }
 
-int is_phase2_solved(coord_cube_t *cube) {
+int is_phase2_solved(const coord_cube_t *cube) {
     return (cube->UD6_edge_permutations + cube->corner_permutations + cube->E_sorted_slice) == 0;
 }
 
-int is_coord_solved(coord_cube_t *cube) { return is_phase1_solved(cube) && is_phase2_solved(cube); }
+int is_coord_solved(const coord_cube_t *cube) { return is_phase1_solved(cube) && is_phase2_solved(cube); }

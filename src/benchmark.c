@@ -1,10 +1,35 @@
+/*
+ * Copyright <2021> <Renan S Silva, aka h3nnn4n>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 #include <stddef.h> // Has to come before entropy, because they forgot to add it
 
 #include <assert.h>
 #include <entropy.h>
 #include <pcg_variants.h>
+#include <stdint.h>
 #include <stdio.h>
 
+#include "benchmark.h"
 #include "cubie_cube.h"
 #include "facelets.h"
 #include "move_tables.h"
@@ -14,6 +39,7 @@
 #include "utils.h"
 
 #define n_scramble_moves 50
+#define n_moves_chunk    1000
 
 void apply_random_scramble(coord_cube_t *cube, int n_moves) {
     assert(cube != NULL);
@@ -39,7 +65,7 @@ void apply_random_scramble(coord_cube_t *cube, int n_moves) {
     assert(!is_phase2_solved(cube));
 }
 
-void do_solve(coord_cube_t *cube) {
+void do_solve(const coord_cube_t *cube) {
     solve_list_t *solution = solve_single(cube);
     /*solve_list_t *solution = solve(cube, 22, 0, 1);*/
     /*static int    solve_count = 0;*/
@@ -55,13 +81,13 @@ void do_solve(coord_cube_t *cube) {
         /*coord_apply_move(cube, solution->solution[i]);*/
         /*}*/
         /*printf("  length: %2d\n", len);*/
-    }
 
-    free(solution->next);
-    free(solution->phase1_solution);
-    free(solution->phase2_solution);
-    free(solution->solution);
-    free(solution);
+        free(solution->next);
+        free(solution->phase1_solution);
+        free(solution->phase2_solution);
+        free(solution->solution);
+        free(solution);
+    }
 
     /*assert(is_phase1_solved(cube));*/
     /*assert(is_phase2_solved(cube));*/
@@ -76,8 +102,8 @@ void solve_random_cubes() {
 
     coord_cube_t *cube = get_coord_cube();
 
-    int  solve_count = 0;
-    long start_time  = get_microseconds();
+    int      solve_count = 0;
+    uint64_t start_time  = get_microseconds();
 
     while (1) {
         int n = pcg32_boundedrand(n_scramble_moves / 2) + n_scramble_moves / 2;
@@ -90,7 +116,7 @@ void solve_random_cubes() {
             break;
     }
 
-    long end_time = get_microseconds();
+    uint64_t end_time = get_microseconds();
     printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);
     printf("solve_count: %d - ", solve_count);
     printf("solves per second : %.2f\n", ((float)solve_count / (end_time - start_time)) * 1000000.0);
@@ -101,8 +127,8 @@ void solve_random_cubes() {
 
 void solve_cube_sample_library() {
     printf("BENCHMARK: Solve 100 sample cubes\n");
-    int  solve_count = 0;
-    long start_time  = get_microseconds();
+    int      solve_count = 0;
+    uint64_t start_time  = get_microseconds();
 
     for (int i = 0; i < N_FACELETS_SAMPLES; i++) {
         cube_cubie_t *cubie_cube = build_cubie_cube_from_str(sample_facelets[i]);
@@ -116,7 +142,7 @@ void solve_cube_sample_library() {
         free(cube);
     }
 
-    long end_time = get_microseconds();
+    uint64_t end_time = get_microseconds();
     printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);
     printf("solve_count: %d - ", solve_count);
     printf("solves per second : %.2f\n", ((float)solve_count / (end_time - start_time)) * 1000000.0);
@@ -128,24 +154,22 @@ void coord_benchmark() {
 
     coord_cube_t *cube = get_coord_cube();
 
-#define n_moves 1000
+    move_t moves[n_moves_chunk];
 
-    move_t moves[n_moves];
-
-    for (int i = 0; i < n_moves; i++)
+    for (int i = 0; i < n_moves_chunk; i++)
         moves[i] = pcg32_boundedrand(N_MOVES);
 
-    int  move_count = 0;
-    long start_time = get_microseconds();
-    long end_time;
+    int      move_count = 0;
+    uint64_t start_time = get_microseconds();
+    uint64_t end_time;
 
     do {
         for (int j = 0; j < 10000; j++) {
-            for (int i = 0; i < n_moves; i++) {
+            for (int i = 0; i < n_moves_chunk; i++) {
                 coord_apply_move(cube, moves[i]);
             }
 
-            move_count += n_moves;
+            move_count += n_moves_chunk;
         }
 
         end_time = get_microseconds();

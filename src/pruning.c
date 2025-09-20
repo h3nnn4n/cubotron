@@ -1,4 +1,28 @@
+/*
+ * Copyright <2021> <Renan S Silva, aka h3nnn4n>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 #include <assert.h>
+#include <stdint.h>
 #include <stdio.h>
 
 #include "coord_cube.h"
@@ -35,7 +59,7 @@ void build_pruning_tables() {
     build_phase2_corner_table();
 }
 
-int get_phase1_pruning(coord_cube_t *cube) {
+int get_phase1_pruning(const coord_cube_t *cube) {
     assert(pruning_phase1_corner != NULL);
     assert(pruning_phase1_edge != NULL);
 
@@ -52,7 +76,7 @@ int get_phase1_pruning(coord_cube_t *cube) {
     return value1 > value2 ? value1 : value2;
 }
 
-int get_phase2_pruning(coord_cube_t *cube) {
+int get_phase2_pruning(const coord_cube_t *cube) {
     assert(pruning_phase2_corner != NULL);
     assert(is_phase1_solved(cube)); // UD6_slices and UD7_slices only works for phase2
 
@@ -94,7 +118,7 @@ void build_phase1_corner_table() {
 
     printf("bulding phase1 corner orientations pruning table\n");
 
-    long start_time       = get_microseconds();
+    uint64_t start_time   = get_microseconds();
     pruning_phase1_corner = (int *)malloc(sizeof(int) * N_CORNER_ORIENTATIONS * N_SLICES);
 
     for (int i = 0; i < N_CORNER_ORIENTATIONS * N_SLICES; i++)
@@ -103,8 +127,8 @@ void build_phase1_corner_table() {
     // The solved phase1 cube has coord zero and can be solved in zero moves
     pruning_phase1_corner[0] = 0;
 
-    int *slice_move_table               = get_move_table_E_slice();
-    int *corner_orientations_move_table = get_move_table_corner_orientations();
+    const int *slice_move_table               = get_move_table_E_slice();
+    const int *corner_orientations_move_table = get_move_table_corner_orientations();
 
     int missing = N_CORNER_ORIENTATIONS * N_SLICES - 1;
     int depth   = 0;
@@ -135,7 +159,7 @@ void build_phase1_corner_table() {
         depth++;
     }
 
-    long end_time = get_microseconds();
+    uint64_t end_time = get_microseconds();
 
     printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);
     printf("nodes per second : %.2f\n",
@@ -162,7 +186,7 @@ void build_phase1_edge_table() {
 
     printf("bulding phase1 edge orientations pruning table\n");
 
-    long start_time     = get_microseconds();
+    uint64_t start_time = get_microseconds();
     pruning_phase1_edge = (int *)malloc(sizeof(int) * N_EDGE_ORIENTATIONS * N_SLICES);
 
     for (int i = 0; i < N_EDGE_ORIENTATIONS * N_SLICES; i++)
@@ -171,8 +195,8 @@ void build_phase1_edge_table() {
     // The solved phase1 cube has coord zero and can be solved in zero moves
     pruning_phase1_edge[0] = 0;
 
-    int *slice_move_table             = get_move_table_E_slice();
-    int *edge_orientations_move_table = get_move_table_edge_orientations();
+    const int *slice_move_table             = get_move_table_E_slice();
+    const int *edge_orientations_move_table = get_move_table_edge_orientations();
 
     int missing = N_EDGE_ORIENTATIONS * N_SLICES - 1;
     int depth   = 0;
@@ -203,7 +227,7 @@ void build_phase1_edge_table() {
         depth++;
     }
 
-    long end_time = get_microseconds();
+    uint64_t end_time = get_microseconds();
 
     printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);
     printf("nodes per second : %.2f\n",
@@ -230,7 +254,7 @@ void build_phase2_UD6_edge_table() {
 
     printf("bulding phase2 UD6_edge permutations pruning table\n");
 
-    long start_time         = get_microseconds();
+    uint64_t start_time     = get_microseconds();
     pruning_phase2_UD6_edge = (int *)malloc(sizeof(int) * N_UD6_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2);
 
     for (int i = 0; i < N_UD6_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2; i++)
@@ -239,8 +263,8 @@ void build_phase2_UD6_edge_table() {
     // The solved phase2 cube has coord zero and can be solved in zero moves
     pruning_phase2_UD6_edge[0] = 0;
 
-    int *sorted_slice_move_table          = get_move_table_E_sorted_slice();
-    int *UD6_edge_permutations_move_table = get_move_table_UD6_edge_permutations();
+    const int *sorted_slice_move_table          = get_move_table_E_sorted_slice();
+    const int *UD6_edge_permutations_move_table = get_move_table_UD6_edge_permutations();
 
     int missing = N_UD6_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2 - 1;
     int depth   = 0;
@@ -284,7 +308,7 @@ void build_phase2_UD6_edge_table() {
         depth++;
     }
 
-    long end_time = get_microseconds();
+    uint64_t end_time = get_microseconds();
 
     printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);
     printf("nodes per second : %.2f\n",
@@ -312,7 +336,7 @@ void build_phase2_UD7_edge_table() {
 
     printf("bulding phase2 UD7_edge permutations pruning table\n");
 
-    long start_time         = get_microseconds();
+    uint64_t start_time     = get_microseconds();
     pruning_phase2_UD7_edge = (int *)malloc(sizeof(int) * N_UD7_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2);
 
     for (int i = 0; i < N_UD7_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2; i++)
@@ -321,8 +345,8 @@ void build_phase2_UD7_edge_table() {
     // The solved phase2 cube has coord zero and can be solved in zero moves
     pruning_phase2_UD7_edge[0] = 0;
 
-    int *sorted_slice_move_table          = get_move_table_E_sorted_slice();
-    int *UD7_edge_permutations_move_table = get_move_table_UD7_edge_permutations();
+    const int *sorted_slice_move_table          = get_move_table_E_sorted_slice();
+    const int *UD7_edge_permutations_move_table = get_move_table_UD7_edge_permutations();
 
     int missing = N_UD7_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2 - 1;
     int depth   = 0;
@@ -366,7 +390,7 @@ void build_phase2_UD7_edge_table() {
         depth++;
     }
 
-    long end_time = get_microseconds();
+    uint64_t end_time = get_microseconds();
 
     printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);
     printf("nodes per second : %.2f\n",
@@ -394,7 +418,7 @@ void build_phase2_corner_table() {
 
     printf("bulding phase2 corner orientations pruning table\n");
 
-    long start_time       = get_microseconds();
+    uint64_t start_time   = get_microseconds();
     pruning_phase2_corner = (int *)malloc(sizeof(int) * N_CORNER_PERMUTATIONS * N_SORTED_SLICES_PHASE2);
 
     for (int i = 0; i < N_CORNER_PERMUTATIONS * N_SORTED_SLICES_PHASE2; i++)
@@ -403,8 +427,8 @@ void build_phase2_corner_table() {
     // The solved phase2 cube has coord zero and can be solved in zero moves
     pruning_phase2_corner[0] = 0;
 
-    int *sorted_slice_move_table        = get_move_table_E_sorted_slice();
-    int *corner_permutations_move_table = get_move_table_corner_permutations();
+    const int *sorted_slice_move_table        = get_move_table_E_sorted_slice();
+    const int *corner_permutations_move_table = get_move_table_corner_permutations();
 
     int missing = N_CORNER_PERMUTATIONS * N_SORTED_SLICES_PHASE2 - 1;
     int depth   = 0;
@@ -448,7 +472,7 @@ void build_phase2_corner_table() {
         depth++;
     }
 
-    long end_time = get_microseconds();
+    uint64_t end_time = get_microseconds();
 
     printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);
     printf("nodes per second : %.2f\n",

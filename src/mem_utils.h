@@ -21,18 +21,12 @@
  *
  */
 
-#ifndef _PRINING
-#define _PRINING
+#ifndef SRC_MEM_UTILS_H_
+#define SRC_MEM_UTILS_H_
 
-#include "coord_cube.h"
+#include <stdlib.h>
 
-void build_pruning_tables();
-void build_phase1_corner_table();
-void build_phase1_edge_table();
-void build_phase2_UD6_edge_table();
-void build_phase2_UD7_edge_table();
-void build_phase2_corner_table();
-int  get_phase1_pruning(const coord_cube_t *cube);
-int  get_phase2_pruning(const coord_cube_t *cube);
+void *memcpy_(void *dest, const void *src, size_t count);
+void *memset_(void *dest, int ch, size_t count);
 
-#endif /* end of include guard */
+#endif /* SRC_MEM_UTILS_H_ */

@@ -21,18 +21,23 @@
  *
  */
 
-#ifndef _PRINING
-#define _PRINING
+#include <assert.h>
+#include <string.h>
 
-#include "coord_cube.h"
+#include "mem_utils.h"
 
-void build_pruning_tables();
-void build_phase1_corner_table();
-void build_phase1_edge_table();
-void build_phase2_UD6_edge_table();
-void build_phase2_UD7_edge_table();
-void build_phase2_corner_table();
-int  get_phase1_pruning(const coord_cube_t *cube);
-int  get_phase2_pruning(const coord_cube_t *cube);
+void *memcpy_(void *dest, const void *src, size_t count) {
+    assert(dest != NULL);
+    assert(src != NULL);
+    assert(count > 0);
 
-#endif /* end of include guard */
+    // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
+    return memcpy(dest, src, count);
+}
+
+void *memset_(void *dest, int ch, size_t count) {
+    assert(dest != NULL);
+
+    // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
+    return memset(dest, ch, count);
+}

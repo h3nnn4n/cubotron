@@ -1,3 +1,26 @@
+/*
+ * Copyright <2021> <Renan S Silva, aka h3nnn4n>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,7 +42,7 @@ color_t corner_colors[N_CORNERS][3] = {{U, R, F}, {U, F, L}, {U, L, B}, {U, B, R
 color_t edge_colors[N_EDGES][2] = {{U, R}, {U, F}, {U, L}, {U, B}, {D, R}, {D, F},
                                    {D, L}, {D, B}, {F, R}, {F, L}, {B, L}, {B, R}};
 
-int verify_valid_facelets(char facelets[N_FACELETS]) {
+int verify_valid_facelets(const char facelets[N_FACELETS]) {
     int faces[N_COLORS] = {0};
 
     for (int i = 0; i < N_FACELETS; i++) {
@@ -41,8 +64,8 @@ int verify_valid_facelets(char facelets[N_FACELETS]) {
     return 1;
 }
 
-color_t *build_facelet(char facelets[N_FACELETS]) {
-    color_t *facelet_cube = (color_t *)malloc(sizeof(facelet_t) * N_FACELETS);
+color_t *build_facelet(const char facelets[N_FACELETS]) {
+    color_t *facelet_cube = (color_t *)malloc(sizeof(color_t) * N_FACELETS);
 
     for (int i = 0; i < N_FACELETS; i++) {
         switch (facelets[i]) {
@@ -60,7 +83,7 @@ color_t *build_facelet(char facelets[N_FACELETS]) {
 
 cube_cubie_t *build_cubie_cube_from_str(char facelets[N_FACELETS]) {
     cube_cubie_t *cubie_cube = init_cubie_cube();
-    color_t *     color_cube = build_facelet(facelets);
+    color_t      *color_cube = build_facelet(facelets);
 
     for (int i = 0; i < N_CORNERS; i++) {
         int orientation = 0;
@@ -74,7 +97,6 @@ cube_cubie_t *build_cubie_cube_from_str(char facelets[N_FACELETS]) {
 
         for (int j = 0; j < N_CORNERS; j++) {
             if (color_a == corner_colors[j][1] && color_b == corner_colors[j][2]) {
-
                 cubie_cube->corner_permutations[i] = j;
                 cubie_cube->corner_orientations[i] = orientation;
             }
