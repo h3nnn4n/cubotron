@@ -14,5 +14,5 @@ jobs:
         source: '.'
         exclude: './deps'
         extensions: 'h,c'
-        clangFormatVersion: 11
+        clangFormatVersion: 20
         style: file
