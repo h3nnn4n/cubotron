@@ -38,6 +38,7 @@ jobs:
             --suppress=nullPointerOutOfResources \
             --suppress=constParameterCallback \
             --suppress=normalCheckLevelMaxBranches \
+            --suppress=unmatchedSuppression \
             --std=c11 \
             --language=c \
             --error-exitcode=1 \
