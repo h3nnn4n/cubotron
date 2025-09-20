@@ -76,7 +76,7 @@ int get_phase1_pruning(const coord_cube_t *cube) {
     return value1 > value2 ? value1 : value2;
 }
 
-int get_phase2_pruning(coord_cube_t *cube) {
+int get_phase2_pruning(const coord_cube_t *cube) {
     assert(pruning_phase2_corner != NULL);
     assert(is_phase1_solved(cube)); // UD6_slices and UD7_slices only works for phase2
 

@@ -67,11 +67,11 @@ void destroy_solve_list_node(solve_list_t *node) {
 }
 
 solve_list_t *solve_facelets_single(char facelets[N_FACELETS]) {
-    config_t *config = get_config();
+    const config_t *config = get_config();
     return solve_facelets(facelets, config);
 }
 
-solve_list_t *solve_facelets(char facelets[N_FACELETS], config_t *config) {
+solve_list_t *solve_facelets(char facelets[N_FACELETS], const config_t *config) {
     cube_cubie_t *cubie_cube = build_cubie_cube_from_str(facelets);
     coord_cube_t *cube       = make_coord_cube(cubie_cube);
     solve_list_t *solution   = solve(cube, config);
@@ -82,14 +82,14 @@ solve_list_t *solve_facelets(char facelets[N_FACELETS], config_t *config) {
     return solution;
 }
 
-solve_list_t *solve_single(coord_cube_t *original_cube) {
-    config_t     *config   = get_config();
+solve_list_t *solve_single(const coord_cube_t *original_cube) {
+    const config_t *config   = get_config();
     solve_list_t *solution = solve(original_cube, config);
 
     return solution;
 }
 
-solve_list_t *solve(coord_cube_t *original_cube, config_t *config) {
+solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
     solve_list_t *solves = new_solve_list_node();
     coord_cube_t *cube   = get_coord_cube();
 
@@ -120,7 +120,7 @@ solve_list_t *solve(coord_cube_t *original_cube, config_t *config) {
 }
 
 // FIXME: we need a decent way to get just the phase1 solution
-move_t *solve_phase1(solve_context_t *solve_context, config_t *config, solve_list_t *solves) {
+move_t *solve_phase1(solve_context_t *solve_context, const config_t *config, solve_list_t *solves) {
     move_t *solution = NULL;
 
     const coord_cube_t *cube          = solve_context->cube;
@@ -441,7 +441,7 @@ solution_found:
     return solution;
 }
 
-solve_context_t *make_solve_context(coord_cube_t *cube) {
+solve_context_t *make_solve_context(const coord_cube_t *cube) {
     solve_context_t *phase1_context = (solve_context_t *)malloc(sizeof(solve_context_t));
     solve_context_t *phase2_context = (solve_context_t *)malloc(sizeof(solve_context_t));
 
