@@ -4,10 +4,10 @@ on: push
 
 jobs:
   heapcheck-solve:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 1
           submodules: true
@@ -22,7 +22,7 @@ jobs:
 
       - name: Cache Tables
         id: cache-tables
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: cache
           key: cache-tables
@@ -37,10 +37,10 @@ jobs:
           HEAPCHECK: normal
 
   heapcheck-solve-blacklist:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 1
           submodules: true
@@ -53,7 +53,7 @@ jobs:
 
       - name: Cache Tables
         id: cache-tables
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: cache
           key: cache-tables
@@ -68,10 +68,10 @@ jobs:
           HEAPCHECK: normal
 
   heapcheck-benchmarks:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 1
           submodules: true
@@ -84,7 +84,7 @@ jobs:
 
       - name: Cache Tables
         id: cache-tables
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: cache
           key: cache-tables

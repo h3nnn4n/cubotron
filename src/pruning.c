@@ -32,6 +32,18 @@
 #include "pruning_cache.h"
 #include "utils.h"
 
+/*
+With UD6
+18.18        solves per second
+33214435.58  moves per second
+
+With UD7
+33.41        solves per second
+42165660.86  moves per second
+*/
+
+#define USE_UD7
+
 static int *pruning_phase1_edge     = NULL;
 static int *pruning_phase1_corner   = NULL;
 static int *pruning_phase2_UD6_edge = NULL;
@@ -64,7 +76,6 @@ int get_phase1_pruning(coord_cube_t *cube) {
     return value1 > value2 ? value1 : value2;
 }
 
-#define USE_UD7
 int get_phase2_pruning(coord_cube_t *cube) {
     assert(pruning_phase2_corner != NULL);
     assert(is_phase1_solved(cube)); // UD6_slices and UD7_slices only works for phase2
