@@ -73,7 +73,7 @@ static move_t reverse_move[] = {
 
 int is_bad_move(move_t move1, move_t move2) { return move1 / 3 == move2 / 3; }
 
-int cubie_off_count(cube_cubie_t *cube) {
+int cubie_off_count(const cube_cubie_t *cube) {
     int count = 0;
 
     for (int i = 0; i < 8; i++) {
@@ -95,7 +95,7 @@ int cubie_off_count(cube_cubie_t *cube) {
     return count;
 }
 
-int is_cubie_solved(cube_cubie_t *cube) { return cubie_off_count(cube) == 0; }
+int is_cubie_solved(const cube_cubie_t *cube) { return cubie_off_count(cube) == 0; }
 
 char *move_to_str_enum(move_t move) {
     assert(move >= 0);
@@ -232,7 +232,7 @@ int unlink_cb(const char *fpath, __attribute__((unused)) const struct stat *sb, 
 
 int rmrf(char *path) { return nftw(path, unlink_cb, 64, FTW_DEPTH | FTW_PHYS); }
 
-move_t str_to_move(char *move_str) {
+move_t str_to_move(const char *move_str) {
     for (move_t move = 0; move < N_MOVES; move++) {
         if (strncmp(move_str, move_to_str(move), 2) == 0) {
             return move;

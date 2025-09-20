@@ -42,7 +42,7 @@ color_t corner_colors[N_CORNERS][3] = {{U, R, F}, {U, F, L}, {U, L, B}, {U, B, R
 color_t edge_colors[N_EDGES][2] = {{U, R}, {U, F}, {U, L}, {U, B}, {D, R}, {D, F},
                                    {D, L}, {D, B}, {F, R}, {F, L}, {B, L}, {B, R}};
 
-int verify_valid_facelets(char facelets[N_FACELETS]) {
+int verify_valid_facelets(const char facelets[N_FACELETS]) {
     int faces[N_COLORS] = {0};
 
     for (int i = 0; i < N_FACELETS; i++) {
@@ -64,7 +64,7 @@ int verify_valid_facelets(char facelets[N_FACELETS]) {
     return 1;
 }
 
-color_t *build_facelet(char facelets[N_FACELETS]) {
+color_t *build_facelet(const char facelets[N_FACELETS]) {
     color_t *facelet_cube = (color_t *)malloc(sizeof(color_t) * N_FACELETS);
 
     for (int i = 0; i < N_FACELETS; i++) {
@@ -83,7 +83,7 @@ color_t *build_facelet(char facelets[N_FACELETS]) {
 
 cube_cubie_t *build_cubie_cube_from_str(char facelets[N_FACELETS]) {
     cube_cubie_t *cubie_cube = init_cubie_cube();
-    color_t *     color_cube = build_facelet(facelets);
+    color_t      *color_cube = build_facelet(facelets);
 
     for (int i = 0; i < N_CORNERS; i++) {
         int orientation = 0;

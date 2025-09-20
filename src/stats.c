@@ -107,7 +107,7 @@ void dump_stats() {
     fprintf(f, "\n");
 
     for (int i = 0; i < buffer_size; i++) {
-        solve_stats_t *stats = &solve_stats[i];
+        const solve_stats_t *stats = &solve_stats[i];
 
         // FIXME: Somehow we are storing empty entries in the buffer. For now
         // lets just skip over it

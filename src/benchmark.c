@@ -65,7 +65,7 @@ void apply_random_scramble(coord_cube_t *cube, int n_moves) {
     assert(!is_phase2_solved(cube));
 }
 
-void do_solve(coord_cube_t *cube) {
+void do_solve(const coord_cube_t *cube) {
     solve_list_t *solution = solve_single(cube);
     /*solve_list_t *solution = solve(cube, 22, 0, 1);*/
     /*static int    solve_count = 0;*/

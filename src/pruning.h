@@ -32,7 +32,7 @@ void build_phase1_edge_table();
 void build_phase2_UD6_edge_table();
 void build_phase2_UD7_edge_table();
 void build_phase2_corner_table();
-int  get_phase1_pruning(coord_cube_t *cube);
-int  get_phase2_pruning(coord_cube_t *cube);
+int  get_phase1_pruning(const coord_cube_t *cube);
+int  get_phase2_pruning(const coord_cube_t *cube);
 
 #endif /* end of include guard */

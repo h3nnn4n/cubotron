@@ -40,11 +40,11 @@ typedef struct {
 coord_cube_t *get_coord_cube();
 void          reset_coord_cube(coord_cube_t *cube);
 coord_cube_t *make_coord_cube(cube_cubie_t *);
-void          copy_coord_cube(coord_cube_t *dest, coord_cube_t *source);
-int           are_all_coord_equal(coord_cube_t *cube1, coord_cube_t *cube2);
-int           are_phase1_coord_equal(coord_cube_t *cube1, coord_cube_t *cube2);
-int           is_phase1_solved(coord_cube_t *cube);
-int           is_phase2_solved(coord_cube_t *cube);
-int           is_coord_solved(coord_cube_t *cube);
+void          copy_coord_cube(coord_cube_t *dest, const coord_cube_t *source);
+int           are_all_coord_equal(const coord_cube_t *cube1, const coord_cube_t *cube2);
+int           are_phase1_coord_equal(const coord_cube_t *cube1, const coord_cube_t *cube2);
+int           is_phase1_solved(const coord_cube_t *cube);
+int           is_phase2_solved(const coord_cube_t *cube);
+int           is_coord_solved(const coord_cube_t *cube);
 
 #endif /* end of include guard */

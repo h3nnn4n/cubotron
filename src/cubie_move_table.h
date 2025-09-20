@@ -30,8 +30,8 @@
 void          cubie_build_move_table();
 void          purge_cubie_move_table();
 cube_cubie_t *cubie_build_basic_move(move_t base_move);
-void          cubie_apply_basic_move_raw(cube_cubie_t *cube, corner_t cp[], edge_t ep[], int co[], int eo[]);
-void          cubie_apply_move(cube_cubie_t *cube, move_t move_to_apply);
+void cubie_apply_basic_move_raw(cube_cubie_t *cube, corner_t cp[], edge_t ep[], const int co[], const int eo[]);
+void cubie_apply_move(cube_cubie_t *cube, move_t move_to_apply);
 
 extern corner_t corner_permutation_U[];
 extern int      corner_orientation_U[];
