@@ -5,7 +5,6 @@
 [![Sample Solves Test](https://github.com/h3nnn4n/cubotron/actions/workflows/solves.yml/badge.svg)](https://github.com/h3nnn4n/cubotron/actions/workflows/solves.yml)
 [![Unit Tests](https://github.com/h3nnn4n/cubotron/actions/workflows/tests.yml/badge.svg)](https://github.com/h3nnn4n/cubotron/actions/workflows/tests.yml)
 [![clang-format](https://github.com/h3nnn4n/cubotron/actions/workflows/clang-format-check.yml/badge.svg)](https://github.com/h3nnn4n/cubotron/actions/workflows/clang-format-check.yml)
-[![clang-tidy](https://github.com/h3nnn4n/cubotron/actions/workflows/clang-tidy.yml/badge.svg)](https://github.com/h3nnn4n/cubotron/actions/workflows/clang-tidy.yml)
 [![cppcheck](https://github.com/h3nnn4n/cubotron/actions/workflows/cppcheck.yml/badge.svg)](https://github.com/h3nnn4n/cubotron/actions/workflows/cppcheck.yml)
 [![cpplint](https://github.com/h3nnn4n/cubotron/actions/workflows/cpplint.yml/badge.svg)](https://github.com/h3nnn4n/cubotron/actions/workflows/cpplint.yml)
 
