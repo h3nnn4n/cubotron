@@ -127,8 +127,8 @@ void build_phase1_corner_table() {
     // The solved phase1 cube has coord zero and can be solved in zero moves
     pruning_phase1_corner[0] = 0;
 
-    int *slice_move_table               = get_move_table_E_slice();
-    int *corner_orientations_move_table = get_move_table_corner_orientations();
+    const int *slice_move_table               = get_move_table_E_slice();
+    const int *corner_orientations_move_table = get_move_table_corner_orientations();
 
     int missing = N_CORNER_ORIENTATIONS * N_SLICES - 1;
     int depth   = 0;
@@ -195,8 +195,8 @@ void build_phase1_edge_table() {
     // The solved phase1 cube has coord zero and can be solved in zero moves
     pruning_phase1_edge[0] = 0;
 
-    int *slice_move_table             = get_move_table_E_slice();
-    int *edge_orientations_move_table = get_move_table_edge_orientations();
+    const int *slice_move_table             = get_move_table_E_slice();
+    const int *edge_orientations_move_table = get_move_table_edge_orientations();
 
     int missing = N_EDGE_ORIENTATIONS * N_SLICES - 1;
     int depth   = 0;
@@ -263,8 +263,8 @@ void build_phase2_UD6_edge_table() {
     // The solved phase2 cube has coord zero and can be solved in zero moves
     pruning_phase2_UD6_edge[0] = 0;
 
-    int *sorted_slice_move_table          = get_move_table_E_sorted_slice();
-    int *UD6_edge_permutations_move_table = get_move_table_UD6_edge_permutations();
+    const int *sorted_slice_move_table          = get_move_table_E_sorted_slice();
+    const int *UD6_edge_permutations_move_table = get_move_table_UD6_edge_permutations();
 
     int missing = N_UD6_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2 - 1;
     int depth   = 0;
@@ -345,8 +345,8 @@ void build_phase2_UD7_edge_table() {
     // The solved phase2 cube has coord zero and can be solved in zero moves
     pruning_phase2_UD7_edge[0] = 0;
 
-    int *sorted_slice_move_table          = get_move_table_E_sorted_slice();
-    int *UD7_edge_permutations_move_table = get_move_table_UD7_edge_permutations();
+    const int *sorted_slice_move_table          = get_move_table_E_sorted_slice();
+    const int *UD7_edge_permutations_move_table = get_move_table_UD7_edge_permutations();
 
     int missing = N_UD7_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2 - 1;
     int depth   = 0;
@@ -427,8 +427,8 @@ void build_phase2_corner_table() {
     // The solved phase2 cube has coord zero and can be solved in zero moves
     pruning_phase2_corner[0] = 0;
 
-    int *sorted_slice_move_table        = get_move_table_E_sorted_slice();
-    int *corner_permutations_move_table = get_move_table_corner_permutations();
+    const int *sorted_slice_move_table        = get_move_table_E_sorted_slice();
+    const int *corner_permutations_move_table = get_move_table_corner_permutations();
 
     int missing = N_CORNER_PERMUTATIONS * N_SORTED_SLICES_PHASE2 - 1;
     int depth   = 0;

@@ -95,7 +95,7 @@ solve_list_t *solve(coord_cube_t *original_cube, config_t *config) {
 
     solve_context_t *solve_context = make_solve_context(original_cube);
 
-    move_t *solution = solve_phase1(solve_context, config, solves);
+    const move_t *solution = solve_phase1(solve_context, config, solves);
 
     if (solution == NULL) {
         printf("Failed to solve");
@@ -123,7 +123,7 @@ solve_list_t *solve(coord_cube_t *original_cube, config_t *config) {
 move_t *solve_phase1(solve_context_t *solve_context, config_t *config, solve_list_t *solves) {
     move_t *solution = NULL;
 
-    coord_cube_t  *cube          = solve_context->cube;
+    const coord_cube_t *cube          = solve_context->cube;
     move_t        *move_stack    = solve_context->move_stack;
     coord_cube_t **cube_stack    = solve_context->cube_stack;
     int           *pruning_stack = solve_context->pruning_stack;
@@ -349,7 +349,7 @@ move_t *solve_phase2(solve_context_t *solve_context, __attribute__((unused)) con
 
     uint64_t move_count = 0;
 
-    coord_cube_t  *cube          = solve_context->cube;
+    const coord_cube_t *cube          = solve_context->cube;
     move_t        *move_stack    = solve_context->move_stack;
     coord_cube_t **cube_stack    = solve_context->cube_stack;
     int           *pruning_stack = solve_context->pruning_stack;
