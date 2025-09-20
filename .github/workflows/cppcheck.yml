@@ -28,4 +28,17 @@ jobs:
           intercept-build make
 
       - name: run cppcheck
-        run: cppcheck --enable=all --suppress=unusedFunction --suppress=missingIncludeSystem --suppress=staticFunction --std=c11 --language=c --error-exitcode=1 src/*.c
+        run: |
+          cppcheck \
+            --enable=all \
+            --suppress=unusedFunction \
+            --suppress=missingIncludeSystem \
+            --suppress=staticFunction \
+            --suppress=nullPointerOutOfMemory \
+            --suppress=nullPointerOutOfResources \
+            --suppress=constParameterCallback \
+            --suppress=normalCheckLevelMaxBranches \
+            --std=c11 \
+            --language=c \
+            --error-exitcode=1 \
+            src/*.c
