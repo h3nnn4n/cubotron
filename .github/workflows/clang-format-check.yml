@@ -16,3 +16,4 @@ jobs:
         extensions: 'h,c'
         clangFormatVersion: 20
         style: file
+        assumeFilename: 'file.c'
