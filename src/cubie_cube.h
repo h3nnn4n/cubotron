@@ -58,9 +58,9 @@ void set_UD6_edges(cube_cubie_t *cube, int slice);
 int  get_corner_permutations(cube_cubie_t *cube);
 void set_corner_permutations(cube_cubie_t *cube, int permutations);
 
-int get_corner_parity(cube_cubie_t *cube);
-int get_edge_parity(cube_cubie_t *cube);
+int get_corner_parity(const cube_cubie_t *cube);
+int get_edge_parity(const cube_cubie_t *cube);
 
-int are_cubie_equal(cube_cubie_t *cube1, cube_cubie_t *cube2);
+int are_cubie_equal(const cube_cubie_t *cube1, const cube_cubie_t *cube2);
 
 #endif /* end of include guard */

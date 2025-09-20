@@ -54,13 +54,13 @@ coord_cube_t *make_coord_cube(cube_cubie_t *cubie) {
     return coord_cube;
 }
 
-void copy_coord_cube(coord_cube_t *dest, coord_cube_t *source) {
+void copy_coord_cube(coord_cube_t *dest, const coord_cube_t *source) {
     assert(dest != NULL);
     assert(source != NULL);
     memcpy_(dest, source, sizeof(coord_cube_t));
 }
 
-int are_all_coord_equal(coord_cube_t *cube1, coord_cube_t *cube2) {
+int are_all_coord_equal(const coord_cube_t *cube1, const coord_cube_t *cube2) {
     if (cube1->edge_orientations != cube2->edge_orientations)
         return 0;
 
@@ -88,7 +88,7 @@ int are_all_coord_equal(coord_cube_t *cube1, coord_cube_t *cube2) {
     return 1;
 }
 
-int are_phase1_coord_equal(coord_cube_t *cube1, coord_cube_t *cube2) {
+int are_phase1_coord_equal(const coord_cube_t *cube1, const coord_cube_t *cube2) {
     if (cube1->edge_orientations != cube2->edge_orientations)
         return 0;
 
@@ -101,12 +101,12 @@ int are_phase1_coord_equal(coord_cube_t *cube1, coord_cube_t *cube2) {
     return 1;
 }
 
-int is_phase1_solved(coord_cube_t *cube) {
+int is_phase1_solved(const coord_cube_t *cube) {
     return (cube->edge_orientations + cube->corner_orientations + cube->E_slice) == 0;
 }
 
-int is_phase2_solved(coord_cube_t *cube) {
+int is_phase2_solved(const coord_cube_t *cube) {
     return (cube->UD6_edge_permutations + cube->corner_permutations + cube->E_sorted_slice) == 0;
 }
 
-int is_coord_solved(coord_cube_t *cube) { return is_phase1_solved(cube) && is_phase2_solved(cube); }
+int is_coord_solved(const coord_cube_t *cube) { return is_phase1_solved(cube) && is_phase2_solved(cube); }

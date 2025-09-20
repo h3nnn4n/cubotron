@@ -39,7 +39,7 @@ static int *move_table_UD6_edge_permutations      = NULL;
 static int *move_table_UD7_edge_permutations      = NULL;
 static int *move_table_corner_permutations        = NULL;
 static int  move_table_parity[N_PARITY * N_MOVES] = {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1,
-                                                    0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0};
+                                                     0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0};
 
 int *get_move_table_edge_orientations() { return move_table_edge_orientations; }
 int *get_move_table_corner_orientations() { return move_table_corner_orientations; }

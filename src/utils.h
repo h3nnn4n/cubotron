@@ -35,7 +35,7 @@
 int is_bad_move(move_t move1, move_t move2);
 
 int   is_cubie_solved(cube_cubie_t *cube);
-int   cubie_off_count(cube_cubie_t *cube);
+int   cubie_off_count(const cube_cubie_t *cube);
 char *move_to_str_enum(move_t move);
 char *move_to_str(move_t move);
 int   is_valid(cube_cubie_t *cube);
@@ -51,7 +51,7 @@ int  Cnk(int n, int k);
 void rotate_left(int *pieces, int l, int r);
 void rotate_right(int *pieces, int l, int r);
 
-move_t str_to_move(char *);
+move_t str_to_move(const char *);
 
 int rmrf(char *path);
 

@@ -134,7 +134,7 @@ cube_cubie_t *cubie_build_basic_move(move_t base_move) {
     return cube;
 }
 
-void cubie_apply_basic_move_raw(cube_cubie_t *cube, corner_t cp[], edge_t ep[], int co[], int eo[]) {
+void cubie_apply_basic_move_raw(cube_cubie_t *cube, corner_t cp[], edge_t ep[], const int co[], const int eo[]) {
     assert(is_valid(cube));
 
     for (int i = 0; i < N_CORNERS; i++) {

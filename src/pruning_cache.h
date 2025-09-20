@@ -24,7 +24,8 @@
 #ifndef _PRUNING_CACHE
 #define _PRUNING_CACHE
 
-int  pruning_table_cache_load(char *cache_name, char *table_name, int **pruning_table, int table_size);
-void pruning_table_cache_store(char *cache_name, char *table_name, int *pruning_table, int table_size);
+int  pruning_table_cache_load(const char *cache_name, const char *table_name, int **pruning_table, int table_size);
+void pruning_table_cache_store(const char *cache_name, const char *table_name, const int *pruning_table,
+                               int table_size);
 
 #endif /* end of include guard */

@@ -30,7 +30,7 @@
 #include "pruning_cache.h"
 #include "utils.h"
 
-int pruning_table_cache_load(char *cache_name, char *table_name, int **pruning_table, int table_size) {
+int pruning_table_cache_load(const char *cache_name, const char *table_name, int **pruning_table, int table_size) {
     char filepath[512];
     // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
     snprintf(filepath, sizeof(filepath), "cache/%s/%s", cache_name, table_name);
@@ -62,7 +62,8 @@ int pruning_table_cache_load(char *cache_name, char *table_name, int **pruning_t
     return 1;
 }
 
-void pruning_table_cache_store(char *cache_name, char *table_name, int *pruning_table, int table_size) {
+void pruning_table_cache_store(const char *cache_name, const char *table_name, const int *pruning_table,
+                               int table_size) {
     char filepath[512];
     char cachepath[512];
 
@@ -74,7 +75,7 @@ void pruning_table_cache_store(char *cache_name, char *table_name, int *pruning_
     uint64_t start_time = get_microseconds();
     ensure_directory_exists(cachepath);
 
-    FILE *   f             = fopen(filepath, "wb");
+    FILE    *f             = fopen(filepath, "wb");
     uint64_t bytes_written = fwrite(pruning_table, sizeof(int), table_size, f);
     fclose(f);
 

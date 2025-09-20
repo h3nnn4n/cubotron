@@ -59,7 +59,7 @@ void build_pruning_tables() {
     build_phase2_corner_table();
 }
 
-int get_phase1_pruning(coord_cube_t *cube) {
+int get_phase1_pruning(const coord_cube_t *cube) {
     assert(pruning_phase1_corner != NULL);
     assert(pruning_phase1_edge != NULL);
 
