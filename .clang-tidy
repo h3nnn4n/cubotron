@@ -1,0 +1,4 @@
+---
+Checks: "bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-cplusplus-*,clang-analyzer-*,cppcoreguidelines-*,-clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling"
+WarningsAsErrors: ""
+HeaderFilterRegex: ".*"
