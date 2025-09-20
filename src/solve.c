@@ -84,7 +84,7 @@ solve_list_t *solve_facelets(char facelets[N_FACELETS], const config_t *config) 
 
 solve_list_t *solve_single(const coord_cube_t *original_cube) {
     const config_t *config   = get_config();
-    solve_list_t *solution = solve(original_cube, config);
+    solve_list_t   *solution = solve(original_cube, config);
 
     return solution;
 }
@@ -124,9 +124,9 @@ move_t *solve_phase1(solve_context_t *solve_context, const config_t *config, sol
     move_t *solution = NULL;
 
     const coord_cube_t *cube          = solve_context->cube;
-    move_t        *move_stack    = solve_context->move_stack;
-    coord_cube_t **cube_stack    = solve_context->cube_stack;
-    int           *pruning_stack = solve_context->pruning_stack;
+    move_t             *move_stack    = solve_context->move_stack;
+    coord_cube_t      **cube_stack    = solve_context->cube_stack;
+    int                *pruning_stack = solve_context->pruning_stack;
 
     int      solution_count = 0;
     uint64_t move_count     = 0;
@@ -350,9 +350,9 @@ move_t *solve_phase2(solve_context_t *solve_context, __attribute__((unused)) con
     uint64_t move_count = 0;
 
     const coord_cube_t *cube          = solve_context->cube;
-    move_t        *move_stack    = solve_context->move_stack;
-    coord_cube_t **cube_stack    = solve_context->cube_stack;
-    int           *pruning_stack = solve_context->pruning_stack;
+    move_t             *move_stack    = solve_context->move_stack;
+    coord_cube_t      **cube_stack    = solve_context->cube_stack;
+    int                *pruning_stack = solve_context->pruning_stack;
 
     uint64_t start_time = get_microseconds();
     uint64_t end_time   = 0;
