@@ -31,6 +31,11 @@ ifeq ($(UNAME_S),Darwin)
   LDFLAGS = -lpcg_random -Wl,-Ldeps/pcg-c/src/
   SPEED_LDFLAGS = -lpcg_random -Wl,-Ldeps/pcg-c/src/ -Wl,-dead_strip -Wl,-S
   ULTRA_LDFLAGS = -lpcg_random -Wl,-Ldeps/pcg-c/src/ -Wl,-dead_strip -Wl,-S -Wl,-x
+
+  SIZE_OPTIMIZATION = -Os -ffunction-sections -fdata-sections -Wl,-dead_strip -Wl,-S
+  SPEED_OPTIMIZATION = -O3 -march=native -mtune=native -flto -ffast-math -funroll-loops -fomit-frame-pointer -DNDEBUG -ftree-vectorize
+  ULTRA_SPEED_OPTIMIZATION = -Ofast -march=native -mtune=native -flto -ffast-math -funroll-loops -fomit-frame-pointer -finline-functions -finline-limit=1000 -fno-strict-aliasing -DNDEBUG -ftree-vectorize -fwhole-program -fno-common
+  PROFILE_GUIDED_OPTIMIZATION = -O3 -march=native -mtune=native -flto -ffast-math -funroll-loops -fomit-frame-pointer -fprofile-use -fprofile-correction -DNDEBUG -ftree-vectorize
 endif
 
 override CFLAGS += -Wall -Wextra -pedantic -std=gnu11 $(OPTIMIZATION) $(OPTIONS) $(INCLUDES)
