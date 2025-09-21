@@ -1,0 +1,35 @@
+name: Build tests
+
+on: push
+
+jobs:
+  run-solver:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        targets: [speed, ultra, size, all]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          submodules: true
+
+      - name: Build
+        run: make ${{ matrix.targets }}
+
+      # - name: Cache Tables
+      #   id: cache-tables
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: cache
+      #     key: cache-tables
+
+      # - name: Build Tables
+      #   if: steps.cache-tables.outputs.cache-hit != 'true'
+      #   run: ./cubotron --rebuild-tables
+
+      # - name: Run Solver with sample cube
+      #   run: ./cubotron --solve DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL
