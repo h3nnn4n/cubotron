@@ -29,7 +29,7 @@ jobs:
 
       - name: Normalize binary name
         run: |
-          mv -b cubotron_* cubotron || true
+          mv -v cubotron_* cubotron || true
 
       - name: Build Tables
         if: steps.cache-tables.outputs.cache-hit != 'true'
