@@ -15,8 +15,6 @@ INCLUDES = -Isrc \
 
 OPTIMIZATION=-O3
 
-override CFLAGS += -Wall -Wextra -pedantic -std=gnu11 $(OPTIMIZATION) $(OPTIONS) $(INCLUDES)
-
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
   ECHOFLAGS = -e
@@ -26,6 +24,8 @@ ifeq ($(UNAME_S),Darwin)
   CFLAGS += -Wno-unused-command-line-argument -Wno-strict-prototypes
   LDFLAGS = -lpcg_random -Wl,-Ldeps/pcg-c/src/
 endif
+
+override CFLAGS += -Wall -Wextra -pedantic -std=gnu11 $(OPTIMIZATION) $(OPTIONS) $(INCLUDES)
 
 CC = gcc
 
