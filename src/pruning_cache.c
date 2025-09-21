@@ -39,7 +39,7 @@ int pruning_table_cache_load(const char *cache_name, const char *table_name, int
     if (!file_exists(filepath))
         return 0;
 
-    uint64_t start_time = get_microseconds();
+    uint32_t start_time = get_microseconds();
 
     printf("loading: %35s   ", filepath);
     fflush(stdout);
@@ -47,18 +47,12 @@ int pruning_table_cache_load(const char *cache_name, const char *table_name, int
 
     *pruning_table = (int *)malloc(sizeof(int) * table_size);
 
-    uint64_t bytes_read       = -1;
-    uint64_t total_bytes_read = 0;
-
-    do {
-        bytes_read = fread(*pruning_table, sizeof(int), table_size, f);
-        total_bytes_read += bytes_read;
-    } while (bytes_read > 0);
-
+    size_t elements_read = fread(*pruning_table, sizeof(int), table_size, f);
     fclose(f);
 
-    uint64_t end_time = get_microseconds();
-    printf("%9" PRIu64 " bytes loaded in %.4f seconds\n", total_bytes_read, (float)(end_time - start_time) / 1000000.0);
+    uint32_t bytes_read = (uint32_t)(elements_read * sizeof(int));
+    uint32_t end_time = get_microseconds();
+    printf("%9u bytes loaded in %.4f seconds\n", bytes_read, (float)(end_time - start_time) / 1000000.0);
 
     return 1;
 }
@@ -73,14 +67,15 @@ void pruning_table_cache_store(const char *cache_name, const char *table_name, c
     // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
     snprintf(cachepath, sizeof(cachepath), "cache/%s", cache_name);
 
-    uint64_t start_time = get_microseconds();
+    uint32_t start_time = get_microseconds();
     ensure_directory_exists(cachepath);
 
-    FILE    *f             = fopen(filepath, "wb");
-    uint64_t bytes_written = fwrite(pruning_table, sizeof(int), table_size, f);
+    FILE *f = fopen(filepath, "wb");
+    size_t elements_written = fwrite(pruning_table, sizeof(int), table_size, f);
     fclose(f);
 
-    uint64_t end_time = get_microseconds();
-    printf("%9" PRIu64 " bytes stored in %s in %.4f seconds\n", bytes_written, filepath,
+    uint32_t bytes_written = (uint32_t)(elements_written * sizeof(int));
+    uint32_t end_time = get_microseconds();
+    printf("%9u bytes stored in %s in %.4f seconds\n", bytes_written, filepath,
            (float)(end_time - start_time) / 1000000.0);
 }
