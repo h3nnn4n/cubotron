@@ -19,8 +19,6 @@ SPEED_OPTIMIZATION=-O3 -march=native -mtune=native -flto -ffast-math -funroll-lo
 ULTRA_SPEED_OPTIMIZATION=-Ofast -march=native -mtune=native -flto -ffast-math -funroll-loops -fomit-frame-pointer -fno-stack-protector -finline-functions -finline-limit=1000 -fno-strict-aliasing -DNDEBUG -fopenmp -ftree-vectorize -fwhole-program -fno-common
 PROFILE_GUIDED_OPTIMIZATION=-O3 -march=native -mtune=native -flto -ffast-math -funroll-loops -fomit-frame-pointer -fno-stack-protector -fprofile-use -fprofile-correction -DNDEBUG -fopenmp -ftree-vectorize
 
-override CFLAGS += -Wall -Wextra -pedantic -std=gnu11 $(OPTIMIZATION) $(OPTIONS) $(INCLUDES)
-
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
   ECHOFLAGS = -e
@@ -29,11 +27,13 @@ ifeq ($(UNAME_S),Linux)
   ULTRA_LDFLAGS = -lpcg_random -Wl,-Ldeps/Unity/build/,-Ldeps/pcg-c/src/ -Wl,--as-needed -Wl,--strip-all -Wl,-z,relro -Wl,-z,now -Wl,--gc-sections -Wl,--build-id=none
 endif
 ifeq ($(UNAME_S),Darwin)
-  CFLAGS += -Wno-unused-command-line-argument
+  CFLAGS += -Wno-unused-command-line-argument -Wno-strict-prototypes
   LDFLAGS = -lpcg_random -Wl,-Ldeps/pcg-c/src/
   SPEED_LDFLAGS = -lpcg_random -Wl,-Ldeps/pcg-c/src/ -Wl,-dead_strip -Wl,-S
   ULTRA_LDFLAGS = -lpcg_random -Wl,-Ldeps/pcg-c/src/ -Wl,-dead_strip -Wl,-S -Wl,-x
 endif
+
+override CFLAGS += -Wall -Wextra -pedantic -std=gnu11 $(OPTIMIZATION) $(OPTIONS) $(INCLUDES)
 
 CC = gcc
 
