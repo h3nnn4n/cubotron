@@ -22,6 +22,7 @@
  */
 
 #include <stdint.h>
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -57,7 +58,7 @@ int pruning_table_cache_load(const char *cache_name, const char *table_name, int
     fclose(f);
 
     uint64_t end_time = get_microseconds();
-    printf("%9llu bytes loaded in %.4f seconds\n", total_bytes_read, (float)(end_time - start_time) / 1000000.0);
+    printf("%9" PRIu64 " bytes loaded in %.4f seconds\n", total_bytes_read, (float)(end_time - start_time) / 1000000.0);
 
     return 1;
 }
@@ -80,6 +81,6 @@ void pruning_table_cache_store(const char *cache_name, const char *table_name, c
     fclose(f);
 
     uint64_t end_time = get_microseconds();
-    printf("%9llu bytes stored in %s in %.4f seconds\n", bytes_written, filepath,
+    printf("%9" PRIu64 " bytes stored in %s in %.4f seconds\n", bytes_written, filepath,
            (float)(end_time - start_time) / 1000000.0);
 }
