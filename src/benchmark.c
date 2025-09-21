@@ -94,7 +94,7 @@ void do_solve(const coord_cube_t *cube) {
 }
 
 void solve_random_cubes() {
-    printf("BENCHMARK: Solve random cubes\n");
+    // printf("BENCHMARK: Solve random cubes\n");
 
     uint64_t seeds[2];
     entropy_getbytes((void *)seeds, sizeof(seeds));
@@ -112,15 +112,19 @@ void solve_random_cubes() {
         /*printf("\n");*/
         solve_count += 1;
 
-        if (get_microseconds() - start_time > 5000000.0)
+        if (get_microseconds() - start_time > 10000000.0)
             break;
+
+        // printf("%.2f\n", ((float)solve_count / (get_microseconds() - start_time)) * 1000000.0);
     }
 
     uint64_t end_time = get_microseconds();
-    printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);
-    printf("solve_count: %d - ", solve_count);
-    printf("solves per second : %.2f\n", ((float)solve_count / (end_time - start_time)) * 1000000.0);
-    printf("\n");
+    // printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);
+    // printf("solve_count: %d - ", solve_count);
+    // printf("solves per second : %.2f\n", ((float)solve_count / (end_time - start_time)) * 1000000.0);
+    // printf("\n");
+
+    printf("%.2f\n", ((float)solve_count / (end_time - start_time)) * 1000000.0);
 
     free(cube);
 }

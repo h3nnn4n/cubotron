@@ -142,9 +142,9 @@ int main(int argc, char **argv) {
     init_stats();
 
     if (config->do_benchmark) {
-        solve_cube_sample_library();
+        // solve_cube_sample_library();
         solve_random_cubes();
-        coord_benchmark();
+        // coord_benchmark();
     }
 
     if (config->do_solve) {
