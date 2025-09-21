@@ -20,16 +20,22 @@ jobs:
       - name: Build
         run: make ${{ matrix.targets }}
 
-      # - name: Cache Tables
-      #   id: cache-tables
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: cache
-      #     key: cache-tables
+      - name: Cache Tables
+        id: cache-tables
+        uses: actions/cache@v4
+        with:
+          path: cache
+          key: cache-tables
 
-      # - name: Build Tables
-      #   if: steps.cache-tables.outputs.cache-hit != 'true'
-      #   run: ./cubotron --rebuild-tables
+      - name: Normalize binary name
+        run: |
+          mv -b cubotron_* cubotron || true
 
-      # - name: Run Solver with sample cube
-      #   run: ./cubotron --solve DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL
+      - name: Build Tables
+        if: steps.cache-tables.outputs.cache-hit != 'true'
+        run: |
+          ./cubotron --rebuild-tables
+
+      - name: Run Solver with sample cube
+        run: |
+          ./cubotron --solve DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL
