@@ -1,5 +1,10 @@
 build/
 cubotron
+cubotron_size
+cubotron_speed
+cubotron_ultra
+cubotron_pgo_instrument
+cubotron_pgo_optimize
 *_tables
 
 *.csv
@@ -7,3 +12,7 @@ cubotron
 .ipynb_checkpoints
 
 .cache/
+
+# Profile-guided optimization files
+*.gcda
+*.gcno
