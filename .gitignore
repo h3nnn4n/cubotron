@@ -7,3 +7,5 @@ cubotron
 .ipynb_checkpoints
 
 .cache/
+
+gmon.out

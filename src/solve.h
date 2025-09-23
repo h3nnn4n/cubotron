@@ -24,6 +24,8 @@
 #ifndef _SOLVE
 #define _SOLVE
 
+#include <stdint.h>
+
 #include "config.h"
 #include "coord_cube.h"
 #include "stats.h"
@@ -50,15 +52,24 @@ typedef struct solve_context_s {
     coord_cube_t *cube_stack[MAX_MOVES];
     int           pruning_stack[MAX_MOVES];
     int           move_count;
-
-    solve_context_t *phase2_context;
+    int           solution_count;
+    int           allowed_depth;
 } solve_context_t;
+
+typedef struct phase1_solve_s {
+    uint8_t depth;
+    uint8_t move_count;
+
+    // Why both if they are the same?
+    move_t solution[MAX_MOVES];
+    move_t phase1_solution[MAX_MOVES];
+} phase1_solve_t;
 
 solve_list_t *solve_facelets_single(char facelets[N_FACELETS]);
 solve_list_t *solve_facelets(char facelets[N_FACELETS], const config_t *config);
 solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config);
 solve_list_t *solve_single(const coord_cube_t *original_cube);
-move_t       *solve_phase1(solve_context_t *solve_context, const config_t *config, solve_list_t *solves);
+phase1_solve_t *get_phase1_solution(solve_context_t *solve_context, const config_t *config);
 move_t       *solve_phase2(solve_context_t *solve_context, const config_t *config, int current_depth);
 
 solve_list_t *new_solve_list_node();

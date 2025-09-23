@@ -150,25 +150,25 @@ int main(int argc, char **argv) {
     if (config->do_solve) {
         solve_list_t *solution = solve_facelets(facelets_to_solve, config);
 
-        do {
-            int length = 0;
+        // do {
+        //     int length = 0;
 
-            printf("solution:\n");
-            for (int i = 0; solution->solution[i] != MOVE_NULL; i++, length++) {
-                printf(" %s", move_to_str(solution->solution[i]));
-            }
-            printf("\n");
-            printf("length: %d\n", length);
+        //     printf("solution:\n");
+        //     for (int i = 0; solution->solution[i] != MOVE_NULL; i++, length++) {
+        //         printf(" %s", move_to_str(solution->solution[i]));
+        //     }
+        //     printf("\n");
+        //     printf("length: %d\n", length);
 
-            solve_list_t *old_solution = solution;
+        //     solve_list_t *old_solution = solution;
 
-            solution = solution->next;
+        //     solution = solution->next;
 
-            free(old_solution->phase1_solution);
-            free(old_solution->phase2_solution);
-            free(old_solution->solution);
-            free(old_solution);
-        } while (solution != NULL && solution->solution != NULL);
+        //     free(old_solution->phase1_solution);
+        //     free(old_solution->phase2_solution);
+        //     free(old_solution->solution);
+        //     free(old_solution);
+        // } while (solution != NULL && solution->solution != NULL);
 
         free(solution);
         free(facelets_to_solve);
