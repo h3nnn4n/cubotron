@@ -40,7 +40,7 @@ int pruning_table_cache_load(const char *cache_name, const char *table_name, int
 
     uint32_t start_time = get_microseconds();
 
-    printf("loading: %35s   ", filepath);
+    printf("loading: %-45s ", filepath);
     fflush(stdout);
     FILE *f = fopen(filepath, "rb");
 
@@ -51,7 +51,7 @@ int pruning_table_cache_load(const char *cache_name, const char *table_name, int
 
     uint32_t bytes_read = (uint32_t)(elements_read * sizeof(int));
     uint32_t end_time   = get_microseconds();
-    printf("%9u bytes loaded in %.4f seconds\n", bytes_read, (float)(end_time - start_time) / 1000000.0);
+    printf("%10u bytes loaded in %6.4f seconds\n", bytes_read, (float)(end_time - start_time) / 1000000.0);
 
     return 1;
 }
@@ -75,6 +75,6 @@ void pruning_table_cache_store(const char *cache_name, const char *table_name, c
 
     uint32_t bytes_written = (uint32_t)(elements_written * sizeof(int));
     uint32_t end_time      = get_microseconds();
-    printf("%9u bytes stored in %s in %.4f seconds\n", bytes_written, filepath,
+    printf("storing: %-45s %10u bytes stored in %6.4f seconds\n", filepath, bytes_written,
            (float)(end_time - start_time) / 1000000.0);
 }
