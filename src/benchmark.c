@@ -51,7 +51,7 @@ void apply_random_scramble(coord_cube_t *cube, int n_moves) {
 
         do {
             moves[i] = pcg32_boundedrand(N_MOVES);
-        } while (i > 0 && (moves[i] == moves[i - 1] || is_bad_move(moves[i], moves[i - 1])));
+        } while (i > 0 && (moves[i] == moves[i - 1] || is_duplicated_or_undoes_move(moves[i], moves[i - 1])));
     }
 
     for (int i = 0; i < n_moves; i++) {

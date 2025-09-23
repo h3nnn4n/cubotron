@@ -71,7 +71,7 @@ static move_t reverse_move[] = {
     /* MOVE_B3 */ MOVE_B1,
 };
 
-int is_bad_move(move_t move1, move_t move2) { return move1 / 3 == move2 / 3; }
+int is_duplicated_or_undoes_move(move_t move1, move_t move2) { return move1 / 3 == move2 / 3; }
 
 int cubie_off_count(const cube_cubie_t *cube) {
     int count = 0;

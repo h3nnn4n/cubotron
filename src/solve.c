@@ -165,7 +165,7 @@ move_t *solve_phase1(solve_context_t *solve_context, const config_t *config, sol
                 continue;
             }
 
-            if (pivot > 0 && is_bad_move(move_stack[pivot], move_stack[pivot - 1]))
+            if (pivot > 0 && is_duplicated_or_undoes_move(move_stack[pivot], move_stack[pivot - 1]))
                 continue;
 
             assert(move_stack[pivot] <= N_MOVES);
@@ -386,7 +386,7 @@ move_t *solve_phase2(solve_context_t *solve_context, __attribute__((unused)) con
                 continue;
             }
 
-            if (pivot > 0 && is_bad_move(move_stack[pivot], move_stack[pivot - 1]))
+            if (pivot > 0 && is_duplicated_or_undoes_move(move_stack[pivot], move_stack[pivot - 1]))
                 continue;
 
             coord_apply_move(cube_stack[pivot], moves[move_stack[pivot]]);

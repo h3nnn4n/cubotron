@@ -70,17 +70,17 @@ void test_is_bad_move_true_cases() {
     for (int i = 0; i < N_COLORS; i++) {
         int offset = i * 3;
 
-        TEST_ASSERT_TRUE(is_bad_move(MOVE_U1 + offset, MOVE_U1 + offset));
-        TEST_ASSERT_TRUE(is_bad_move(MOVE_U1 + offset, MOVE_U2 + offset));
-        TEST_ASSERT_TRUE(is_bad_move(MOVE_U1 + offset, MOVE_U3 + offset));
+        TEST_ASSERT_TRUE(is_duplicated_or_undoes_move(MOVE_U1 + offset, MOVE_U1 + offset));
+        TEST_ASSERT_TRUE(is_duplicated_or_undoes_move(MOVE_U1 + offset, MOVE_U2 + offset));
+        TEST_ASSERT_TRUE(is_duplicated_or_undoes_move(MOVE_U1 + offset, MOVE_U3 + offset));
 
-        TEST_ASSERT_TRUE(is_bad_move(MOVE_U2 + offset, MOVE_U1 + offset));
-        TEST_ASSERT_TRUE(is_bad_move(MOVE_U2 + offset, MOVE_U2 + offset));
-        TEST_ASSERT_TRUE(is_bad_move(MOVE_U2 + offset, MOVE_U3 + offset));
+        TEST_ASSERT_TRUE(is_duplicated_or_undoes_move(MOVE_U2 + offset, MOVE_U1 + offset));
+        TEST_ASSERT_TRUE(is_duplicated_or_undoes_move(MOVE_U2 + offset, MOVE_U2 + offset));
+        TEST_ASSERT_TRUE(is_duplicated_or_undoes_move(MOVE_U2 + offset, MOVE_U3 + offset));
 
-        TEST_ASSERT_TRUE(is_bad_move(MOVE_U3 + offset, MOVE_U1 + offset));
-        TEST_ASSERT_TRUE(is_bad_move(MOVE_U3 + offset, MOVE_U2 + offset));
-        TEST_ASSERT_TRUE(is_bad_move(MOVE_U3 + offset, MOVE_U3 + offset));
+        TEST_ASSERT_TRUE(is_duplicated_or_undoes_move(MOVE_U3 + offset, MOVE_U1 + offset));
+        TEST_ASSERT_TRUE(is_duplicated_or_undoes_move(MOVE_U3 + offset, MOVE_U2 + offset));
+        TEST_ASSERT_TRUE(is_duplicated_or_undoes_move(MOVE_U3 + offset, MOVE_U3 + offset));
     }
 }
 
@@ -91,17 +91,17 @@ void test_is_bad_move_false_cases() {
         for (int j = i + 1; j < N_COLORS; j++) {
             int offset2 = j * 3;
 
-            TEST_ASSERT_FALSE(is_bad_move(MOVE_U1 + offset1, MOVE_U1 + offset2));
-            TEST_ASSERT_FALSE(is_bad_move(MOVE_U1 + offset1, MOVE_U2 + offset2));
-            TEST_ASSERT_FALSE(is_bad_move(MOVE_U1 + offset1, MOVE_U3 + offset2));
+            TEST_ASSERT_FALSE(is_duplicated_or_undoes_move(MOVE_U1 + offset1, MOVE_U1 + offset2));
+            TEST_ASSERT_FALSE(is_duplicated_or_undoes_move(MOVE_U1 + offset1, MOVE_U2 + offset2));
+            TEST_ASSERT_FALSE(is_duplicated_or_undoes_move(MOVE_U1 + offset1, MOVE_U3 + offset2));
 
-            TEST_ASSERT_FALSE(is_bad_move(MOVE_U2 + offset1, MOVE_U1 + offset2));
-            TEST_ASSERT_FALSE(is_bad_move(MOVE_U2 + offset1, MOVE_U2 + offset2));
-            TEST_ASSERT_FALSE(is_bad_move(MOVE_U2 + offset1, MOVE_U3 + offset2));
+            TEST_ASSERT_FALSE(is_duplicated_or_undoes_move(MOVE_U2 + offset1, MOVE_U1 + offset2));
+            TEST_ASSERT_FALSE(is_duplicated_or_undoes_move(MOVE_U2 + offset1, MOVE_U2 + offset2));
+            TEST_ASSERT_FALSE(is_duplicated_or_undoes_move(MOVE_U2 + offset1, MOVE_U3 + offset2));
 
-            TEST_ASSERT_FALSE(is_bad_move(MOVE_U3 + offset1, MOVE_U1 + offset2));
-            TEST_ASSERT_FALSE(is_bad_move(MOVE_U3 + offset1, MOVE_U2 + offset2));
-            TEST_ASSERT_FALSE(is_bad_move(MOVE_U3 + offset1, MOVE_U3 + offset2));
+            TEST_ASSERT_FALSE(is_duplicated_or_undoes_move(MOVE_U3 + offset1, MOVE_U1 + offset2));
+            TEST_ASSERT_FALSE(is_duplicated_or_undoes_move(MOVE_U3 + offset1, MOVE_U2 + offset2));
+            TEST_ASSERT_FALSE(is_duplicated_or_undoes_move(MOVE_U3 + offset1, MOVE_U3 + offset2));
         }
     }
 }
