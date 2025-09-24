@@ -9,3 +9,6 @@ cubotron
 .cache/
 
 gmon.out
+
+.vscode
+main.plist
