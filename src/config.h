@@ -38,6 +38,8 @@ typedef struct {
     // we only have 18 moves, so the black list cant evet be greater than 18 in length
     // (Assuming there are no repeats)
     move_t move_black_list[18];
+
+    move_t *scramble_moves;
 } config_t;
 
 void      init_config();

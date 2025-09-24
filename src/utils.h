@@ -51,7 +51,8 @@ int  Cnk(int n, int k);
 void rotate_left(int *pieces, int l, int r);
 void rotate_right(int *pieces, int l, int r);
 
-move_t str_to_move(const char *);
+move_t *move_sequence_str_to_moves(const char *move_sequence_str);
+move_t  str_to_move(const char *);
 
 int rmrf(char *path);
 

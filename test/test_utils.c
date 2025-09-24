@@ -106,6 +106,17 @@ void test_is_bad_move_false_cases() {
     }
 }
 
+void test_move_sequence_str_to_moves() {
+    move_t *moves            = move_sequence_str_to_moves("U R2 F D' L B");
+    move_t  expected_moves[] = {MOVE_U1, MOVE_R2, MOVE_F1, MOVE_D3, MOVE_L1, MOVE_B1, MOVE_NULL};
+
+    for (int i = 0; i < 7; i++) {
+        TEST_ASSERT_EQUAL_INT(moves[i], expected_moves[i]);
+    }
+
+    free(moves);
+}
+
 void test_str_to_move() {
     // This actually tests that str_to_move and move_to_str are identity
     for (move_t move = MOVE_U1; move < MOVE_NULL; move++) {
@@ -133,6 +144,7 @@ int main() {
     RUN_TEST(test_is_bad_move_true_cases);
     RUN_TEST(test_is_bad_move_false_cases);
 
+    RUN_TEST(test_move_sequence_str_to_moves);
     RUN_TEST(test_str_to_move);
 
     return UNITY_END();
