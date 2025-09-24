@@ -26,6 +26,7 @@
 #include <string.h>
 
 #include "coord_cube.h"
+#include "coord_move_tables.h"
 #include "mem_utils.h"
 
 coord_cube_t *get_coord_cube() {
@@ -110,3 +111,16 @@ int is_phase2_solved(const coord_cube_t *cube) {
 }
 
 int is_coord_solved(const coord_cube_t *cube) { return is_phase1_solved(cube) && is_phase2_solved(cube); }
+
+int is_move_sequence_a_solution_for_cube(const coord_cube_t *cube, const move_t *moves) {
+    coord_cube_t *temp_cube = get_coord_cube();
+    copy_coord_cube(temp_cube, cube);
+
+    for (int i = 0; moves[i] != MOVE_NULL; i++) {
+        coord_apply_move(temp_cube, moves[i]);
+    }
+
+    int result = is_coord_solved(temp_cube);
+    free(temp_cube);
+    return result;
+}

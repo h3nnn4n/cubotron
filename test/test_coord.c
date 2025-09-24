@@ -69,6 +69,26 @@ void test_is_phase2_solved() {
     free(cube);
 }
 
+void test_is_move_sequence_a_solution_for_cube() {
+    coord_cube_t *cube = get_coord_cube();
+
+    move_t solution[] = {MOVE_NULL};
+    TEST_ASSERT_TRUE(is_move_sequence_a_solution_for_cube(cube, solution));
+
+    coord_apply_move(cube, MOVE_F1);
+    coord_apply_move(cube, MOVE_R1);
+    coord_apply_move(cube, MOVE_B1);
+    coord_apply_move(cube, MOVE_R1);
+
+    move_t reverse_solution[] = {MOVE_R3, MOVE_B3, MOVE_R3, MOVE_F3, MOVE_NULL};
+    TEST_ASSERT_TRUE(is_move_sequence_a_solution_for_cube(cube, reverse_solution));
+
+    move_t wrong_solution[] = {MOVE_U1, MOVE_NULL};
+    TEST_ASSERT_FALSE(is_move_sequence_a_solution_for_cube(cube, wrong_solution));
+
+    free(cube);
+}
+
 void setUp(void) { build_move_tables(); }
 
 void tearDown(void) {}
@@ -81,6 +101,7 @@ int main() {
     RUN_TEST(test_copy_coord_cube);
     RUN_TEST(test_is_phase1_solved);
     RUN_TEST(test_is_phase2_solved);
+    RUN_TEST(test_is_move_sequence_a_solution_for_cube);
 
     return UNITY_END();
 }
