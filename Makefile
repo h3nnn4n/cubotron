@@ -82,6 +82,10 @@ test: pcg $(TEST_TARGETS)
 	done; \
 	echo $(ECHOFLAGS) "Everything in order"
 
+test-%: pcg
+	@echo $(ECHOFLAGS) "[RUN]\t$(BUILDDIR)/test/test_$*"
+	@$(BUILDDIR)/test/test_$*
+
 pcg:
 	@echo $(ECHOFLAGS) "[CC]\tpcg core"
 	@$(MAKE) -s -C deps/pcg-c/src/
