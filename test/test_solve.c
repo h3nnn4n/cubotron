@@ -1,6 +1,7 @@
 #include <pcg_variants.h>
 #include <unity.h>
 
+#include <coord_cube.h>
 #include <facelets.h>
 #include <move_tables.h>
 #include <pruning.h>
@@ -8,61 +9,19 @@
 #include <solve.h>
 #include <utils.h>
 
-void scramble_cube(coord_cube_t *cube, int n_moves) {
-    move_t scramble_moves[256];
-    if (n_moves > 256)
-        n_moves = 256; // prevent overflow
-
-    move_t prev_move = MOVE_NULL;
-    for (int i = 0; i < n_moves;) {
-        move_t move = pcg32_boundedrand(N_MOVES);
-        if (i > 0 && is_duplicated_or_undoes_move(move, prev_move)) {
-            continue;
-        }
-        scramble_moves[i] = move;
-        coord_apply_move(cube, move);
-        prev_move = move;
-        i++;
-    }
-
-    printf("Scramble: ");
-    for (int i = 0; i < n_moves; i++) {
-        printf("%s ", move_to_str(scramble_moves[i]));
-    }
-    printf("\n");
-}
-
 void test_random_phase1_solving() {
     coord_cube_t *cube = get_coord_cube();
 
     for (int i = 0; i < 100; i++) {
-        int    n_moves   = 50;
-        move_t moves[50] = {0};
-
         reset_coord_cube(cube);
-
-        for (int i = 0; i < n_moves; i++) {
-            moves[i] = pcg32_boundedrand(N_MOVES);
-
-            do {
-                moves[i] = pcg32_boundedrand(N_MOVES);
-            } while (i > 0 && moves[i] == moves[i - 1]);
-
-            coord_apply_move(cube, moves[i]);
-        }
-
-        /*char buffer[512];*/
-        /*sprintf(buffer, "%4d %4d %3d", cube->edge_orientations, cube->corner_orientations, cube->E_slice);*/
-        /*TEST_MESSAGE(buffer);*/
+        scramble_cube(cube, 50);
 
         TEST_ASSERT_FALSE(is_phase1_solved(cube));
 
-        solve_context_t *solve_context = make_solve_context(cube);
-        config_t *       config        = get_config();
-        config->n_solutions            = 0;
-        phase1_solve_t *phase1_solution = get_phase1_solution(solve_context, config);
+        solve_context_t *solve_context   = make_solve_context(cube);
+        phase1_solve_t  *phase1_solution = get_phase1_solution(solve_context, get_config());
 
-        move_t *solution = phase1_solution->phase1_solution;
+        move_t *solution = phase1_solution->solution;
         TEST_ASSERT_TRUE(solution != NULL);
 
         for (int i = 0; solution[i] != MOVE_NULL; i++) {
@@ -71,64 +30,83 @@ void test_random_phase1_solving() {
 
         TEST_ASSERT_TRUE(is_phase1_solved(cube));
 
-        free(solution);
+        free(phase1_solution);
     }
+
     free(cube);
 }
 
-// void test_random_phase2_solving() {
-//     coord_cube_t *cube = get_coord_cube();
+void test_phase1_solution_generator() {
+    coord_cube_t *cube = get_coord_cube();
+    scramble_cube(cube, 50);
 
-//     for (int i = 0; i < 100; i++) {
-//         reset_coord_cube(cube);
+    solve_context_t *solve_context = make_solve_context(cube);
 
-//         int    n_moves   = 50;
-//         move_t moves[50] = {0};
-//         for (int i = 0; i < n_moves; i++) {
-//             moves[i] = pcg32_boundedrand(N_MOVES);
+    const uint8_t         N_SOLUTIONS = 10;
+    const phase1_solve_t *solutions[N_SOLUTIONS];
 
-//             do {
-//                 moves[i] = pcg32_boundedrand(N_MOVES);
-//             } while (i > 0 && moves[i] == moves[i - 1]);
+    for (int i = 0; i < N_SOLUTIONS; i++) {
+        phase1_solve_t *phase1_solution = get_phase1_solution(solve_context, get_config());
 
-//             coord_apply_move(cube, moves[i]);
-//         }
+        TEST_ASSERT_TRUE(phase1_solution != NULL);
 
-//         solve_context_t *solve_context = make_solve_context(cube);
-//         // Apply phase1 solution
-//         {
-//             config_t *config    = get_config();
-//             config->n_solutions = 0;
-//             move_t *solution    = get_phase1_solution(solve_context, config, NULL);
+        solutions[i] = phase1_solution;
+    }
 
-//             for (int i = 0; solution[i] != MOVE_NULL; i++) {
-//                 coord_apply_move(cube, solution[i]);
-//             }
+    for (int i = 0; i < N_SOLUTIONS; i++) {
+        for (int j = 0; j < N_SOLUTIONS; j++) {
+            if (i == j)
+                continue;
 
-//             TEST_ASSERT_TRUE(is_phase1_solved(cube));
+            TEST_ASSERT_FALSE(are_move_sequences_equal(solutions[i]->solution, solutions[j]->solution));
+        }
+    }
 
-//             free(solution);
-//         }
+    for (int i = 0; i < N_SOLUTIONS; i++) {
+        destroy_phase1_solve(solutions[i]);
+    }
 
-//         TEST_ASSERT_FALSE(is_phase2_solved(cube));
+    free(solve_context);
+}
 
-//         copy_coord_cube(solve_context->phase2_context->cube, cube);
-//         config_t *config   = get_config();
-//         move_t *  solution = solve_phase2(solve_context->phase2_context, config, 20);
+void test_random_phase2_solving() {
+    coord_cube_t *cube = get_coord_cube();
 
-//         TEST_ASSERT_TRUE(solution != NULL);
+    for (int i = 0; i < 50; i++) {
+        reset_coord_cube(cube);
+        scramble_cube(cube, 50);
 
-//         for (int i = 0; solution[i] != MOVE_NULL; i++) {
-//             coord_apply_move(cube, solution[i]);
-//         }
+        solve_context_t *phase1_solve_context = make_solve_context(cube);
 
-//         TEST_ASSERT_TRUE(is_phase2_solved(cube));
+        TEST_ASSERT_FALSE(is_phase1_solved(cube));
+        TEST_ASSERT_FALSE(is_phase2_solved(cube));
 
-//         free(solution);
-//     }
+        phase1_solve_t *phase1_solution = get_phase1_solution(phase1_solve_context, get_config());
 
-//     free(cube);
-// }
+        coord_apply_moves(cube, phase1_solution->solution, phase1_solution->depth);
+
+        TEST_ASSERT_TRUE(is_phase1_solved(cube));
+        TEST_ASSERT_FALSE(is_phase2_solved(cube));
+
+        solve_context_t *phase2_solve_context = make_solve_context(phase1_solution->cube);
+        phase2_solve_t  *phase2_solution      = solve_phase2(phase2_solve_context, get_config());
+
+        TEST_ASSERT_TRUE(phase2_solution != NULL);
+
+        coord_apply_moves(cube, phase2_solution->solution, phase2_solution->depth);
+
+        TEST_ASSERT_TRUE(is_phase1_solved(cube));
+        TEST_ASSERT_TRUE(is_phase2_solved(cube));
+
+        free(phase1_solution);
+        free(phase2_solution);
+
+        destroy_solve_context(phase1_solve_context);
+        destroy_solve_context(phase2_solve_context);
+    }
+
+    free(cube);
+}
 
 void test_facelets_solve_with_max_length() {
     char *facelets = "DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL";
@@ -146,6 +124,9 @@ void test_facelets_solve_with_max_length() {
         for (int i = 0; solution->solution[i] != MOVE_NULL; i++, length++)
             ;
 
+        printf("Length: %d\n", length);
+        printf("Max length: %d\n", max_length);
+
         TEST_ASSERT_TRUE(length <= max_length);
 
         free(solution);
@@ -156,19 +137,9 @@ void test_random_full_solver_with_random_scrambles_single_solution() {
     coord_cube_t *cube = get_coord_cube();
 
     for (int i = 0; i < 100; i++) {
+        printf("\n\n\nNew test:\n");
         reset_coord_cube(cube);
-
-        int    n_moves   = 50;
-        move_t moves[50] = {0};
-        for (int j = 0; j < n_moves; j++) {
-            moves[j] = pcg32_boundedrand(N_MOVES);
-
-            do {
-                moves[j] = pcg32_boundedrand(N_MOVES);
-            } while (j > 0 && moves[j] == moves[j - 1]);
-
-            coord_apply_move(cube, moves[j]);
-        }
+        scramble_cube(cube, 50);
 
         TEST_ASSERT_FALSE(is_phase1_solved(cube));
         TEST_ASSERT_FALSE(is_phase2_solved(cube));
@@ -195,6 +166,7 @@ void test_random_full_solver_with_random_scrambles_single_solution() {
     free(cube);
 }
 
+// What does this do?
 void test_random_full_solver_with_random_scrambles_multiple_solution() {
     coord_cube_t *cube = get_coord_cube();
 
@@ -299,17 +271,7 @@ void test_solve_with_move_blacklist() {
         for (int i = 0; i < 10; i++) {
             coord_cube_t *cube = get_coord_cube();
 
-            int    n_moves   = 50;
-            move_t moves[50] = {0};
-            for (int j = 0; j < n_moves; j++) {
-                moves[j] = pcg32_boundedrand(N_MOVES);
-
-                do {
-                    moves[j] = pcg32_boundedrand(N_MOVES);
-                } while (j > 0 && moves[j] == moves[j - 1]);
-
-                coord_apply_move(cube, moves[j]);
-            }
+            scramble_cube(cube, 50);
 
             TEST_ASSERT_FALSE(is_phase1_solved(cube));
             TEST_ASSERT_FALSE(is_phase2_solved(cube));
@@ -353,6 +315,7 @@ int main() {
     UNITY_BEGIN();
 
     RUN_TEST(test_random_phase1_solving);
+    RUN_TEST(test_phase1_solution_generator);
     // RUN_TEST(test_random_phase2_solving);
     RUN_TEST(test_facelets_solve_with_max_length);
     RUN_TEST(test_random_full_solver_with_random_scrambles_single_solution);

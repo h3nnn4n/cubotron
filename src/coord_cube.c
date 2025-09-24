@@ -146,9 +146,9 @@ void scramble_cube(coord_cube_t *cube, int n_moves) {
         i++;
     }
 
-    printf("Scramble: ");
-    for (int i = 0; i < n_moves; i++) {
-        printf("%s ", move_to_str(scramble_moves[i]));
-    }
-    printf("\n");
+    // printf("Scramble: ");
+    // for (int i = 0; i < n_moves; i++) {
+    //     printf("%s ", move_to_str(scramble_moves[i]));
+    // }
+    // printf("\n");
 }

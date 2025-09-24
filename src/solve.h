@@ -61,10 +61,7 @@ typedef struct phase1_solve_s {
     uint8_t move_count;
 
     coord_cube_t *cube;
-
-    // Why both if they are the same?
-    move_t solution[MAX_MOVES];
-    move_t phase1_solution[MAX_MOVES];
+    move_t        solution[MAX_MOVES];
 } phase1_solve_t;
 
 typedef struct phase2_solve_s {
@@ -72,9 +69,7 @@ typedef struct phase2_solve_s {
     uint8_t move_count;
 
     coord_cube_t *cube;
-
-    move_t solution[MAX_MOVES];
-    move_t phase2_solution[MAX_MOVES];
+    move_t        solution[MAX_MOVES];
 } phase2_solve_t;
 
 solve_list_t *solve_facelets_single(char facelets[N_FACELETS]);
@@ -83,6 +78,7 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config);
 solve_list_t *solve_single(const coord_cube_t *original_cube);
 phase1_solve_t *get_phase1_solution(solve_context_t *solve_context, const config_t *config);
 phase2_solve_t *solve_phase2(solve_context_t *solve_context, const config_t *config);
+move_t         *make_solution(const phase1_solve_t *phase1_solution, const phase2_solve_t *phase2_solution);
 
 phase1_solve_t *make_phase1_solve(const coord_cube_t *cube);
 void            destroy_phase1_solve(phase1_solve_t *phase1_solve);

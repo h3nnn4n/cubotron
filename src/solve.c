@@ -91,68 +91,107 @@ solve_list_t *solve_single(const coord_cube_t *original_cube) {
 
 solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
     solve_list_t *solves = new_solve_list_node();
-    // coord_cube_t *cube   = get_coord_cube();
 
-    printf("Making solve context\n");
-    solve_context_t *solve_context = make_solve_context(original_cube);
-
-    printf("Getting phase1 solution\n");
-    const phase1_solve_t *solution = NULL;
-
-    solution = get_phase1_solution(solve_context, config);
-    if (solution == NULL) {
-        printf("No phase1 solution found\n");
-        return NULL;
-    }
-
-    printf("Phase1 solution: ");
-    for (int i = 0; solution->phase1_solution[i] != MOVE_NULL; i++) {
-        printf("%s ", move_to_str(solution->phase1_solution[i]));
-    }
     printf("\n");
+    printf("Solving\n");
+    printf("Making phase1 context\n");
+    solve_context_t *phase1_context = make_solve_context(original_cube);
 
-    assert(is_phase1_solved(solve_context->cube));
+    // Only handles a single solution
+    while (solves->solution == NULL) {
+        phase1_solve_t *phase1_solution = NULL;
 
-    printf("Making phase2 context\n");
+        printf("Getting phase1 solution\n");
+        while (phase1_solution == NULL) {
+            phase1_solution = get_phase1_solution(phase1_context, config);
+            printf("Phase1 solution depth: %d\n", phase1_solution->depth);
+            if (phase1_solution == NULL) {
+                printf("No phase1 solution found\n");
+                // destroy_solve_context(phase1_context);
+                return NULL;
+            }
+        }
 
-    solve_context_t *phase2_context = make_solve_context(solve_context->cube);
-    phase2_context->allowed_depth   = solution->depth;
+        printf("Phase1 solution: ");
+        for (int i = 0; phase1_solution->solution[i] != MOVE_NULL; i++) {
+            printf("%s ", move_to_str(phase1_solution->solution[i]));
+        }
+        printf("\n");
 
-    printf("Solving phase2\n");
+        assert(is_phase1_solved(phase1_context->cube));
 
-    phase2_solve_t *phase2_solution = NULL;
-    phase2_solution                 = solve_phase2(phase2_context, config);
+        ////////////////////////////////////////////
 
-    assert(is_phase2_solved(phase2_solution->cube));
+        printf("Making phase2 context\n");
 
-    printf("Phase2 solution: ");
-    for (int i = 0; phase2_solution->solution[i] != MOVE_NULL; i++) {
-        printf("%s ", move_to_str(phase2_solution->solution[i]));
+        solve_context_t *phase2_context = make_solve_context(phase1_context->cube);
+        phase2_context->allowed_depth   = config->max_depth - phase1_solution->depth;
+
+        printf("Solving phase2\n");
+
+        // we could find multipl solutions for phase2, but the first one is always the shortest
+        phase2_solve_t *phase2_solution = solve_phase2(phase2_context, config);
+
+        if (phase2_solution == NULL) {
+            printf("No phase2 solution found\n");
+            copy_coord_cube(phase1_context->cube, original_cube);
+            // destroy_phase1_solve(phase1_solution);
+            // destroy_solve_context(phase1_context);
+            // destroy_solve_context(phase2_context);
+            continue;
+        }
+
+        printf("Phase2 solution: ");
+        for (int i = 0; phase2_solution->solution[i] != MOVE_NULL; i++) {
+            printf("%s ", move_to_str(phase2_solution->solution[i]));
+        }
+        printf("\n");
+
+        assert(is_phase2_solved(phase2_solution->cube));
+
+        // free(phase2_solution);
+        // destroy_solve_context(phase2_context);
+
+        // if (solution == NULL) {
+        //     printf("Failed to solve");
+        //     free(solves);
+        //     return NULL;
+        // } else {
+        //     copy_coord_cube(cube, original_cube);
+
+        //     for (int i = 0; solution[i] != MOVE_NULL; i++) {
+        //         coord_apply_move(cube, solution[i]);
+        //     }
+
+        //     assert(is_phase1_solved(cube));
+        //     assert(is_phase2_solved(cube));
+        // }
+
+        // free(cube);
+
+        // destroy_solve_context(solve_context);
+
+        solves->phase1_solution = phase1_solution->solution;
+        solves->phase2_solution = phase2_solution->solution;
+        solves->solution        = make_solution(phase1_solution, phase2_solution);
+        solves->stats           = NULL; // FIXME
+        solves->next            = NULL; // FIXME
+
+        printf("Solution: ");
+        for (int i = 0; solves->solution[i] != MOVE_NULL; i++) {
+            printf("%s ", move_to_str(solves->solution[i]));
+        }
+        printf("\n");
+        uint8_t solution_length = 0;
+        for (int i = 0; solves->solution[i] != MOVE_NULL; i++) {
+            solution_length++;
+        }
+        printf("Solution length: %d\n", solution_length);
+
+        assert(solves->solution != NULL);
+
+        assert(is_move_sequence_a_solution_for_cube(original_cube, solves->solution));
     }
-    printf("\n");
-
-    free(phase2_solution);
-    destroy_solve_context(phase2_context);
-    printf("\n");
-
-    // if (solution == NULL) {
-    //     printf("Failed to solve");
-    //     free(solves);
-    //     return NULL;
-    // } else {
-    //     copy_coord_cube(cube, original_cube);
-
-    //     for (int i = 0; solution[i] != MOVE_NULL; i++) {
-    //         coord_apply_move(cube, solution[i]);
-    //     }
-
-    //     assert(is_phase1_solved(cube));
-    //     assert(is_phase2_solved(cube));
-    // }
-
-    // free(cube);
-
-    // destroy_solve_context(solve_context);
 
     return solves;
 }
@@ -165,6 +204,8 @@ phase1_solve_t *get_phase1_solution(solve_context_t *solve_context, const config
     coord_cube_t      **cube_stack    = solve_context->cube_stack;
     int                *pruning_stack = solve_context->pruning_stack;
 
+    // printf("Getting phase1 solution with max depth: %d\n", config->max_depth);
+
     // int *solution_count = &solve_context->solution_count;
     // uint64_t *move_count     = &solve_context->move_count;
 
@@ -173,8 +214,7 @@ phase1_solve_t *get_phase1_solution(solve_context_t *solve_context, const config
     /*int move_estimate = get_phase1_pruning(cube);*/
     /*printf("estimated number of moves: %d\n", move_estimate);*/
 
-    for (solve_context->allowed_depth = 1; solve_context->allowed_depth <= config->max_depth;
-         solve_context->allowed_depth++) {
+    for (; solve_context->allowed_depth <= config->max_depth; solve_context->allowed_depth++) {
         int pivot = 0;
         /*printf("searching with max depth: %d\n", allowed_depth);*/
 
@@ -262,11 +302,9 @@ phase1_solve_t *get_phase1_solution(solve_context_t *solve_context, const config
                 // phase1_solution->move_count     = move_count;
 
                 for (int i = 0; i <= pivot; i++) {
-                    phase1_solution->solution[i]        = move_stack[i];
-                    phase1_solution->phase1_solution[i] = move_stack[i];
+                    phase1_solution->solution[i] = move_stack[i];
                 }
-                phase1_solution->solution[pivot + 1]        = MOVE_NULL;
-                phase1_solution->phase1_solution[pivot + 1] = MOVE_NULL;
+                phase1_solution->solution[pivot + 1] = MOVE_NULL;
 
                 // copy cube_stack[pivot] to phase1_solution->cube
                 copy_coord_cube(phase1_solution->cube, cube_stack[pivot]);
@@ -299,7 +337,6 @@ phase1_solve_t *get_phase1_solution(solve_context_t *solve_context, const config
 }
 
 phase2_solve_t *solve_phase2(solve_context_t *solve_context, const config_t *config) {
-    move_t *solution = NULL;
     move_t  moves[]  = {MOVE_U1, MOVE_U2, MOVE_U3, MOVE_D1, MOVE_D2, MOVE_D3, MOVE_R2, MOVE_L2, MOVE_F2, MOVE_B2};
     int     n_moves  = 10;
 
@@ -321,7 +358,7 @@ phase2_solve_t *solve_phase2(solve_context_t *solve_context, const config_t *con
     uint64_t start_time = get_microseconds();
     uint64_t end_time   = 0;
 
-    for (int allowed_depth = 1; allowed_depth <= config->max_depth; allowed_depth++) {
+    for (int allowed_depth = 1; allowed_depth <= solve_context->allowed_depth; allowed_depth++) {
         int pivot = 0;
         copy_coord_cube(cube_stack[0], cube);
 
@@ -367,13 +404,6 @@ phase2_solve_t *solve_phase2(solve_context_t *solve_context, const config_t *con
             */
 
             if (is_phase2_solved(cube_stack[pivot])) {
-                printf("Phase2 solution found\n");
-                solution = malloc(sizeof(move_t) * (pivot + 2));
-
-                for (int i = 0; i <= pivot; i++)
-                    solution[i] = moves[move_stack[i]];
-                solution[pivot + 1] = MOVE_NULL;
-
                 end_time = get_microseconds();
 
                 solve_stats_t *stats = get_current_stat();
@@ -388,12 +418,10 @@ phase2_solve_t *solve_phase2(solve_context_t *solve_context, const config_t *con
                 phase2_solution->move_count     = move_count;
 
                 for (int i = 0; i <= pivot; i++) {
-                    phase2_solution->solution[i]        = moves[move_stack[i]];
-                    phase2_solution->phase2_solution[i] = moves[move_stack[i]];
+                    phase2_solution->solution[i] = moves[move_stack[i]];
                 }
 
-                phase2_solution->solution[pivot + 1]        = MOVE_NULL;
-                phase2_solution->phase2_solution[pivot + 1] = MOVE_NULL;
+                phase2_solution->solution[pivot + 1] = MOVE_NULL;
 
                 copy_coord_cube(phase2_solution->cube, cube_stack[pivot]);
 
@@ -419,6 +447,20 @@ phase2_solve_t *solve_phase2(solve_context_t *solve_context, const config_t *con
     printf("Phase 2 solution not found\n");
 
     return NULL;
+}
+
+move_t *make_solution(const phase1_solve_t *phase1_solution, const phase2_solve_t *phase2_solution) {
+    move_t *solution = (move_t *)malloc(sizeof(move_t) * (phase1_solution->depth + phase2_solution->depth + 1));
+    for (int i = 0; i < phase1_solution->depth; i++) {
+        solution[i] = phase1_solution->solution[i];
+    }
+
+    for (int i = 0; i < phase2_solution->depth; i++) {
+        solution[phase1_solution->depth + i] = phase2_solution->solution[i];
+    }
+
+    solution[phase1_solution->depth + phase2_solution->depth] = MOVE_NULL;
+    return solution;
 }
 
 phase1_solve_t *make_phase1_solve(const coord_cube_t *cube) {
