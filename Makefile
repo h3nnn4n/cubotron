@@ -76,7 +76,11 @@ gdb: clean debug_prepare $(TARGET)
 	gdb $(CURDIR)/$(TARGET)
 
 test: pcg $(TEST_TARGETS)
-	$(foreach var,$(TEST_TARGETS),$(var) && ) echo $(ECHOFLAGS) "Everything in order"
+	@for var in $(TEST_TARGETS); do \
+		echo $(ECHOFLAGS) "[RUN]\t$$var"; \
+		$$var || exit $$?; \
+	done; \
+	echo $(ECHOFLAGS) "Everything in order"
 
 pcg:
 	@echo $(ECHOFLAGS) "[CC]\tpcg core"
