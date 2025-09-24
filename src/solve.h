@@ -30,7 +30,7 @@
 #include "coord_cube.h"
 #include "stats.h"
 
-#define MAX_MOVES 30
+#define MAX_MOVES 50
 
 typedef struct solve_list_s solve_list_t;
 

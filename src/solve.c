@@ -104,12 +104,13 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
         printf("Getting phase1 solution\n");
         while (phase1_solution == NULL) {
             phase1_solution = get_phase1_solution(phase1_context, config);
-            printf("Phase1 solution depth: %d\n", phase1_solution->depth);
             if (phase1_solution == NULL) {
                 printf("No phase1 solution found\n");
                 // destroy_solve_context(phase1_context);
                 return NULL;
             }
+
+            printf("Phase1 solution depth: %d\n", phase1_solution->depth);
         }
 
         printf("Phase1 solution: ");
@@ -134,8 +135,7 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
 
         if (phase2_solution == NULL) {
             printf("No phase2 solution found\n");
-            copy_coord_cube(phase1_context->cube, original_cube);
-            // destroy_phase1_solve(phase1_solution);
+            destroy_phase1_solve(phase1_solution);
             // destroy_solve_context(phase1_context);
             // destroy_solve_context(phase2_context);
             continue;
@@ -210,7 +210,9 @@ phase1_solve_t *get_phase1_solution(solve_context_t *solve_context, const config
     /*int move_estimate = get_phase1_pruning(cube);*/
     /*printf("estimated number of moves: %d\n", move_estimate);*/
 
-    for (; solve_context->allowed_depth <= config->max_depth; solve_context->allowed_depth++) {
+    assert(solve_context->allowed_depth >= 0);
+    assert(solve_context->allowed_depth < config->max_depth);
+    for (; solve_context->allowed_depth < config->max_depth; solve_context->allowed_depth++) {
         int pivot = 0;
         /*printf("searching with max depth: %d\n", allowed_depth);*/
 
@@ -484,6 +486,8 @@ void destroy_phase2_solve(phase2_solve_t *phase2_solution) {
 }
 
 solve_context_t *make_solve_context(const coord_cube_t *cube) {
+    assert(cube != NULL);
+
     solve_context_t *phase1_context = (solve_context_t *)malloc(sizeof(solve_context_t));
 
     for (int i = 0; i < MAX_MOVES; i++) {
@@ -495,6 +499,8 @@ solve_context_t *make_solve_context(const coord_cube_t *cube) {
     phase1_context->cube = get_coord_cube();
 
     copy_coord_cube(phase1_context->cube, cube);
+
+    phase1_context->allowed_depth = 0;
 
     return phase1_context;
 }
