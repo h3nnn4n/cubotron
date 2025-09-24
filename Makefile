@@ -99,7 +99,7 @@ pcg_clean:
 
 $(TEST_TARGETS): $(OBJS_NO_MAIN) $(OBJS_TEST)
 	@echo $(ECHOFLAGS) "[LD]\t$@"
-	@$(CC) -o "$@" $@.o $(OBJS_NO_MAIN) $(LDFLAGS) $(OPTIMIZATION)
+	@$(CC) -o "$@" $@.o $(OBJS_NO_MAIN) $(LDFLAGS) -g -pg -O0
 
 $(BUILDDIR)/%.o: %.c
 	@echo $(ECHOFLAGS) "[CC]\t$<"
