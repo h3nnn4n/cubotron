@@ -80,6 +80,9 @@ phase1_solve_t *get_phase1_solution(solve_context_t *solve_context, const config
 phase2_solve_t *solve_phase2(solve_context_t *solve_context, const config_t *config);
 move_t         *make_solution(const phase1_solve_t *phase1_solution, const phase2_solve_t *phase2_solution);
 
+void update_solve_list_node(solve_list_t *solves, const phase1_solve_t *phase1_solution,
+                            const phase2_solve_t *phase2_solution);
+
 phase1_solve_t *make_phase1_solve(const coord_cube_t *cube);
 void            destroy_phase1_solve(phase1_solve_t *phase1_solve);
 

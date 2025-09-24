@@ -171,11 +171,7 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
 
         // destroy_solve_context(solve_context);
 
-        solves->phase1_solution = phase1_solution->solution;
-        solves->phase2_solution = phase2_solution->solution;
-        solves->solution        = make_solution(phase1_solution, phase2_solution);
-        solves->stats           = NULL; // FIXME
-        solves->next            = NULL; // FIXME
+        update_solve_list_node(solves, phase1_solution, phase2_solution);
 
         printf("Solution: ");
         for (int i = 0; solves->solution[i] != MOVE_NULL; i++) {
@@ -519,4 +515,27 @@ void destroy_solve_context(solve_context_t *context) {
 
     free(context->cube);
     free(context);
+}
+
+void update_solve_list_node(solve_list_t *solves, const phase1_solve_t *phase1_solution,
+                            const phase2_solve_t *phase2_solution) {
+
+    move_t *phase1_solution_copy = (move_t *)malloc(sizeof(move_t) * (phase1_solution->depth + 1));
+    move_t *phase2_solution_copy = (move_t *)malloc(sizeof(move_t) * (phase2_solution->depth + 1));
+    for (int i = 0; i < phase1_solution->depth; i++) {
+        phase1_solution_copy[i] = phase1_solution->solution[i];
+    }
+    for (int i = 0; i < phase2_solution->depth; i++) {
+        phase2_solution_copy[i] = phase2_solution->solution[i];
+    }
+    phase1_solution_copy[phase1_solution->depth] = MOVE_NULL;
+    phase2_solution_copy[phase2_solution->depth] = MOVE_NULL;
+
+    solves->phase1_solution = phase1_solution_copy;
+    solves->phase2_solution = phase2_solution_copy;
+
+    solves->solution = make_solution(phase1_solution, phase2_solution);
+
+    solves->stats = NULL; // FIXME
+    solves->next  = NULL; // FIXME
 }
