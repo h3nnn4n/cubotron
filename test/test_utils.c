@@ -124,6 +124,20 @@ void test_str_to_move() {
     }
 }
 
+void test_are_move_sequences_equal() {
+    move_t *moves1 = move_sequence_str_to_moves("U R2 F D' L B");
+    move_t *moves2 = move_sequence_str_to_moves("U R2 F D' L B");
+    move_t *moves3 = move_sequence_str_to_moves("D R2 F D' L B'");
+
+    TEST_ASSERT_TRUE(are_move_sequences_equal(moves1, moves2));
+    TEST_ASSERT_FALSE(are_move_sequences_equal(moves1, moves3));
+    TEST_ASSERT_FALSE(are_move_sequences_equal(moves2, moves3));
+
+    free(moves1);
+    free(moves2);
+    free(moves3);
+}
+
 void setUp() { build_move_tables(); }
 void tearDown() {}
 
@@ -146,6 +160,8 @@ int main() {
 
     RUN_TEST(test_move_sequence_str_to_moves);
     RUN_TEST(test_str_to_move);
+
+    RUN_TEST(test_are_move_sequences_equal);
 
     return UNITY_END();
 }

@@ -262,3 +262,19 @@ move_t str_to_move(const char *move_str) {
 
     return MOVE_NULL;
 }
+
+void print_move_sequence(const move_t *moves) {
+    for (int i = 0; moves[i] != MOVE_NULL; i++) {
+        printf("%s ", move_to_str(moves[i]));
+    }
+    printf("\n");
+}
+
+int are_move_sequences_equal(const move_t *moves1, const move_t *moves2) {
+    for (int i = 0; moves1[i] != MOVE_NULL && moves2[i] != MOVE_NULL; i++) {
+        if (moves1[i] != moves2[i])
+            return 0;
+    }
+
+    return 1;
+}

@@ -54,6 +54,9 @@ void rotate_right(int *pieces, int l, int r);
 move_t *move_sequence_str_to_moves(const char *move_sequence_str);
 move_t  str_to_move(const char *);
 
+void print_move_sequence(const move_t *moves);
+int  are_move_sequences_equal(const move_t *moves1, const move_t *moves2);
+
 int rmrf(char *path);
 
 #endif /* end of include guard */
