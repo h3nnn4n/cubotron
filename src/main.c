@@ -156,9 +156,7 @@ int main(int argc, char **argv) {
         solve_cube_sample_library();
         solve_random_cubes();
         coord_benchmark();
-    }
-
-    if (config->do_solve) {
+    } else if (config->do_solve) {
         solve_list_t *solution = NULL;
 
         if (config->scramble_moves != NULL) {
@@ -197,6 +195,8 @@ int main(int argc, char **argv) {
 
         free(solution);
         free(facelets_to_solve);
+    } else {
+        printf("No solve mode specified\n");
     }
 
     purge_cubie_move_table();
