@@ -82,7 +82,7 @@ test: pcg $(TEST_TARGETS)
 	done; \
 	echo $(ECHOFLAGS) "Everything in order"
 
-test-%: pcg
+test-%: $(BUILDDIR)/test/test_% pcg
 	@echo $(ECHOFLAGS) "[RUN]\t$(BUILDDIR)/test/test_$*"
 	@$(BUILDDIR)/test/test_$*
 
