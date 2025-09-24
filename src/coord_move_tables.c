@@ -103,6 +103,12 @@ void coord_apply_move(coord_cube_t *cube, move_t move) {
     assert(cube->corner_permutations < N_CORNER_PERMUTATIONS);
 }
 
+void coord_apply_moves(coord_cube_t *cube, move_t *moves, int n_moves) {
+    for (int i = 0; i < n_moves; i++) {
+        coord_apply_move(cube, moves[i]);
+    }
+}
+
 void coord_build_move_tables() {
     cube_cubie_t *cube = NULL;
 
