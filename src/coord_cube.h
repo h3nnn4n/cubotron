@@ -47,5 +47,6 @@ int           is_phase1_solved(const coord_cube_t *cube);
 int           is_phase2_solved(const coord_cube_t *cube);
 int           is_coord_solved(const coord_cube_t *cube);
 int           is_move_sequence_a_solution_for_cube(const coord_cube_t *cube, const move_t *moves);
+void          scramble_cube(coord_cube_t *cube, int n_moves);
 
 #endif /* end of include guard */

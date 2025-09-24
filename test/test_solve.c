@@ -8,6 +8,30 @@
 #include <solve.h>
 #include <utils.h>
 
+void scramble_cube(coord_cube_t *cube, int n_moves) {
+    move_t scramble_moves[256];
+    if (n_moves > 256)
+        n_moves = 256; // prevent overflow
+
+    move_t prev_move = MOVE_NULL;
+    for (int i = 0; i < n_moves;) {
+        move_t move = pcg32_boundedrand(N_MOVES);
+        if (i > 0 && is_duplicated_or_undoes_move(move, prev_move)) {
+            continue;
+        }
+        scramble_moves[i] = move;
+        coord_apply_move(cube, move);
+        prev_move = move;
+        i++;
+    }
+
+    printf("Scramble: ");
+    for (int i = 0; i < n_moves; i++) {
+        printf("%s ", move_to_str(scramble_moves[i]));
+    }
+    printf("\n");
+}
+
 void test_random_phase1_solving() {
     coord_cube_t *cube = get_coord_cube();
 
