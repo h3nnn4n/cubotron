@@ -54,6 +54,7 @@ typedef struct solve_context_s {
     int           move_count;
     int           solution_count;
     int           allowed_depth;
+    int           depth;
 } solve_context_t;
 
 typedef struct phase1_solve_s {

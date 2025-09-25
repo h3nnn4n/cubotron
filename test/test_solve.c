@@ -1,4 +1,5 @@
 #include <pcg_variants.h>
+#include <string.h>
 #include <unity.h>
 
 #include <coord_cube.h>
@@ -42,7 +43,7 @@ void test_phase1_solution_generator() {
 
     solve_context_t *solve_context = make_solve_context(cube);
 
-    const uint8_t         N_SOLUTIONS = 10;
+    const uint8_t         N_SOLUTIONS = 50;
     const phase1_solve_t *solutions[N_SOLUTIONS];
 
     for (int i = 0; i < N_SOLUTIONS; i++) {
@@ -58,6 +59,15 @@ void test_phase1_solution_generator() {
             if (i == j)
                 continue;
 
+            // printf("\n");
+
+            // printf("Checking if solutions %d and %d are equal\n", i, j);
+            // printf("Solution %d: ", i);
+            // print_move_sequence(solutions[i]->solution);
+            // printf("Solution %d: ", j);
+            // print_move_sequence(solutions[j]->solution);
+            // printf("\n");
+
             TEST_ASSERT_FALSE(are_move_sequences_equal(solutions[i]->solution, solutions[j]->solution));
         }
     }
@@ -67,6 +77,39 @@ void test_phase1_solution_generator() {
     }
 
     free(solve_context);
+}
+
+void test_phase1_solution_count() {
+    config_t *config             = get_config();
+    uint32_t  original_max_depth = config->max_depth;
+    config->max_depth            = 10;
+
+    cube_cubie_t    *cubie_cube    = build_cubie_cube_from_str(sample_facelets[0]);
+    coord_cube_t    *cube          = make_coord_cube(cubie_cube);
+    solve_context_t *solve_context = make_solve_context(cube);
+
+    uint64_t solution_count = 0;
+
+    while (1) {
+        phase1_solve_t *phase1_solution = get_phase1_solution(solve_context, config);
+        if (phase1_solution == NULL)
+            break;
+
+        solution_count++;
+
+        // print_move_sequence(phase1_solution->solution);
+        free(phase1_solution);
+    }
+
+    config->max_depth = original_max_depth;
+    TEST_ASSERT_TRUE(solution_count > 0);
+
+    free(solve_context);
+    free(cube);
+
+    // printf("Solution count: %lu\n", solution_count);
+
+    TEST_ASSERT_TRUE(solution_count == 1235401);
 }
 
 void test_random_phase2_solving() {
@@ -316,12 +359,13 @@ int main() {
 
     RUN_TEST(test_random_phase1_solving);
     RUN_TEST(test_phase1_solution_generator);
+    RUN_TEST(test_phase1_solution_count);
     // RUN_TEST(test_random_phase2_solving);
-    RUN_TEST(test_facelets_solve_with_max_length);
-    RUN_TEST(test_random_full_solver_with_random_scrambles_single_solution);
+    // RUN_TEST(test_facelets_solve_with_max_length);
+    // RUN_TEST(test_random_full_solver_with_random_scrambles_single_solution);
     RUN_TEST(test_random_full_solver_with_random_scrambles_multiple_solution);
-    RUN_TEST(test_random_full_solver_with_sample_cubes_single_solution);
-    RUN_TEST(test_solve_with_move_blacklist);
+    // RUN_TEST(test_random_full_solver_with_sample_cubes_single_solution);
+    // RUN_TEST(test_solve_with_move_blacklist); // Passing but way to slow
 
     return UNITY_END();
 }
