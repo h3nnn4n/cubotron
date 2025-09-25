@@ -125,8 +125,7 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
 
         printf("Making phase2 context\n");
 
-        solve_context_t *phase2_context = make_solve_context(phase1_context->cube);
-        phase2_context->allowed_depth   = config->max_depth - phase1_solution->depth;
+        solve_context_t *phase2_context = make_phase2_solve_context(phase1_solution, config);
 
         printf("Solving phase2\n");
 
@@ -444,6 +443,12 @@ solve_context_t *make_solve_context(const coord_cube_t *cube) {
     phase1_context->depth         = 0;
 
     return phase1_context;
+}
+
+solve_context_t *make_phase2_solve_context(const phase1_solve_t *phase1_solution, const config_t *config) {
+    solve_context_t *context = make_solve_context(phase1_solution->cube);
+    context->allowed_depth   = config->max_depth - phase1_solution->depth;
+    return context;
 }
 
 void clear_solve_context(solve_context_t *solve_context) {

@@ -113,6 +113,9 @@ void test_phase1_solution_count() {
 }
 
 void test_random_phase2_solving() {
+    config_t *config  = get_config();
+    config->max_depth = 30; // FIXME: 25 should be enough
+
     coord_cube_t *cube = get_coord_cube();
 
     for (int i = 0; i < 50; i++) {
@@ -131,7 +134,7 @@ void test_random_phase2_solving() {
         TEST_ASSERT_TRUE(is_phase1_solved(cube));
         TEST_ASSERT_FALSE(is_phase2_solved(cube));
 
-        solve_context_t *phase2_solve_context = make_solve_context(phase1_solution->cube);
+        solve_context_t *phase2_solve_context = make_phase2_solve_context(phase1_solution, get_config());
         phase2_solve_t  *phase2_solution      = solve_phase2(phase2_solve_context, get_config());
 
         TEST_ASSERT_TRUE(phase2_solution != NULL);
@@ -360,7 +363,7 @@ int main() {
     RUN_TEST(test_random_phase1_solving);
     RUN_TEST(test_phase1_solution_generator);
     RUN_TEST(test_phase1_solution_count);
-    // RUN_TEST(test_random_phase2_solving);
+    RUN_TEST(test_random_phase2_solving);
     // RUN_TEST(test_facelets_solve_with_max_length);
     // RUN_TEST(test_random_full_solver_with_random_scrambles_single_solution);
     RUN_TEST(test_random_full_solver_with_random_scrambles_multiple_solution);

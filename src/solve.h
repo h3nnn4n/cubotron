@@ -94,6 +94,7 @@ solve_list_t *new_solve_list_node();
 void          destroy_solve_list_node(solve_list_t *node);
 
 solve_context_t *make_solve_context(const coord_cube_t *cube);
+solve_context_t *make_phase2_solve_context(const phase1_solve_t *phase1_solution, const config_t *config);
 void             clear_solve_context(solve_context_t *solve_context);
 void             destroy_solve_context(solve_context_t *context);
 
