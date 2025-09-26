@@ -97,7 +97,7 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
     printf("Making phase1 context\n");
     solve_context_t *phase1_context = make_solve_context(original_cube);
 
-    // Only handles a single solution
+    // FIXME: Only handles a single solution
     while (solves->solution == NULL) {
         phase1_solve_t *phase1_solution = NULL;
 
@@ -106,7 +106,6 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
             phase1_solution = get_phase1_solution(phase1_context, config);
             if (phase1_solution == NULL) {
                 printf("No phase1 solution found\n");
-                // destroy_solve_context(phase1_context);
                 return NULL;
             }
 
@@ -135,8 +134,6 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
         if (phase2_solution == NULL) {
             printf("No phase2 solution found\n");
             destroy_phase1_solve(phase1_solution);
-            // destroy_solve_context(phase1_context);
-            // destroy_solve_context(phase2_context);
             continue;
         }
 
@@ -147,28 +144,6 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
         printf("\n");
 
         assert(is_phase2_solved(phase2_solution->cube));
-
-        // free(phase2_solution);
-        // destroy_solve_context(phase2_context);
-
-        // if (solution == NULL) {
-        //     printf("Failed to solve");
-        //     free(solves);
-        //     return NULL;
-        // } else {
-        //     copy_coord_cube(cube, original_cube);
-
-        //     for (int i = 0; solution[i] != MOVE_NULL; i++) {
-        //         coord_apply_move(cube, solution[i]);
-        //     }
-
-        //     assert(is_phase1_solved(cube));
-        //     assert(is_phase2_solved(cube));
-        // }
-
-        // free(cube);
-
-        // destroy_solve_context(solve_context);
 
         update_solve_list_node(solves, phase1_solution, phase2_solution);
 
