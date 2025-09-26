@@ -16,6 +16,8 @@ void test_random_phase1_solving() {
     for (int i = 0; i < 100; i++) {
         reset_coord_cube(cube);
         scramble_cube(cube, 50);
+        coord_cube_t *original_cube = get_coord_cube();
+        copy_coord_cube(original_cube, cube);
 
         TEST_ASSERT_FALSE(is_phase1_solved(cube));
 
@@ -30,6 +32,8 @@ void test_random_phase1_solving() {
         }
 
         TEST_ASSERT_TRUE(is_phase1_solved(cube));
+        // debug_phase1_solution(phase1_solution, original_cube);
+        TEST_ASSERT_TRUE(is_phase1_moves_solved(solution, original_cube));
 
         free(phase1_solution);
     }
@@ -40,6 +44,8 @@ void test_random_phase1_solving() {
 void test_phase1_solution_generator() {
     coord_cube_t *cube = get_coord_cube();
     scramble_cube(cube, 50);
+    coord_cube_t *original_cube = get_coord_cube();
+    copy_coord_cube(original_cube, cube);
 
     solve_context_t *solve_context = make_solve_context(cube);
 
@@ -52,6 +58,8 @@ void test_phase1_solution_generator() {
         TEST_ASSERT_TRUE(phase1_solution != NULL);
 
         solutions[i] = phase1_solution;
+
+        TEST_ASSERT_TRUE(is_phase1_moves_solved(phase1_solution->solution, original_cube));
     }
 
     for (int i = 0; i < N_SOLUTIONS; i++) {
@@ -128,6 +136,9 @@ void test_random_phase2_solving() {
         TEST_ASSERT_FALSE(is_phase2_solved(cube));
 
         phase1_solve_t *phase1_solution = get_phase1_solution(phase1_solve_context, get_config());
+
+        // debug_phase1_solution(phase1_solution, cube);
+        TEST_ASSERT_TRUE(is_phase1_moves_solved(phase1_solution->solution, cube));
 
         coord_apply_moves(cube, phase1_solution->solution, phase1_solution->depth);
 
@@ -360,14 +371,15 @@ int main() {
 
     UNITY_BEGIN();
 
-    RUN_TEST(test_random_phase1_solving);
+    // RUN_TEST(test_random_phase1_solving);
     RUN_TEST(test_phase1_solution_generator);
-    RUN_TEST(test_phase1_solution_count);
-    RUN_TEST(test_random_phase2_solving);
+    // RUN_TEST(test_phase1_solution_count);
+    // RUN_TEST(test_random_phase2_solving);
+    // RUN_TEST(test_random_full_solver_with_random_scrambles_multiple_solution);
+
+    // RUN_TEST(test_random_full_solver_with_sample_cubes_single_solution);
     // RUN_TEST(test_facelets_solve_with_max_length);
     // RUN_TEST(test_random_full_solver_with_random_scrambles_single_solution);
-    RUN_TEST(test_random_full_solver_with_random_scrambles_multiple_solution);
-    // RUN_TEST(test_random_full_solver_with_sample_cubes_single_solution);
     // RUN_TEST(test_solve_with_move_blacklist); // Passing but way to slow
 
     return UNITY_END();

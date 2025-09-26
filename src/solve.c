@@ -94,11 +94,12 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
 
     printf("\n");
     printf("Solving\n");
-    printf("Making phase1 context\n");
     solve_context_t *phase1_context = make_solve_context(original_cube);
 
     // FIXME: Only handles a single solution
     while (solves->solution == NULL) {
+        printf("\n");
+
         phase1_solve_t *phase1_solution = NULL;
 
         printf("Getting phase1 solution\n");
@@ -113,22 +114,19 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
         }
 
         printf("Phase1 solution: ");
-        for (int i = 0; phase1_solution->solution[i] != MOVE_NULL; i++) {
-            printf("%s ", move_to_str(phase1_solution->solution[i]));
-        }
-        printf("\n");
+        print_move_sequence(phase1_solution->solution);
 
-        assert(is_phase1_solved(phase1_context->cube));
+        debug_phase1_solution(phase1_solution, original_cube);
+
+        assert(is_phase1_solved(phase1_solution->cube));
 
         ////////////////////////////////////////////
-
-        printf("Making phase2 context\n");
 
         solve_context_t *phase2_context = make_phase2_solve_context(phase1_solution, config);
 
         printf("Solving phase2\n");
 
-        // we could find multipl solutions for phase2, but the first one is always the shortest
+        // we could find multiple solutions for phase2, but the first one is always the shortest
         phase2_solve_t *phase2_solution = solve_phase2(phase2_context, config);
 
         if (phase2_solution == NULL) {
@@ -138,10 +136,7 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
         }
 
         printf("Phase2 solution: ");
-        for (int i = 0; phase2_solution->solution[i] != MOVE_NULL; i++) {
-            printf("%s ", move_to_str(phase2_solution->solution[i]));
-        }
-        printf("\n");
+        print_move_sequence(phase2_solution->solution);
 
         assert(is_phase2_solved(phase2_solution->cube));
 
@@ -159,7 +154,6 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
         printf("Solution length: %d\n", solution_length);
 
         assert(solves->solution != NULL);
-
         assert(is_move_sequence_a_solution_for_cube(original_cube, solves->solution));
     }
 
@@ -229,6 +223,10 @@ phase1_solve_t *get_phase1_solution(solve_context_t *solve_context, const config
                 assert(is_phase1_solved(phase1_solution->cube));
                 assert(is_phase1_solved(solve_context->cube));
 
+                debug_phase1_solution(phase1_solution, solve_context->original_cube);
+
+                assert(is_phase1_moves_solved(phase1_solution->solution, solve_context->original_cube));
+
                 return phase1_solution;
             }
 
@@ -249,8 +247,8 @@ phase1_solve_t *get_phase1_solution(solve_context_t *solve_context, const config
 }
 
 phase2_solve_t *solve_phase2(solve_context_t *solve_context, const config_t *config) {
-    move_t  moves[]  = {MOVE_U1, MOVE_U2, MOVE_U3, MOVE_D1, MOVE_D2, MOVE_D3, MOVE_R2, MOVE_L2, MOVE_F2, MOVE_B2};
-    int     n_moves  = 10;
+    move_t moves[] = {MOVE_U1, MOVE_U2, MOVE_U3, MOVE_D1, MOVE_D2, MOVE_D3, MOVE_R2, MOVE_L2, MOVE_F2, MOVE_B2};
+    int    n_moves = 10;
 
     for (int i = 0; i < MAX_MOVES; i++) {
         solve_context->move_stack[i]    = -1;
@@ -382,9 +380,11 @@ solve_context_t *make_solve_context(const coord_cube_t *cube) {
 
     clear_solve_context(phase1_context);
 
-    phase1_context->cube = get_coord_cube();
+    phase1_context->cube          = get_coord_cube();
+    phase1_context->original_cube = get_coord_cube();
 
     copy_coord_cube(phase1_context->cube, cube);
+    copy_coord_cube(phase1_context->original_cube, cube);
 
     phase1_context->allowed_depth = 0;
     phase1_context->depth         = 0;
@@ -439,4 +439,39 @@ void update_solve_list_node(solve_list_t *solves, const phase1_solve_t *phase1_s
 
     solves->stats = NULL; // FIXME
     solves->next  = NULL; // FIXME
+}
+
+void debug_phase1_solution(const phase1_solve_t *phase1_solution, const coord_cube_t *original_cube) {
+    printf("\n");
+    printf("Phase1 solution: ");
+    print_move_sequence(phase1_solution->solution);
+
+    coord_cube_t *cube = get_coord_cube();
+    copy_coord_cube(cube, original_cube);
+
+    uint32_t pruning = get_phase1_pruning(cube);
+
+    printf("Pruning: %d\n", pruning);
+
+    for (int i = 0; phase1_solution->solution[i] != MOVE_NULL; i++) {
+        coord_apply_move(cube, phase1_solution->solution[i]);
+        pruning = get_phase1_pruning(cube);
+        printf("Pruning: %d\n", pruning);
+    }
+
+    printf("Is phase1 solved: %d\n", is_phase1_solved(cube));
+
+    printf("\n");
+    free(cube);
+}
+
+int is_phase1_moves_solved(const move_t *solution, const coord_cube_t *original_cube) {
+    coord_cube_t *cube = get_coord_cube();
+    copy_coord_cube(cube, original_cube);
+
+    for (int i = 0; solution[i] != MOVE_NULL; i++) {
+        coord_apply_move(cube, solution[i]);
+    }
+
+    return is_phase1_solved(cube);
 }
