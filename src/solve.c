@@ -260,15 +260,10 @@ phase2_solve_t *solve_phase2(solve_context_t *solve_context, const config_t *con
 
     copy_coord_cube(solve_context->cube_stack[0], solve_context->cube);
 
-    uint64_t move_count = 0;
-
     const coord_cube_t *cube          = solve_context->cube;
     move_t             *move_stack    = solve_context->move_stack;
     coord_cube_t      **cube_stack    = solve_context->cube_stack;
     int                *pruning_stack = solve_context->pruning_stack;
-
-    uint64_t start_time = get_microseconds();
-    uint64_t end_time   = 0;
 
     for (int allowed_depth = 1; allowed_depth <= solve_context->allowed_depth; allowed_depth++) {
         int pivot = 0;
@@ -283,7 +278,6 @@ phase2_solve_t *solve_phase2(solve_context_t *solve_context, const config_t *con
             if ((int)move_stack[pivot] >= n_moves) {
                 pruning_stack[pivot] = -1; // ?
                 move_stack[pivot]    = -1;
-                /*printf("\n");*/
                 pivot--;
 
                 if (pivot < 0) {
@@ -302,32 +296,10 @@ phase2_solve_t *solve_phase2(solve_context_t *solve_context, const config_t *con
 
             coord_apply_move(cube_stack[pivot], moves[move_stack[pivot]]);
             pruning_stack[pivot] = get_phase2_pruning(cube_stack[pivot]);
-            move_count++;
-
-            /*
-            if (move_count % 1000000 == 0) {
-                char buffer[512];
-                sprintf(buffer, " moves: %4d pivot: %2d", move_count, pivot);
-                sprintf(buffer, "%s : %4d -> ", buffer, cube_stack[pivot]->corner_permutations);
-                for (int i = 0; i <= pivot; i++)
-                    sprintf(buffer, "%s %s", buffer, move_to_str(move_stack[i]));
-                printf("%s\n", buffer);
-            }
-            */
 
             if (is_phase2_solved(cube_stack[pivot])) {
-                end_time = get_microseconds();
-
-                solve_stats_t *stats = get_current_stat();
-                if (stats != NULL) {
-                    stats->phase2_depth      = pivot + 1;
-                    stats->phase2_move_count = move_count;
-                    stats->phase2_solve_time = (float)(end_time - start_time) / 1000000.0;
-                }
-
                 phase2_solve_t *phase2_solution = make_phase2_solve(cube_stack[pivot]);
                 phase2_solution->depth          = pivot + 1;
-                phase2_solution->move_count     = move_count;
 
                 for (int i = 0; i <= pivot; i++) {
                     phase2_solution->solution[i] = moves[move_stack[i]];
