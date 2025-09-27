@@ -100,6 +100,9 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
     while (solves->solution == NULL) {
         printf("\n");
 
+        // solve_phase1_old(phase1_context, config, solves);
+        // return NULL;
+
         phase1_solve_t *phase1_solution = NULL;
 
         printf("Getting phase1 solution\n");
@@ -186,7 +189,7 @@ phase1_solve_t *get_phase1_solution(solve_context_t *solve_context, const config
                 solve_context->depth--;
 
                 if (solve_context->depth < 0) {
-                    solve_context->depth = 0;
+                    solve_context->depth = 0; // ?
                     break;
                 } else if (solve_context->depth == 0) {
                     copy_coord_cube(cube_stack[0], cube);
@@ -201,11 +204,15 @@ phase1_solve_t *get_phase1_solution(solve_context_t *solve_context, const config
                 is_duplicated_or_undoes_move(move_stack[solve_context->depth], move_stack[solve_context->depth - 1]))
                 continue;
 
-            assert(cube_stack[solve_context->depth] != NULL);
-            assert(move_stack[solve_context->depth] <= N_MOVES);
+            assert(move_stack[solve_context->depth] >= 0);
+            assert(move_stack[solve_context->depth] < N_MOVES);
 
             coord_apply_move(cube_stack[solve_context->depth], move_stack[solve_context->depth]);
             pruning_stack[solve_context->depth] = get_phase1_pruning(cube_stack[solve_context->depth]);
+
+            printf("depth=%d  prunning=%d phase1_solved=%d -> ", solve_context->depth,
+                   pruning_stack[solve_context->depth], is_phase1_solved(cube_stack[solve_context->depth]));
+            print_move_sequence(move_stack);
 
             if (is_phase1_solved(cube_stack[solve_context->depth])) {
                 phase1_solve_t *phase1_solution = make_phase1_solve(cube_stack[solve_context->depth]);
@@ -225,9 +232,12 @@ phase1_solve_t *get_phase1_solution(solve_context_t *solve_context, const config
 
                 debug_phase1_solution(phase1_solution, solve_context->original_cube);
 
-                assert(is_phase1_moves_solved(phase1_solution->solution, solve_context->original_cube));
+                assert(is_phase1_moves_solved(move_stack, solve_context->original_cube));
+                // assert(is_phase1_moves_solved(phase1_solution->solution, solve_context->original_cube));
 
                 return phase1_solution;
+            } else {
+                // print_move_sequence(move_stack);
             }
 
             if (pruning_stack[solve_context->depth] + solve_context->depth < solve_context->allowed_depth) {
@@ -244,6 +254,127 @@ phase1_solve_t *get_phase1_solution(solve_context_t *solve_context, const config
     }
 
     return NULL;
+}
+
+move_t *solve_phase1_old(solve_context_t *solve_context, const config_t *config, solve_list_t *solves) {
+    move_t *solution = NULL;
+
+    const coord_cube_t *cube          = solve_context->cube;
+    move_t             *move_stack    = solve_context->move_stack;
+    coord_cube_t      **cube_stack    = solve_context->cube_stack;
+    int                *pruning_stack = solve_context->pruning_stack;
+
+    int      solution_count = 0;
+    uint64_t move_count     = 0;
+
+    uint64_t phase2_time = 0;
+    uint64_t start_time  = get_microseconds();
+    uint64_t end_time    = 0;
+    /*int move_estimate = get_phase1_pruning(cube);*/
+    /*printf("estimated number of moves: %d\n", move_estimate);*/
+
+    for (int allowed_depth = 1; allowed_depth <= config->max_depth; allowed_depth++) {
+        int pivot = 0;
+        /*printf("searching with max depth: %d\n", allowed_depth);*/
+
+        copy_coord_cube(cube_stack[0], cube);
+
+        do {
+            do {
+                move_stack[pivot]++;
+            } while (config->move_black_list[move_stack[pivot]] != MOVE_NULL && move_stack[pivot] < N_MOVES);
+
+            if (move_stack[pivot] >= N_MOVES) {
+                pruning_stack[pivot] = -1; // ?
+                move_stack[pivot]    = -1;
+                /*printf("\n");*/
+                pivot--;
+
+                if (pivot < 0) {
+                    break;
+                } else if (pivot == 0) {
+                    copy_coord_cube(cube_stack[0], cube);
+                } else {
+                    copy_coord_cube(cube_stack[pivot], cube_stack[pivot - 1]);
+                }
+
+                continue;
+            }
+
+            if (pivot > 0 && is_duplicated_or_undoes_move(move_stack[pivot], move_stack[pivot - 1]))
+                continue;
+
+            assert(move_stack[pivot] <= N_MOVES);
+
+            coord_apply_move(cube_stack[pivot], move_stack[pivot]);
+            pruning_stack[pivot] = get_phase1_pruning(cube_stack[pivot]);
+            move_count++;
+
+            if (is_phase1_solved(cube_stack[pivot])) {
+                end_time = get_microseconds();
+
+                solve_stats_t *stats = get_current_stat();
+                if (stats != NULL) {
+                    stats->phase1_depth      = pivot + 1;
+                    stats->phase1_move_count = move_count;
+                    stats->phase1_solve_time = (float)(end_time - phase2_time - start_time) / 1000000.0;
+
+                    if (solves != NULL) {
+                        solves->stats = stats;
+                    }
+                }
+            }
+
+            if (is_phase1_solved(cube_stack[pivot])) {
+                solution_count++;
+                printf("phase1 old: ");
+                print_move_sequence(move_stack);
+                if (solution_count >= 20) {
+                    return NULL;
+                }
+
+                /*printf("phase1 solution found with depth %2d - ", pivot);*/
+                solution                = malloc(sizeof(move_t) * (40));
+                move_t *phase1_solution = malloc(sizeof(move_t) * (40));
+
+                for (int i = 0; i <= pivot; i++) {
+                    solution[i]        = move_stack[i];
+                    phase1_solution[i] = move_stack[i];
+                    /*printf(" %s", move_to_str(solution[i]));*/
+                }
+                solution[pivot + 1]        = MOVE_NULL;
+                phase1_solution[pivot + 1] = MOVE_NULL;
+                /*printf("\n");*/
+
+                // zero means just phase1 solution.
+                // -1 is find all solutions
+                if (config->n_solutions == 0) {
+                    /*printf("doing just phase1!\n");*/
+                    goto solution_found;
+                }
+            }
+
+            if (pruning_stack[pivot] + pivot < allowed_depth) {
+                copy_coord_cube(cube_stack[pivot + 1], cube_stack[pivot]);
+                pivot++;
+            } else {
+                if (pivot > 0) {
+                    copy_coord_cube(cube_stack[pivot], cube_stack[pivot - 1]);
+                } else {
+                    copy_coord_cube(cube_stack[pivot], cube);
+                }
+            }
+        } while (1);
+    }
+
+solution_found:
+
+    if (solves != NULL && solves->next != NULL) {
+        destroy_solve_list_node(solves->next);
+        solves->next = NULL;
+    }
+
+    return solution;
 }
 
 phase2_solve_t *solve_phase2(solve_context_t *solve_context, const config_t *config) {
@@ -469,7 +600,7 @@ int is_phase1_moves_solved(const move_t *solution, const coord_cube_t *original_
     coord_cube_t *cube = get_coord_cube();
     copy_coord_cube(cube, original_cube);
 
-    for (int i = 0; solution[i] != MOVE_NULL; i++) {
+    for (int i = 0; solution[i] != MOVE_NULL && solution[i] != -1; i++) {
         coord_apply_move(cube, solution[i]);
     }
 

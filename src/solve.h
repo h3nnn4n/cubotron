@@ -101,5 +101,6 @@ void             destroy_solve_context(solve_context_t *context);
 
 void debug_phase1_solution(const phase1_solve_t *phase1_solution, const coord_cube_t *original_cube);
 int  is_phase1_moves_solved(const move_t *solution, const coord_cube_t *original_cube);
+move_t *solve_phase1_old(solve_context_t *solve_context, const config_t *config, solve_list_t *solves);
 
 #endif /* end of include guard */
