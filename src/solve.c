@@ -103,6 +103,8 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
 
     solve_context_t *solve_context = make_solve_context(original_cube);
 
+    prep_phase1(solve_context);
+
     const move_t *solution = solve_phase1(solve_context, config, solves);
 
     if (solution == NULL) {
@@ -112,6 +114,8 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
         return NULL;
     } else {
         copy_coord_cube(cube, original_cube);
+
+        solution = patch_solution(solve_context, solves);
 
         for (int i = 0; solution[i] != MOVE_NULL; i++) {
             coord_apply_move(cube, solution[i]);
@@ -125,6 +129,59 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
     destroy_solve_context(solve_context);
 
     return solves;
+}
+
+void prep_phase1(solve_context_t *solve_context) {
+    for (int i = 0; i < MAX_MOVES; i++) {
+        solve_context->prep_moves[i] = MOVE_NULL;
+    }
+
+    solve_context->prep_move_count = 2;
+    solve_context->prep_moves[0]   = MOVE_L1;
+    solve_context->prep_moves[1]   = MOVE_U2;
+
+    for (int i = 0; i < solve_context->prep_move_count; i++) {
+        coord_apply_move(solve_context->cube, solve_context->prep_moves[i]);
+    }
+}
+
+move_t *patch_solution(solve_context_t *solve_context, solve_list_t *solution) {
+    uint16_t solution_length = 0;
+
+    for (int i = 0; solution->solution[i] != MOVE_NULL; i++) {
+        solution_length++;
+    }
+
+    const move_t *partial_solution = solution->solution;
+    uint16_t      total_length     = solution_length + solve_context->prep_move_count;
+    solution->solution             = malloc(sizeof(move_t) * (total_length + 1));
+
+    for (int i = 0; i < total_length; i++) {
+        solution->solution[i] = MOVE_NULL;
+    }
+
+    for (int i = 0; i < solve_context->prep_move_count; i++) {
+        solution->solution[i] = solve_context->prep_moves[i];
+    }
+
+    for (int i = 0; partial_solution[i] != MOVE_NULL; i++) {
+        solution->solution[i + solve_context->prep_move_count] = partial_solution[i];
+    }
+
+    solution->solution[solve_context->prep_move_count + solution_length] = MOVE_NULL;
+
+    const move_t *phase1_solution = solution->phase1_solution;
+    solution->phase1_solution     = malloc(sizeof(move_t) * (solution_length + solve_context->prep_move_count + 1));
+
+    for (int i = 0; i < solution_length + solve_context->prep_move_count; i++) {
+        solution->phase1_solution[i] = solution->solution[i];
+    }
+
+    solution->phase1_solution[solution_length + solve_context->prep_move_count] = MOVE_NULL;
+
+    free(phase1_solution);
+
+    return solution->solution;
 }
 
 // FIXME: we need a decent way to get just the phase1 solution
@@ -217,18 +274,18 @@ move_t *solve_phase1(solve_context_t *solve_context, const config_t *config, sol
             }
 
             if (is_phase1_solved(cube_stack[pivot])) {
-                /*printf("phase1 solution found with depth %2d - ", pivot);*/
+                // printf("phase1 solution found with depth %2d: ", pivot);
                 solution                = malloc(sizeof(move_t) * (40));
                 move_t *phase1_solution = malloc(sizeof(move_t) * (40));
 
                 for (int i = 0; i <= pivot; i++) {
                     solution[i]        = move_stack[i];
                     phase1_solution[i] = move_stack[i];
-                    /*printf(" %s", move_to_str(solution[i]));*/
+                    // printf(" %s", move_to_str(solution[i]));
                 }
                 solution[pivot + 1]        = MOVE_NULL;
                 phase1_solution[pivot + 1] = MOVE_NULL;
-                /*printf("\n");*/
+                // printf("\n");
 
                 // zero means just phase1 solution.
                 // -1 is find all solutions
