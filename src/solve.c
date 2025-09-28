@@ -188,7 +188,7 @@ solve_list_t *solve_thread(void *arg) {
     return solves;
 }
 
-void prep_phase1(solve_context_t *solve_context, uint16_t move_count, move_t *move_list) {
+void prep_phase1(solve_context_t *solve_context, uint16_t move_count, const move_t *move_list) {
     for (int i = 0; i < MAX_MOVES; i++) {
         solve_context->prep_moves[i] = MOVE_NULL;
     }
