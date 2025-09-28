@@ -47,6 +47,8 @@ typedef struct solve_list_s {
 typedef struct solve_context_s solve_context_t;
 
 typedef struct solve_context_s {
+    coord_cube_t *original_cube;
+
     coord_cube_t *cube;
     move_t        move_stack[MAX_MOVES];
     coord_cube_t *cube_stack[MAX_MOVES];
@@ -62,10 +64,12 @@ solve_list_t *solve_facelets_single(char facelets[N_FACELETS]);
 solve_list_t *solve_facelets(char facelets[N_FACELETS], const config_t *config);
 solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config);
 solve_list_t *solve_single(const coord_cube_t *original_cube);
-move_t       *solve_phase1(solve_context_t *solve_context, const config_t *config, solve_list_t *solves);
+move_t       *solve_phase1(solve_context_t *solve_context, solve_list_t *solves);
 move_t       *solve_phase2(solve_context_t *solve_context, const config_t *config, int current_depth);
-void          prep_phase1(solve_context_t *solve_context);
+void          prep_phase1(solve_context_t *solve_context, uint16_t move_count, move_t *move_list);
 move_t       *patch_solution(solve_context_t *solve_context, solve_list_t *solution);
+
+solve_list_t *solve_thread(solve_context_t *solve_context);
 
 solve_list_t *new_solve_list_node();
 void          destroy_solve_list_node(solve_list_t *node);

@@ -22,6 +22,7 @@
  */
 
 #include <assert.h>
+#include <pthread.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -99,21 +100,45 @@ solve_list_t *solve_single(const coord_cube_t *original_cube) {
 
 solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
     solve_list_t *solves = new_solve_list_node();
-    coord_cube_t *cube   = get_coord_cube();
 
-    solve_context_t *solve_context = make_solve_context(original_cube);
+    solve_context_t *solve_contexts[N_MOVES];
+    move_t           move_list[N_MOVES];
 
-    prep_phase1(solve_context);
+    for (int i = 0; i < N_MOVES; i++) {
+        move_list[i] = MOVE_NULL;
+    }
 
-    const move_t *solution = solve_phase1(solve_context, config, solves);
+    for (int i = 0; i < N_MOVES; i++) {
+        solve_contexts[i] = make_solve_context(original_cube);
+        move_list[0]      = i;
+        prep_phase1(solve_contexts[i], 1, move_list);
+    }
+
+    pthread_t threads[N_MOVES];
+    for (int i = 0; i < N_MOVES; i++) {
+        pthread_create(&threads[i], NULL, (void *(*)(void *))solve_thread, (void *)solve_contexts[i]);
+    }
+
+    for (int i = 0; i < N_MOVES; i++) {
+        pthread_join(threads[i], NULL);
+    }
+
+    return NULL;
+
+    return solves;
+}
+
+solve_list_t *solve_thread(solve_context_t *solve_context) {
+    solve_list_t *solves = new_solve_list_node();
+
+    const move_t *solution = solve_phase1(solve_context, solves);
 
     if (solution == NULL) {
-        destroy_solve_context(solve_context);
         destroy_solve_list(solves);
-        free(cube);
         return NULL;
     } else {
-        copy_coord_cube(cube, original_cube);
+        coord_cube_t *cube = get_coord_cube();
+        copy_coord_cube(cube, solve_context->original_cube);
 
         solution = patch_solution(solve_context, solves);
 
@@ -123,26 +148,27 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
 
         assert(is_phase1_solved(cube));
         assert(is_phase2_solved(cube));
-    }
 
-    free(cube);
-    destroy_solve_context(solve_context);
+        free(cube);
+    }
 
     return solves;
 }
 
-void prep_phase1(solve_context_t *solve_context) {
+void prep_phase1(solve_context_t *solve_context, uint16_t move_count, move_t *move_list) {
     for (int i = 0; i < MAX_MOVES; i++) {
         solve_context->prep_moves[i] = MOVE_NULL;
     }
 
-    solve_context->prep_move_count = 2;
-    solve_context->prep_moves[0]   = MOVE_L1;
-    solve_context->prep_moves[1]   = MOVE_U2;
+    for (int i = 0; i < move_count; i++) {
+        solve_context->prep_moves[i] = move_list[i];
+    }
 
-    for (int i = 0; i < solve_context->prep_move_count; i++) {
+    for (int i = 0; i < move_count; i++) {
         coord_apply_move(solve_context->cube, solve_context->prep_moves[i]);
     }
+
+    solve_context->prep_move_count = move_count;
 }
 
 move_t *patch_solution(solve_context_t *solve_context, solve_list_t *solution) {
@@ -185,8 +211,10 @@ move_t *patch_solution(solve_context_t *solve_context, solve_list_t *solution) {
 }
 
 // FIXME: we need a decent way to get just the phase1 solution
-move_t *solve_phase1(solve_context_t *solve_context, const config_t *config, solve_list_t *solves) {
+move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves) {
     move_t *solution = NULL;
+
+    const config_t *config = get_config();
 
     const coord_cube_t *cube          = solve_context->cube;
     move_t             *move_stack    = solve_context->move_stack;
@@ -201,6 +229,9 @@ move_t *solve_phase1(solve_context_t *solve_context, const config_t *config, sol
     uint64_t end_time    = 0;
     /*int move_estimate = get_phase1_pruning(cube);*/
     /*printf("estimated number of moves: %d\n", move_estimate);*/
+
+    // printf("solving phase1 with prep moves: ");
+    // print_move_sequence(solve_context->prep_moves);
 
     for (int allowed_depth = 1; allowed_depth <= config->max_depth; allowed_depth++) {
         int pivot = 0;
@@ -500,6 +531,8 @@ move_t *solve_phase2(solve_context_t *solve_context, __attribute__((unused)) con
                     stats->phase2_solve_time = (float)(end_time - start_time) / 1000000.0;
                 }
 
+                print_move_sequence(solution);
+
                 goto solution_found;
             }
 
@@ -540,6 +573,8 @@ solve_context_t *make_solve_context(const coord_cube_t *cube) {
 
     phase1_context->phase2_context = phase2_context;
     phase2_context->phase2_context = NULL;
+
+    phase1_context->original_cube = cube;
 
     return phase1_context;
 }
