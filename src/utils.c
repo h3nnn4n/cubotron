@@ -236,10 +236,10 @@ move_t *move_sequence_str_to_moves(const char *move_sequence_str) {
     size_t  max_moves = strlen(move_sequence_str);
     move_t *moves     = malloc(sizeof(move_t) * max_moves);
 
-    char  *input_copy = strdup(move_sequence_str);
+    char *input_copy = strdup(move_sequence_str);
     // NOLINTNEXTLINE(runtime/threadsafe_fng)
-    const char *token      = strtok(input_copy, " ");
-    size_t move_idx   = 0;
+    const char *token    = strtok(input_copy, " ");
+    size_t      move_idx = 0;
 
     while (token != NULL) {
         moves[move_idx++] = str_to_move(token);
