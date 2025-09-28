@@ -99,33 +99,34 @@ solve_list_t *solve_single(const coord_cube_t *original_cube) {
 }
 
 solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
-    thread_context_t thread_contexts[N_MOVES];
-    move_t           move_list[N_MOVES];
+    const int        thread_count = config->thread_count;
+    thread_context_t thread_contexts[thread_count];
+    move_t           move_list[thread_count];
 
-    for (int i = 0; i < N_MOVES; i++) {
+    for (int i = 0; i < thread_count; i++) {
         move_list[i] = MOVE_NULL;
     }
 
-    for (int i = 0; i < N_MOVES; i++) {
+    for (int i = 0; i < thread_count; i++) {
         thread_contexts[i].solve_context = make_solve_context(original_cube);
         thread_contexts[i].solves        = new_solve_list_node();
         move_list[0]      = i;
         prep_phase1(thread_contexts[i].solve_context, 1, move_list);
     }
 
-    pthread_t threads[N_MOVES];
-    for (int i = 0; i < N_MOVES; i++) {
+    pthread_t threads[thread_count];
+    for (int i = 0; i < thread_count; i++) {
         pthread_create(&threads[i], NULL, (void *(*)(void *))solve_thread, (void *)&thread_contexts[i]);
     }
 
-    for (int i = 0; i < N_MOVES; i++) {
+    for (int i = 0; i < thread_count; i++) {
         pthread_join(threads[i], NULL);
     }
 
     solve_list_t *solves  = NULL;
     solve_list_t *current = NULL;
 
-    for (int i = 0; i < N_MOVES; i++) {
+    for (int i = 0; i < thread_count; i++) {
         if (thread_contexts[i].solves != NULL && thread_contexts[i].solves->solution != NULL) {
             if (solves == NULL) {
                 solves  = thread_contexts[i].solves;
@@ -254,6 +255,10 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves) {
         copy_coord_cube(cube_stack[0], cube);
 
         do {
+            if (get_config()->die) {
+                return NULL;
+            }
+
             do {
                 move_stack[pivot]++;
             } while (config->move_black_list[move_stack[pivot]] != MOVE_NULL && move_stack[pivot] < N_MOVES);
@@ -489,6 +494,10 @@ move_t *solve_phase2(solve_context_t *solve_context, __attribute__((unused)) con
         /*printf("searching with max depth: %d\n", allowed_depth);*/
 
         do {
+            if (get_config()->die) {
+                return NULL;
+            }
+
             do {
                 move_stack[pivot]++;
             } while ((int)move_stack[pivot] < n_moves &&
@@ -544,6 +553,8 @@ move_t *solve_phase2(solve_context_t *solve_context, __attribute__((unused)) con
                     stats->phase2_move_count = move_count;
                     stats->phase2_solve_time = (float)(end_time - start_time) / 1000000.0;
                 }
+
+                get_config()->die = true;
 
                 // print_move_sequence(solution);
 
