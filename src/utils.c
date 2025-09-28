@@ -244,7 +244,7 @@ move_t *move_sequence_str_to_moves(const char *move_sequence_str) {
     while (token != NULL) {
         moves[move_idx++] = str_to_move(token);
         // NOLINTNEXTLINE(runtime/threadsafe_fng)
-        token             = strtok(NULL, " ");
+        token = strtok(NULL, " ");
     }
 
     moves[move_idx] = MOVE_NULL;
