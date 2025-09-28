@@ -38,20 +38,13 @@ int pruning_table_cache_load(const char *cache_name, const char *table_name, int
     if (!file_exists(filepath))
         return 0;
 
-    uint32_t start_time = get_microseconds();
-
-    // printf("loading: %-45s ", filepath);
     fflush(stdout);
     FILE *f = fopen(filepath, "rb");
 
     *pruning_table = (int *)malloc(sizeof(int) * table_size);
 
-    size_t elements_read = fread(*pruning_table, sizeof(int), table_size, f);
+    fread(*pruning_table, sizeof(int), table_size, f);
     fclose(f);
-
-    uint32_t bytes_read = (uint32_t)(elements_read * sizeof(int));
-    uint32_t end_time   = get_microseconds();
-    // printf("%10u bytes loaded in %6.4f seconds\n", bytes_read, (float)(end_time - start_time) / 1000000.0);
 
     return 1;
 }
