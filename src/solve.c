@@ -99,9 +99,7 @@ solve_list_t *solve_single(const coord_cube_t *original_cube) {
 }
 
 solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
-    solve_list_t *solves = new_solve_list_node();
-
-    solve_context_t *solve_contexts[N_MOVES];
+    thread_context_t thread_contexts[N_MOVES];
     move_t           move_list[N_MOVES];
 
     for (int i = 0; i < N_MOVES; i++) {
@@ -109,27 +107,43 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
     }
 
     for (int i = 0; i < N_MOVES; i++) {
-        solve_contexts[i] = make_solve_context(original_cube);
+        thread_contexts[i].solve_context = make_solve_context(original_cube);
+        thread_contexts[i].solves        = new_solve_list_node();
         move_list[0]      = i;
-        prep_phase1(solve_contexts[i], 1, move_list);
+        prep_phase1(thread_contexts[i].solve_context, 1, move_list);
     }
 
     pthread_t threads[N_MOVES];
     for (int i = 0; i < N_MOVES; i++) {
-        pthread_create(&threads[i], NULL, (void *(*)(void *))solve_thread, (void *)solve_contexts[i]);
+        pthread_create(&threads[i], NULL, (void *(*)(void *))solve_thread, (void *)&thread_contexts[i]);
     }
 
     for (int i = 0; i < N_MOVES; i++) {
         pthread_join(threads[i], NULL);
     }
 
-    return NULL;
+    solve_list_t *solves  = NULL;
+    solve_list_t *current = NULL;
+
+    for (int i = 0; i < N_MOVES; i++) {
+        if (thread_contexts[i].solves != NULL && thread_contexts[i].solves->solution != NULL) {
+            if (solves == NULL) {
+                solves  = thread_contexts[i].solves;
+                current = solves;
+            } else {
+                current->next = thread_contexts[i].solves;
+                current       = current->next;
+            }
+        }
+    }
 
     return solves;
 }
 
-solve_list_t *solve_thread(solve_context_t *solve_context) {
-    solve_list_t *solves = new_solve_list_node();
+solve_list_t *solve_thread(void *arg) {
+    thread_context_t *thread_context = (thread_context_t *)arg;
+    solve_context_t  *solve_context  = thread_context->solve_context;
+    solve_list_t     *solves         = thread_context->solves;
 
     const move_t *solution = solve_phase1(solve_context, solves);
 
@@ -531,7 +545,7 @@ move_t *solve_phase2(solve_context_t *solve_context, __attribute__((unused)) con
                     stats->phase2_solve_time = (float)(end_time - start_time) / 1000000.0;
                 }
 
-                print_move_sequence(solution);
+                // print_move_sequence(solution);
 
                 goto solution_found;
             }

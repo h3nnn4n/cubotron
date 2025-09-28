@@ -173,24 +173,19 @@ int main(int argc, char **argv) {
             solution = solve_facelets(facelets_to_solve, config);
         }
 
-        printf("solution:\n");
-        do {
+        // Print all solutions
+        solve_list_t *current      = solution;
+        int           solution_num = 1;
+        while (current != NULL && current->solution != NULL) {
             int length = 0;
-
-            for (int i = 0; solution->solution[i] != MOVE_NULL; i++, length++) {
+            for (int i = 0; current->solution[i] != MOVE_NULL; i++, length++) {
             }
-            printf("length: %2d: ", length);
-            print_move_sequence(solution->solution);
+            printf("Solution %2d (length %d): ", solution_num, length);
+            print_move_sequence(current->solution);
 
-            solve_list_t *old_solution = solution;
-
-            solution = solution->next;
-
-            free(old_solution->phase1_solution);
-            free(old_solution->phase2_solution);
-            free(old_solution->solution);
-            free(old_solution);
-        } while (solution != NULL && solution->solution != NULL);
+            current = current->next;
+            solution_num++;
+        }
 
         destroy_solve_list(solution);
         free(facelets_to_solve);
