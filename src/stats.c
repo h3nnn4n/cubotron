@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "config.h"
 #include "file_utils.h"
 #include "mem_utils.h"
 #include "stats.h"
@@ -121,4 +122,43 @@ void dump_stats() {
     }
 
     fclose(f);
+}
+
+solve_stats_t *get_solve_stats() {
+    solve_stats_t *stats = (solve_stats_t *)malloc(sizeof(solve_stats_t));
+    memset_(stats, 0, sizeof(solve_stats_t));
+    return stats;
+}
+
+void print_solve_stats(const solve_stats_t *stats) {
+    printf("Solve stats:\n");
+    printf("  Phase 1 time: %f seconds\n", stats->phase1_solve_time);
+    printf("  Phase 2 time: %f seconds\n", stats->phase2_solve_time);
+    printf("  Total time: %f seconds\n", stats->solve_time);
+    printf("  Phase 1 depth: %d\n", stats->phase1_depth);
+    printf("  Phase 2 depth: %d\n", stats->phase2_depth);
+    printf("  Solution length: %d\n", stats->solution_length);
+    printf("  Phase 1 move count: %d\n", stats->phase1_move_count);
+    printf("  Phase 2 move count: %d\n", stats->phase2_move_count);
+    printf("  Move count: %d\n", stats->move_count);
+}
+
+solve_stats_t *aggregate_stats(solve_stats_t **thread_stats) {
+    solve_stats_t *aggregated = get_solve_stats();
+
+    solve_stats_t *first_valid = NULL;
+    for (int i = 0; i < get_config()->thread_count; i++) {
+        if (thread_stats[i]->solution_length > 0 && thread_stats[i]->solution_length < 1000) {
+            first_valid = thread_stats[i];
+            break;
+        }
+    }
+
+    if (first_valid == NULL) {
+        return aggregated;
+    }
+
+    *aggregated = *first_valid;
+
+    return aggregated;
 }

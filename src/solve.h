@@ -63,14 +63,15 @@ typedef struct solve_context_s {
 typedef struct thread_context_s {
     solve_context_t *solve_context;
     solve_list_t    *solves;
+    solve_stats_t   *stats;
 } thread_context_t;
 
 solve_list_t *solve_facelets_single(char facelets[N_FACELETS]);
 solve_list_t *solve_facelets(char facelets[N_FACELETS], const config_t *config);
 solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config);
 solve_list_t *solve_single(const coord_cube_t *original_cube);
-move_t       *solve_phase1(solve_context_t *solve_context, solve_list_t *solves);
-move_t       *solve_phase2(solve_context_t *solve_context, const config_t *config, int current_depth);
+move_t       *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve_stats_t *stats);
+move_t *solve_phase2(solve_context_t *solve_context, const config_t *config, int current_depth, solve_stats_t *stats);
 void          prep_phase1(solve_context_t *solve_context, uint16_t move_count, move_t *move_list);
 move_t       *patch_solution(solve_context_t *solve_context, solve_list_t *solution);
 

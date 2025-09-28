@@ -187,6 +187,10 @@ int main(int argc, char **argv) {
             solution_num++;
         }
 
+        if (solution != NULL) {
+            print_solve_stats(solution->stats);
+        }
+
         destroy_solve_list(solution);
         free(facelets_to_solve);
     } else {
