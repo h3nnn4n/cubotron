@@ -232,12 +232,51 @@ int unlink_cb(const char *fpath, __attribute__((unused)) const struct stat *sb, 
 
 int rmrf(char *path) { return nftw(path, unlink_cb, 64, FTW_DEPTH | FTW_PHYS); }
 
+move_t *move_sequence_str_to_moves(const char *move_sequence_str) {
+    size_t  max_moves = strlen(move_sequence_str);
+    move_t *moves     = malloc(sizeof(move_t) * max_moves);
+
+    char *input_copy = strdup(move_sequence_str);
+    // NOLINTNEXTLINE(runtime/threadsafe_fn)
+    const char *token    = strtok(input_copy, " ");
+    size_t      move_idx = 0;
+
+    while (token != NULL) {
+        moves[move_idx++] = str_to_move(token);
+        // NOLINTNEXTLINE(runtime/threadsafe_fn)
+        token = strtok(NULL, " ");
+    }
+
+    moves[move_idx] = MOVE_NULL;
+    free(input_copy);
+
+    return moves;
+}
+
 move_t str_to_move(const char *move_str) {
     for (move_t move = 0; move < N_MOVES; move++) {
-        if (strncmp(move_str, move_to_str(move), 2) == 0) {
+        const char *target_str = move_to_str(move);
+        // Handle the case where input is shorter than target (e.g., "U" vs "U ")
+        if (strncmp(move_str, target_str, strlen(move_str)) == 0 && strlen(move_str) <= strlen(target_str)) {
             return move;
         }
     }
 
     return MOVE_NULL;
+}
+
+void print_move_sequence(const move_t *moves) {
+    for (int i = 0; moves[i] != MOVE_NULL && moves[i] != -1; i++) {
+        printf("%s ", move_to_str(moves[i]));
+    }
+    printf("\n");
+}
+
+int are_move_sequences_equal(const move_t *moves1, const move_t *moves2) {
+    for (int i = 0; moves1[i] != MOVE_NULL && moves2[i] != MOVE_NULL; i++) {
+        if (moves1[i] != moves2[i])
+            return 0;
+    }
+
+    return 1;
 }

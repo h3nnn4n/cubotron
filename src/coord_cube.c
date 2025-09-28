@@ -22,11 +22,16 @@
  */
 
 #include <assert.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include <pcg_variants.h>
+
 #include "coord_cube.h"
+#include "coord_move_tables.h"
 #include "mem_utils.h"
+#include "utils.h"
 
 coord_cube_t *get_coord_cube() {
     coord_cube_t *coord_cube = (coord_cube_t *)malloc(sizeof(coord_cube_t));
@@ -110,3 +115,40 @@ int is_phase2_solved(const coord_cube_t *cube) {
 }
 
 int is_coord_solved(const coord_cube_t *cube) { return is_phase1_solved(cube) && is_phase2_solved(cube); }
+
+int is_move_sequence_a_solution_for_cube(const coord_cube_t *cube, const move_t *moves) {
+    coord_cube_t *temp_cube = get_coord_cube();
+    copy_coord_cube(temp_cube, cube);
+
+    for (int i = 0; moves[i] != MOVE_NULL; i++) {
+        coord_apply_move(temp_cube, moves[i]);
+    }
+
+    int result = is_coord_solved(temp_cube);
+    free(temp_cube);
+    return result;
+}
+
+void scramble_cube(coord_cube_t *cube, int n_moves) {
+    // Fox debug purposes
+    move_t scramble_moves[256];
+    assert(n_moves <= 256);
+
+    move_t prev_move = MOVE_NULL;
+    for (int i = 0; i < n_moves;) {
+        move_t move = pcg32_boundedrand(N_MOVES);
+        if (i > 0 && is_duplicated_or_undoes_move(move, prev_move)) {
+            continue;
+        }
+        scramble_moves[i] = move;
+        coord_apply_move(cube, move);
+        prev_move = move;
+        i++;
+    }
+
+    // printf("Scramble: ");
+    // for (int i = 0; i < n_moves; i++) {
+    //     printf("%s ", move_to_str(scramble_moves[i]));
+    // }
+    // printf("\n");
+}

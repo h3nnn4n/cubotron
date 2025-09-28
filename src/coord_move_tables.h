@@ -30,6 +30,7 @@
 
 void coord_build_move_tables();
 void coord_apply_move(coord_cube_t *cube, move_t move);
+void coord_apply_moves(coord_cube_t *cube, const move_t *moves, int n_moves);
 
 int *get_move_table_edge_orientations();
 int *get_move_table_corner_orientations();

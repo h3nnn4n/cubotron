@@ -63,9 +63,13 @@ move_t       *solve_phase2(solve_context_t *solve_context, const config_t *confi
 
 solve_list_t *new_solve_list_node();
 void          destroy_solve_list_node(solve_list_t *node);
+void          destroy_solve_list(solve_list_t *solves);
 
 solve_context_t *make_solve_context(const coord_cube_t *cube);
 void             clear_solve_context(solve_context_t *solve_context);
 void             destroy_solve_context(solve_context_t *context);
+
+// Utility functions for testing
+int is_phase1_moves_solved(const move_t *solution, const coord_cube_t *original_cube);
 
 #endif /* end of include guard */

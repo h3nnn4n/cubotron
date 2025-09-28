@@ -66,6 +66,14 @@ void destroy_solve_list_node(solve_list_t *node) {
     free(node);
 }
 
+void destroy_solve_list(solve_list_t *solves) {
+    while (solves != NULL) {
+        solve_list_t *next = solves->next;
+        destroy_solve_list_node(solves);
+        solves = next;
+    }
+}
+
 solve_list_t *solve_facelets_single(char facelets[N_FACELETS]) {
     const config_t *config = get_config();
     return solve_facelets(facelets, config);
@@ -98,8 +106,9 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
     const move_t *solution = solve_phase1(solve_context, config, solves);
 
     if (solution == NULL) {
-        printf("Failed to solve");
-        free(solves);
+        destroy_solve_context(solve_context);
+        destroy_solve_list(solves);
+        free(cube);
         return NULL;
     } else {
         copy_coord_cube(cube, original_cube);
@@ -113,7 +122,6 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
     }
 
     free(cube);
-
     destroy_solve_context(solve_context);
 
     return solves;
@@ -290,6 +298,7 @@ move_t *solve_phase1(solve_context_t *solve_context, const config_t *config, sol
                     } else {
                         free(phase1_solution);
                         free(phase2_solution);
+                        free(solution);
                     }
 
                     assert(is_coord_solved(phase2_cube));
@@ -332,6 +341,20 @@ solution_found:
     }
 
     return solution;
+}
+
+// Utility functions for testing
+int is_phase1_moves_solved(const move_t *solution, const coord_cube_t *original_cube) {
+    coord_cube_t *cube = get_coord_cube();
+    copy_coord_cube(cube, original_cube);
+
+    for (int i = 0; solution[i] != MOVE_NULL && solution[i] != -1; i++) {
+        coord_apply_move(cube, solution[i]);
+    }
+
+    int result = is_phase1_solved(cube);
+    free(cube);
+    return result;
 }
 
 move_t *solve_phase2(solve_context_t *solve_context, __attribute__((unused)) const config_t *config, int max_depth) {

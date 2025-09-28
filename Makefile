@@ -18,10 +18,11 @@ OPTIMIZATION=-O3
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
   ECHOFLAGS = -e
+  CFLAGS += -Wno-unterminated-string-initialization
   LDFLAGS = -lpcg_random -Wl,-Ldeps/Unity/build/,-Ldeps/pcg-c/src/
 endif
 ifeq ($(UNAME_S),Darwin)
-  CFLAGS += -Wno-unused-command-line-argument -Wno-strict-prototypes
+  CFLAGS += -Wno-unused-command-line-argument -Wno-strict-prototypes -Wno-unterminated-string-initialization
   LDFLAGS = -lpcg_random -Wl,-Ldeps/pcg-c/src/
 endif
 
@@ -75,7 +76,15 @@ gdb: clean debug_prepare $(TARGET)
 	gdb $(CURDIR)/$(TARGET)
 
 test: pcg $(TEST_TARGETS)
-	$(foreach var,$(TEST_TARGETS),$(var) && ) echo $(ECHOFLAGS) "Everything in order"
+	@for var in $(TEST_TARGETS); do \
+		echo $(ECHOFLAGS) "[RUN]\t$$var"; \
+		$$var || exit $$?; \
+	done; \
+	echo $(ECHOFLAGS) "Everything in order"
+
+test-%: $(BUILDDIR)/test/test_% pcg
+	@echo $(ECHOFLAGS) "[RUN]\t$(BUILDDIR)/test/test_$*"
+	@$(BUILDDIR)/test/test_$*
 
 pcg:
 	@echo $(ECHOFLAGS) "[CC]\tpcg core"
@@ -90,7 +99,7 @@ pcg_clean:
 
 $(TEST_TARGETS): $(OBJS_NO_MAIN) $(OBJS_TEST)
 	@echo $(ECHOFLAGS) "[LD]\t$@"
-	@$(CC) -o "$@" $@.o $(OBJS_NO_MAIN) $(LDFLAGS) $(OPTIMIZATION)
+	@$(CC) -o "$@" $@.o $(OBJS_NO_MAIN) $(LDFLAGS) -g -pg -O0
 
 $(BUILDDIR)/%.o: %.c
 	@echo $(ECHOFLAGS) "[CC]\t$<"

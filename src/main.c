@@ -48,6 +48,7 @@ int main(int argc, char **argv) {
     struct option long_options[] = {{"benchmarks", no_argument, &config->do_benchmark, 1},
                                     {"rebuild-tables", no_argument, &config->rebuild_tables, 1},
                                     {"solve", required_argument, 0, 's'},
+                                    {"solve-scramble", optional_argument, 0, 'c'},
                                     {"max-depth", required_argument, 0, 'm'},
                                     {"n-solutions", required_argument, 0, 'n'},
                                     {"move-blacklist", required_argument, 0, 'b'},
@@ -124,6 +125,16 @@ int main(int argc, char **argv) {
                 config->n_solutions = atoi(optarg);
             } break;
 
+            case 'c': {
+                if (optarg == NULL) {
+                    fprintf(stderr, "optarg is missing for scramble");
+                    break;
+                }
+
+                config->do_solve       = 1;
+                config->scramble_moves = move_sequence_str_to_moves(optarg);
+            } break;
+
             case '?':
                 /* getopt_long already printed an error message. */
                 break;
@@ -145,20 +156,31 @@ int main(int argc, char **argv) {
         solve_cube_sample_library();
         solve_random_cubes();
         coord_benchmark();
-    }
+    } else if (config->do_solve) {
+        solve_list_t *solution = NULL;
 
-    if (config->do_solve) {
-        solve_list_t *solution = solve_facelets(facelets_to_solve, config);
+        if (config->scramble_moves != NULL) {
+            coord_cube_t *cube = get_coord_cube();
+            printf("Scramble moves: ");
+            for (int i = 0; config->scramble_moves[i] != MOVE_NULL; i++) {
+                printf("%s ", move_to_str(config->scramble_moves[i]));
+                coord_apply_move(cube, config->scramble_moves[i]);
+            }
+            printf("\n");
 
+            solution = solve_single(cube);
+        } else {
+            solution = solve_facelets(facelets_to_solve, config);
+        }
+
+        printf("solution:\n");
         do {
             int length = 0;
 
-            printf("solution:\n");
             for (int i = 0; solution->solution[i] != MOVE_NULL; i++, length++) {
-                printf(" %s", move_to_str(solution->solution[i]));
             }
-            printf("\n");
-            printf("length: %d\n", length);
+            printf("length: %2d: ", length);
+            print_move_sequence(solution->solution);
 
             solve_list_t *old_solution = solution;
 
@@ -170,8 +192,10 @@ int main(int argc, char **argv) {
             free(old_solution);
         } while (solution != NULL && solution->solution != NULL);
 
-        free(solution);
+        destroy_solve_list(solution);
         free(facelets_to_solve);
+    } else {
+        printf("No solve mode specified\n");
     }
 
     purge_cubie_move_table();
