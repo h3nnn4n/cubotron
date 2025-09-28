@@ -141,6 +141,7 @@ void print_solve_stats(const solve_stats_t *stats) {
     printf("  Phase 1 move count: %d\n", stats->phase1_move_count);
     printf("  Phase 2 move count: %d\n", stats->phase2_move_count);
     printf("  Move count: %d\n", stats->move_count);
+    printf("  Moves per second: %f.2\n", stats->move_count / stats->solve_time);
 }
 
 solve_stats_t *aggregate_stats(solve_stats_t **thread_stats) {
