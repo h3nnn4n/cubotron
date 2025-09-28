@@ -66,6 +66,14 @@ void destroy_solve_list_node(solve_list_t *node) {
     free(node);
 }
 
+void destroy_solve_list(solve_list_t *solves) {
+    while (solves != NULL) {
+        solve_list_t *next = solves->next;
+        destroy_solve_list_node(solves);
+        solves = next;
+    }
+}
+
 solve_list_t *solve_facelets_single(char facelets[N_FACELETS]) {
     const config_t *config = get_config();
     return solve_facelets(facelets, config);
@@ -297,6 +305,7 @@ move_t *solve_phase1(solve_context_t *solve_context, const config_t *config, sol
                     } else {
                         free(phase1_solution);
                         free(phase2_solution);
+                        free(solution);
                     }
 
                     assert(is_coord_solved(phase2_cube));

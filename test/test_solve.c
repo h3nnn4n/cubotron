@@ -37,7 +37,7 @@ void test_random_phase1_solving() {
         TEST_ASSERT_TRUE(is_phase1_moves_solved(solution, original_cube));
 
         free(original_cube);
-        destroy_solve_list_node(solutions);
+        destroy_solve_list(solutions);
     }
 
     free(cube);
@@ -68,7 +68,7 @@ void test_phase1_solution_generator() {
     free(test_cube);
     free(original_cube);
     free(cube);
-    destroy_solve_list_node(solutions);
+    destroy_solve_list(solutions);
 }
 
 void test_phase1_solution_count() {
@@ -87,7 +87,7 @@ void test_phase1_solution_count() {
 
     free(cubie_cube);
     free(cube);
-    destroy_solve_list_node(solutions);
+    destroy_solve_list(solutions);
 }
 
 void test_random_phase2_solving() {
@@ -113,7 +113,7 @@ void test_random_phase2_solving() {
         TEST_ASSERT_TRUE(is_phase1_solved(cube));
         TEST_ASSERT_TRUE(is_phase2_solved(cube));
 
-        destroy_solve_list_node(solutions);
+        destroy_solve_list(solutions);
     }
 
     free(cube);
