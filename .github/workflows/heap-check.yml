@@ -14,7 +14,7 @@ jobs:
 
       - name: Install gproftools
         run: |
-          sudo apt-get install -y google-perftools libgoogle-perftools-dev
+          sudo apt-get install -y google-perftools libgoogle-perftools-dev pprof
           sudo ln -s /usr/lib/x86_64-linux-gnu/libtcmalloc.so /usr/lib/libtcmalloc.so
 
       - name: Build
@@ -35,6 +35,7 @@ jobs:
         run: ./cubotron --solve DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL --max-depth=21 --n-solutions=5
         env:
           HEAPCHECK: normal
+          PPROF_PATH: /usr/bin/pprof
 
   heapcheck-solve-blacklist:
     runs-on: ubuntu-latest
@@ -47,7 +48,7 @@ jobs:
 
       - name: Install gproftools
         run: |
-          sudo apt-get install -y google-perftools libgoogle-perftools-dev
+          sudo apt-get install -y google-perftools libgoogle-perftools-dev pprof
           sudo ln -s /usr/lib/x86_64-linux-gnu/libtcmalloc.so /usr/lib/libtcmalloc.so
 
       - name: Build
@@ -68,6 +69,7 @@ jobs:
         run: ./cubotron --solve DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL --max-depth=27 --n-solutions=5 --move-blacklist="U U2 U'"
         env:
           HEAPCHECK: normal
+          PPROF_PATH: /usr/bin/pprof
 
   heapcheck-benchmarks:
     runs-on: ubuntu-latest
@@ -80,7 +82,7 @@ jobs:
 
       - name: Install gproftools
         run: |
-          sudo apt-get install -y google-perftools libgoogle-perftools-dev
+          sudo apt-get install -y google-perftools libgoogle-perftools-dev pprof
           sudo ln -s /usr/lib/x86_64-linux-gnu/libtcmalloc.so /usr/lib/libtcmalloc.so
 
       - name: Build
@@ -101,3 +103,4 @@ jobs:
         run: ./cubotron --benchmarks
         env:
           HEAPCHECK: normal
+          PPROF_PATH: /usr/bin/pprof
