@@ -193,7 +193,7 @@ int main(int argc, char **argv) {
         //     free(old_solution);
         // } while (solution != NULL && solution->solution != NULL);
 
-        free(solution);
+        destroy_solve_list(solution);
         free(facelets_to_solve);
     } else {
         printf("No solve mode specified\n");

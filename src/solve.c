@@ -109,17 +109,25 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
         printf("Failed to solve\n");
         destroy_solve_context(solve_context);
         free(cube);
-        free(solves);
+        destroy_solve_list(solves);
         return NULL;
     } else {
-        printf("Solution found: ");
-        for (int i = 0; solution[i] != MOVE_NULL; i++) {
-            printf("%s ", move_to_str(solution[i]));
+        // Print all solutions found
+        solve_list_t *current      = solves;
+        int           solution_num = 1;
+        while (current != NULL && current->solution != NULL) {
+            printf("Solution %d: ", solution_num);
+            for (int i = 0; current->solution[i] != MOVE_NULL; i++) {
+                printf("%s ", move_to_str(current->solution[i]));
+            }
+            printf("\n");
+            current = current->next;
+            solution_num++;
         }
-        printf("\n");
 
         copy_coord_cube(cube, original_cube);
 
+        // Test the first solution
         for (int i = 0; solution[i] != MOVE_NULL; i++) {
             coord_apply_move(cube, solution[i]);
         }
