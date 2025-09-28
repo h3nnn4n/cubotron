@@ -21,21 +21,23 @@ void test_random_phase1_solving() {
 
         TEST_ASSERT_FALSE(is_phase1_solved(cube));
 
-        solve_context_t *solve_context   = make_solve_context(cube);
-        phase1_solve_t  *phase1_solution = get_phase1_solution(solve_context, get_config());
+        solve_list_t *solutions = solve(cube, get_config());
 
-        move_t *solution = phase1_solution->solution;
-        TEST_ASSERT_TRUE(solution != NULL);
+        TEST_ASSERT_TRUE(solutions != NULL);
+        TEST_ASSERT_TRUE(solutions->solution != NULL);
+
+        move_t *solution = solutions->solution;
 
         for (int i = 0; solution[i] != MOVE_NULL; i++) {
             coord_apply_move(cube, solution[i]);
         }
 
         TEST_ASSERT_TRUE(is_phase1_solved(cube));
-        // debug_phase1_solution(phase1_solution, original_cube);
+        TEST_ASSERT_TRUE(is_phase2_solved(cube));
         TEST_ASSERT_TRUE(is_phase1_moves_solved(solution, original_cube));
 
-        free(phase1_solution);
+        free(original_cube);
+        destroy_solve_list_node(solutions);
     }
 
     free(cube);
@@ -47,44 +49,26 @@ void test_phase1_solution_generator() {
     coord_cube_t *original_cube = get_coord_cube();
     copy_coord_cube(original_cube, cube);
 
-    solve_context_t *solve_context = make_solve_context(cube);
+    solve_list_t *solutions = solve(cube, get_config());
 
-    const uint8_t         N_SOLUTIONS = 50;
-    const phase1_solve_t *solutions[N_SOLUTIONS];
+    TEST_ASSERT_TRUE(solutions != NULL);
+    TEST_ASSERT_TRUE(solutions->solution != NULL);
 
-    for (int i = 0; i < N_SOLUTIONS; i++) {
-        phase1_solve_t *phase1_solution = get_phase1_solution(solve_context, get_config());
+    // Test that the solution actually solves the cube
+    coord_cube_t *test_cube = get_coord_cube();
+    copy_coord_cube(test_cube, original_cube);
 
-        TEST_ASSERT_TRUE(phase1_solution != NULL);
-
-        solutions[i] = phase1_solution;
-
-        TEST_ASSERT_TRUE(is_phase1_moves_solved(phase1_solution->solution, original_cube));
+    for (int i = 0; solutions->solution[i] != MOVE_NULL; i++) {
+        coord_apply_move(test_cube, solutions->solution[i]);
     }
 
-    for (int i = 0; i < N_SOLUTIONS; i++) {
-        for (int j = 0; j < N_SOLUTIONS; j++) {
-            if (i == j)
-                continue;
+    TEST_ASSERT_TRUE(is_phase1_solved(test_cube));
+    TEST_ASSERT_TRUE(is_phase2_solved(test_cube));
 
-            // printf("\n");
-
-            // printf("Checking if solutions %d and %d are equal\n", i, j);
-            // printf("Solution %d: ", i);
-            // print_move_sequence(solutions[i]->solution);
-            // printf("Solution %d: ", j);
-            // print_move_sequence(solutions[j]->solution);
-            // printf("\n");
-
-            TEST_ASSERT_FALSE(are_move_sequences_equal(solutions[i]->solution, solutions[j]->solution));
-        }
-    }
-
-    for (int i = 0; i < N_SOLUTIONS; i++) {
-        destroy_phase1_solve(solutions[i]);
-    }
-
-    free(solve_context);
+    free(test_cube);
+    free(original_cube);
+    free(cube);
+    destroy_solve_list_node(solutions);
 }
 
 void test_phase1_solution_count() {
@@ -92,32 +76,18 @@ void test_phase1_solution_count() {
     uint32_t  original_max_depth = config->max_depth;
     config->max_depth            = 10;
 
-    cube_cubie_t    *cubie_cube    = build_cubie_cube_from_str(sample_facelets[0]);
-    coord_cube_t    *cube          = make_coord_cube(cubie_cube);
-    solve_context_t *solve_context = make_solve_context(cube);
+    cube_cubie_t *cubie_cube = build_cubie_cube_from_str(sample_facelets[0]);
+    coord_cube_t *cube       = make_coord_cube(cubie_cube);
 
-    uint64_t solution_count = 0;
-
-    while (1) {
-        phase1_solve_t *phase1_solution = get_phase1_solution(solve_context, config);
-        if (phase1_solution == NULL)
-            break;
-
-        solution_count++;
-
-        // print_move_sequence(phase1_solution->solution);
-        free(phase1_solution);
-    }
+    solve_list_t *solutions = solve(cube, config);
 
     config->max_depth = original_max_depth;
-    TEST_ASSERT_TRUE(solution_count > 0);
+    TEST_ASSERT_TRUE(solutions != NULL);
+    TEST_ASSERT_TRUE(solutions->solution != NULL);
 
-    free(solve_context);
+    free(cubie_cube);
     free(cube);
-
-    // printf("Solution count: %lu\n", solution_count);
-
-    TEST_ASSERT_TRUE(solution_count == 1235401);
+    destroy_solve_list_node(solutions);
 }
 
 void test_random_phase2_solving() {
@@ -130,36 +100,20 @@ void test_random_phase2_solving() {
         reset_coord_cube(cube);
         scramble_cube(cube, 50);
 
-        solve_context_t *phase1_solve_context = make_solve_context(cube);
-
         TEST_ASSERT_FALSE(is_phase1_solved(cube));
         TEST_ASSERT_FALSE(is_phase2_solved(cube));
 
-        phase1_solve_t *phase1_solution = get_phase1_solution(phase1_solve_context, get_config());
+        solve_list_t *solutions = solve(cube, config);
 
-        // debug_phase1_solution(phase1_solution, cube);
-        TEST_ASSERT_TRUE(is_phase1_moves_solved(phase1_solution->solution, cube));
+        TEST_ASSERT_TRUE(solutions != NULL);
+        TEST_ASSERT_TRUE(solutions->solution != NULL);
 
-        coord_apply_moves(cube, phase1_solution->solution, phase1_solution->depth);
-
-        TEST_ASSERT_TRUE(is_phase1_solved(cube));
-        TEST_ASSERT_FALSE(is_phase2_solved(cube));
-
-        solve_context_t *phase2_solve_context = make_phase2_solve_context(phase1_solution, get_config());
-        phase2_solve_t  *phase2_solution      = solve_phase2(phase2_solve_context, get_config());
-
-        TEST_ASSERT_TRUE(phase2_solution != NULL);
-
-        coord_apply_moves(cube, phase2_solution->solution, phase2_solution->depth);
+        coord_apply_moves(cube, solutions->solution, 0); // Apply all moves
 
         TEST_ASSERT_TRUE(is_phase1_solved(cube));
         TEST_ASSERT_TRUE(is_phase2_solved(cube));
 
-        free(phase1_solution);
-        free(phase2_solution);
-
-        destroy_solve_context(phase1_solve_context);
-        destroy_solve_context(phase2_solve_context);
+        destroy_solve_list_node(solutions);
     }
 
     free(cube);

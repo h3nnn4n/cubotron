@@ -24,13 +24,11 @@
 #ifndef _SOLVE
 #define _SOLVE
 
-#include <stdint.h>
-
 #include "config.h"
 #include "coord_cube.h"
 #include "stats.h"
 
-#define MAX_MOVES 50
+#define MAX_MOVES 30
 
 typedef struct solve_list_s solve_list_t;
 
@@ -47,60 +45,30 @@ typedef struct solve_list_s {
 typedef struct solve_context_s solve_context_t;
 
 typedef struct solve_context_s {
-    coord_cube_t *original_cube;
     coord_cube_t *cube;
-    coord_cube_t *cube_stack[MAX_MOVES];
     move_t        move_stack[MAX_MOVES];
+    coord_cube_t *cube_stack[MAX_MOVES];
     int           pruning_stack[MAX_MOVES];
     int           move_count;
-    int           solution_count;
-    int           allowed_depth;
-    int           depth;
+
+    solve_context_t *phase2_context;
 } solve_context_t;
 
-typedef struct phase1_solve_s {
-    uint8_t depth;
-    uint8_t move_count;
-
-    coord_cube_t *cube;
-    move_t        solution[MAX_MOVES];
-} phase1_solve_t;
-
-typedef struct phase2_solve_s {
-    uint8_t depth;
-    uint8_t move_count;
-
-    coord_cube_t *cube;
-    move_t        solution[MAX_MOVES];
-} phase2_solve_t;
-
-solve_list_t   *solve_facelets_single(char facelets[N_FACELETS]);
-solve_list_t   *solve_facelets(char facelets[N_FACELETS], const config_t *config);
-solve_list_t   *solve(const coord_cube_t *original_cube, const config_t *config);
-solve_list_t   *solve_single(const coord_cube_t *original_cube);
-phase1_solve_t *get_phase1_solution(solve_context_t *solve_context, const config_t *config);
-phase2_solve_t *solve_phase2(solve_context_t *solve_context, const config_t *config);
-move_t         *make_solution(const phase1_solve_t *phase1_solution, const phase2_solve_t *phase2_solution);
-
-void update_solve_list_node(solve_list_t *solves, const phase1_solve_t *phase1_solution,
-                            const phase2_solve_t *phase2_solution);
-
-phase1_solve_t *make_phase1_solve(const coord_cube_t *cube);
-void            destroy_phase1_solve(phase1_solve_t *phase1_solve);
-
-phase2_solve_t *make_phase2_solve(const coord_cube_t *cube);
-void            destroy_phase2_solve(phase2_solve_t *phase2_solve);
+solve_list_t *solve_facelets_single(char facelets[N_FACELETS]);
+solve_list_t *solve_facelets(char facelets[N_FACELETS], const config_t *config);
+solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config);
+solve_list_t *solve_single(const coord_cube_t *original_cube);
+move_t       *solve_phase1(solve_context_t *solve_context, const config_t *config, solve_list_t *solves);
+move_t       *solve_phase2(solve_context_t *solve_context, const config_t *config, int current_depth);
 
 solve_list_t *new_solve_list_node();
 void          destroy_solve_list_node(solve_list_t *node);
 
 solve_context_t *make_solve_context(const coord_cube_t *cube);
-solve_context_t *make_phase2_solve_context(const phase1_solve_t *phase1_solution, const config_t *config);
 void             clear_solve_context(solve_context_t *solve_context);
 void             destroy_solve_context(solve_context_t *context);
 
-void debug_phase1_solution(const phase1_solve_t *phase1_solution, const coord_cube_t *original_cube);
-int  is_phase1_moves_solved(const move_t *solution, const coord_cube_t *original_cube);
-move_t *solve_phase1_old(solve_context_t *solve_context, const config_t *config, solve_list_t *solves);
+// Utility functions for testing
+int is_phase1_moves_solved(const move_t *solution, const coord_cube_t *original_cube);
 
 #endif /* end of include guard */
