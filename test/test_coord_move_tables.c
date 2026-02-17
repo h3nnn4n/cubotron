@@ -162,6 +162,59 @@ void test_moves_are_reversible() {
     }
 }
 
+void test_move_inverses() {
+    coord_cube_t *cube = get_coord_cube();
+    coord_cube_t *reference = get_coord_cube();
+
+    for (move_t move = MOVE_U1; move < MOVE_NULL; move += 3) {
+        reset_coord_cube(cube);
+        reset_coord_cube(reference);
+
+        coord_apply_move(cube, move);
+        coord_apply_move(cube, move + 2);
+
+        TEST_ASSERT_TRUE(are_all_coord_equal(reference, cube));
+    }
+
+    free(cube);
+    free(reference);
+}
+
+void test_quarter_turns_four_times_identity() {
+    coord_cube_t *cube = get_coord_cube();
+    coord_cube_t *reference = get_coord_cube();
+
+    for (move_t move = MOVE_U1; move < MOVE_NULL; move += 3) {
+        reset_coord_cube(cube);
+        reset_coord_cube(reference);
+
+        coord_apply_move(cube, move);
+        coord_apply_move(cube, move);
+        coord_apply_move(cube, move);
+        coord_apply_move(cube, move);
+
+        TEST_ASSERT_TRUE(are_all_coord_equal(reference, cube));
+    }
+
+    free(cube);
+    free(reference);
+}
+
+void test_all_moves_preserve_cube_validity() {
+    coord_cube_t *cube = get_coord_cube();
+
+    for (move_t move = MOVE_U1; move < MOVE_NULL; move++) {
+        reset_coord_cube(cube);
+        coord_apply_move(cube, move);
+
+        TEST_ASSERT_TRUE(cube->edge_orientations >= 0 && cube->edge_orientations < N_EDGE_ORIENTATIONS);
+        TEST_ASSERT_TRUE(cube->corner_orientations >= 0 && cube->corner_orientations < N_CORNER_ORIENTATIONS);
+        TEST_ASSERT_TRUE(cube->E_slice >= 0 && cube->E_slice < N_SLICES);
+    }
+
+    free(cube);
+}
+
 void setUp(void) { build_move_tables(); }
 
 void tearDown(void) {}
@@ -180,6 +233,9 @@ int main() {
     RUN_TEST(test_coord_orientation_changes);
 
     RUN_TEST(test_moves_are_reversible);
+    RUN_TEST(test_move_inverses);
+    RUN_TEST(test_quarter_turns_four_times_identity);
+    RUN_TEST(test_all_moves_preserve_cube_validity);
 
     return UNITY_END();
 }
