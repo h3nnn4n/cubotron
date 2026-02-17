@@ -27,7 +27,8 @@
 #include "definitions.h"
 
 typedef struct {
-    int do_benchmark;
+    int do_benchmark_fast;
+    int do_benchmark_slow;
     int do_solve;
     int rebuild_tables;
     int max_depth;
