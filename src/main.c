@@ -45,7 +45,8 @@ int main(int argc, char **argv) {
     init_config();
     config = get_config();
 
-    struct option long_options[] = {{"benchmarks", no_argument, &config->do_benchmark, 1},
+    struct option long_options[] = {{"benchmark-fast", no_argument, &config->do_benchmark_fast, 1},
+                                    {"benchmark-slow", no_argument, &config->do_benchmark_slow, 1},
                                     {"rebuild-tables", no_argument, &config->rebuild_tables, 1},
                                     {"solve", required_argument, 0, 's'},
                                     {"solve-scramble", optional_argument, 0, 'c'},
@@ -152,10 +153,10 @@ int main(int argc, char **argv) {
     build_pruning_tables();
     init_stats();
 
-    if (config->do_benchmark) {
-        solve_cube_sample_library();
-        solve_random_cubes();
-        coord_benchmark();
+    if (config->do_benchmark_fast) {
+        run_benchmark_fast();
+    } else if (config->do_benchmark_slow) {
+        run_benchmark_slow();
     } else if (config->do_solve) {
         solve_list_t *solution = NULL;
 

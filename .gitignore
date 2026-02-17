@@ -12,3 +12,6 @@ gmon.out
 
 .vscode
 main.plist
+
+benchmarks/results/*
+!benchmarks/results/.gitkeep

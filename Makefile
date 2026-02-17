@@ -19,11 +19,11 @@ UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
   ECHOFLAGS = -e
   CFLAGS += -Wno-unterminated-string-initialization
-  LDFLAGS = -lpcg_random -Wl,-Ldeps/Unity/build/,-Ldeps/pcg-c/src/
+  LDFLAGS = -lpcg_random -lm -Wl,-Ldeps/Unity/build/,-Ldeps/pcg-c/src/
 endif
 ifeq ($(UNAME_S),Darwin)
   CFLAGS += -Wno-unused-command-line-argument -Wno-strict-prototypes -Wno-unterminated-string-initialization
-  LDFLAGS = -lpcg_random -Wl,-Ldeps/pcg-c/src/
+  LDFLAGS = -lpcg_random -lm -Wl,-Ldeps/pcg-c/src/
 endif
 
 override CFLAGS += -Wall -Wextra -pedantic -std=gnu11 $(OPTIMIZATION) $(OPTIONS) $(INCLUDES)
