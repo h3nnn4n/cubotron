@@ -46,6 +46,7 @@ With UD7
 
 static int *pruning_phase1_edge     = NULL;
 static int *pruning_phase1_corner   = NULL;
+static int *pruning_phase1_combined = NULL;
 static int *pruning_phase2_UD6_edge = NULL;
 static int *pruning_phase2_UD7_edge = NULL;
 static int *pruning_phase2_corner   = NULL;
@@ -53,6 +54,7 @@ static int *pruning_phase2_corner   = NULL;
 void build_pruning_tables() {
     build_phase1_corner_table();
     build_phase1_edge_table();
+    build_phase1_combined_table();
 
     build_phase2_UD6_edge_table();
     build_phase2_UD7_edge_table();
@@ -62,18 +64,17 @@ void build_pruning_tables() {
 int get_phase1_pruning(const coord_cube_t *cube) {
     assert(pruning_phase1_corner != NULL);
     assert(pruning_phase1_edge != NULL);
+    assert(pruning_phase1_combined != NULL);
 
     int value1 = pruning_phase1_corner[cube->corner_orientations * N_SLICES + cube->E_slice];
     int value2 = pruning_phase1_edge[cube->edge_orientations * N_SLICES + cube->E_slice];
+    int value3 = pruning_phase1_combined[cube->corner_orientations * N_EDGE_ORIENTATIONS + cube->edge_orientations];
 
-    assert(value1 >= 0);
-    assert(value2 >= 0);
+    assert(value1 >= 0 && value1 < N_SLICES * N_CORNER_ORIENTATIONS);
+    assert(value2 >= 0 && value2 < N_SLICES * N_EDGE_ORIENTATIONS);
+    assert(value3 >= 0 && value3 < N_CORNER_ORIENTATIONS * N_EDGE_ORIENTATIONS);
 
-    assert(value1 < N_SLICES * N_CORNER_ORIENTATIONS);
-    assert(value2 < N_SLICES * N_EDGE_ORIENTATIONS);
-
-    // We want the bigger one
-    return value1 > value2 ? value1 : value2;
+    return MAX(MAX(value1, value2), value3);
 }
 
 int get_phase2_pruning(const coord_cube_t *cube) {
@@ -242,6 +243,78 @@ void build_phase1_edge_table() {
     }
 
     pruning_table_cache_store("pruning_tables", "phase1_edge", pruning_phase1_edge, N_EDGE_ORIENTATIONS * N_SLICES);
+}
+
+void build_phase1_combined_table() {
+    if (pruning_phase1_combined != NULL)
+        return;
+
+    if (pruning_table_cache_load("pruning_tables", "phase1_combined", &pruning_phase1_combined,
+                                 N_CORNER_ORIENTATIONS * N_EDGE_ORIENTATIONS))
+        return;
+
+    printf("bulding phase1 combined corner/edge orientations pruning table\n");
+
+    uint64_t start_time     = get_microseconds();
+    pruning_phase1_combined = (int *)malloc(sizeof(int) * N_CORNER_ORIENTATIONS * N_EDGE_ORIENTATIONS);
+
+    for (int i = 0; i < N_CORNER_ORIENTATIONS * N_EDGE_ORIENTATIONS; i++)
+        pruning_phase1_combined[i] = -1;
+
+    pruning_phase1_combined[0] = 0;
+
+    const int *corner_orientations_move_table = get_move_table_corner_orientations();
+    const int *edge_orientations_move_table   = get_move_table_edge_orientations();
+
+    int missing = N_CORNER_ORIENTATIONS * N_EDGE_ORIENTATIONS - 1;
+    int depth   = 0;
+
+    int depth_dist[20] = {0};
+
+    while (missing > 0) {
+        for (int i = 0; i < N_CORNER_ORIENTATIONS * N_EDGE_ORIENTATIONS; i++) {
+            if (pruning_phase1_combined[i] != depth)
+                continue;
+
+            int corner_orientations = i / N_EDGE_ORIENTATIONS;
+            int edge_orientations   = i % N_EDGE_ORIENTATIONS;
+
+            for (int move = 0; move < N_MOVES; move++) {
+                int next_corner_orientations = corner_orientations_move_table[corner_orientations * N_MOVES + move];
+                int next_edge_orientations   = edge_orientations_move_table[edge_orientations * N_MOVES + move];
+                int next_index               = next_corner_orientations * N_EDGE_ORIENTATIONS + next_edge_orientations;
+
+                if (pruning_phase1_combined[next_index] == -1) {
+                    pruning_phase1_combined[next_index] = depth + 1;
+                    missing--;
+                    depth_dist[depth]++;
+                }
+            }
+        }
+
+        printf("finished depth %2d: %8d %8d\n", depth, depth_dist[depth],
+               (N_CORNER_ORIENTATIONS * N_EDGE_ORIENTATIONS) - missing);
+
+        assert(depth <= 13);
+        depth++;
+    }
+
+    uint64_t end_time = get_microseconds();
+
+    printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);
+    printf("nodes per second : %.2f\n",
+           ((float)(N_CORNER_ORIENTATIONS * N_EDGE_ORIENTATIONS) / (end_time - start_time)) * 1000000.0);
+    printf("\n");
+
+    for (int i = 0; i < N_CORNER_ORIENTATIONS * N_EDGE_ORIENTATIONS; i++) {
+        if (pruning_phase1_combined[i] == -1) {
+            printf("phase1 combined pruning is not correctly populated!\n");
+            abort();
+        }
+    }
+
+    pruning_table_cache_store("pruning_tables", "phase1_combined", pruning_phase1_combined,
+                              N_CORNER_ORIENTATIONS * N_EDGE_ORIENTATIONS);
 }
 
 void build_phase2_UD6_edge_table() {

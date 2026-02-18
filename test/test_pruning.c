@@ -39,6 +39,29 @@ void test_pruning_single_moves() {
     free(cube);
 }
 
+void test_combined_pruning_solved_state() {
+    coord_cube_t *cube = get_coord_cube();
+    reset_coord_cube(cube);
+
+    TEST_ASSERT_EQUAL(0, get_phase1_pruning(cube));
+
+    free(cube);
+}
+
+void test_combined_pruning_geq_individual() {
+    coord_cube_t *cube = get_coord_cube();
+
+    for (int i = 0; i < 20; i++) {
+        reset_coord_cube(cube);
+        scramble_cube(cube, 15);
+
+        int combined = get_phase1_pruning(cube);
+        TEST_ASSERT_TRUE(combined >= 0);
+    }
+
+    free(cube);
+}
+
 void test_pruning_never_overestimates_sample() {
     coord_cube_t *cube = get_coord_cube();
     config_t *config = get_config();
@@ -80,6 +103,8 @@ int main() {
 
     RUN_TEST(test_pruning_solved_state);
     RUN_TEST(test_pruning_single_moves);
+    RUN_TEST(test_combined_pruning_solved_state);
+    RUN_TEST(test_combined_pruning_geq_individual);
     RUN_TEST(test_pruning_never_overestimates_sample);
 
     return UNITY_END();
