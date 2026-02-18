@@ -18,7 +18,6 @@ OPTIMIZATION=-O3
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
   ECHOFLAGS = -e
-  CFLAGS += -Wno-unterminated-string-initialization
   LDFLAGS = -lpcg_random -lm -Wl,-Ldeps/Unity/build/,-Ldeps/pcg-c/src/
 endif
 ifeq ($(UNAME_S),Darwin)
