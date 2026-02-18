@@ -255,8 +255,8 @@ int save_benchmark_txt(const benchmark_result_t *result, const char *filename, c
 
         comparison_t time_comp = compare_samples(times1, result->sample_count, times2, previous->sample_count);
 
-        fprintf(f, "Solve Time:       %.3f ms → %.3f ms   (%+.1f%%)   %s\n", result->time_stats.mean,
-                previous->time_stats.mean, time_comp.mean_diff_pct,
+        fprintf(f, "Solve Time:       %.3f ms → %.3f ms   (%+.1f%%)   %s\n", previous->time_stats.mean,
+                result->time_stats.mean, time_comp.mean_diff_pct,
                 time_comp.is_significant ? (time_comp.mean_diff < 0 ? "✓ FASTER" : "✗ SLOWER") : "~ NO CHANGE");
         fprintf(f, "  Welch's t-test: t=%.2f, p=%.3f (%s at α=0.05)\n", time_comp.t_statistic, time_comp.p_value,
                 time_comp.is_significant ? "significant" : "not significant");
@@ -272,8 +272,8 @@ int save_benchmark_txt(const benchmark_result_t *result, const char *filename, c
 
         comparison_t length_comp = compare_samples(lengths1, result->sample_count, lengths2, previous->sample_count);
 
-        fprintf(f, "Solution Length:  %.2f → %.2f moves       (%+.1f%%)   %s\n", result->length_stats.mean,
-                previous->length_stats.mean, length_comp.mean_diff_pct,
+        fprintf(f, "Solution Length:  %.2f → %.2f moves       (%+.1f%%)   %s\n", previous->length_stats.mean,
+                result->length_stats.mean, length_comp.mean_diff_pct,
                 length_comp.is_significant ? (length_comp.mean_diff < 0 ? "✓ BETTER" : "✗ WORSE") : "~ NO CHANGE");
         fprintf(f, "  Welch's t-test: t=%.2f, p=%.3f (%s)\n", length_comp.t_statistic, length_comp.p_value,
                 length_comp.is_significant ? "significant" : "not significant");
@@ -309,10 +309,11 @@ benchmark_result_t *load_benchmark_json(const char *filename) {
 
     benchmark_result_t *result = calloc(1, sizeof(benchmark_result_t));
 
-    char line[4096];
-    int  sample_count = 0;
+    char  *line         = NULL;
+    size_t line_len     = 0;
+    int    sample_count = 0;
 
-    while (fgets(line, sizeof(line), f)) {
+    while (getline(&line, &line_len, f) != -1) {
         sscanf(line, "  \"timestamp\": \"%31[^\"]\"", result->timestamp);
         sscanf(line, "  \"type\": \"%15[^\"]\"", result->type);
         sscanf(line, "  \"git_commit\": \"%63[^\"]\"", result->git_commit);
@@ -329,7 +330,7 @@ benchmark_result_t *load_benchmark_json(const char *filename) {
     result->phase2_lengths   = calloc(sample_count, sizeof(int));
 
     fseek(f, 0, SEEK_SET);
-    while (fgets(line, sizeof(line), f)) {
+    while (getline(&line, &line_len, f) != -1) {
         if (strstr(line, "\"solve_times_ms\":")) {
             char *p = strchr(line, '[');
             if (p) {
@@ -353,6 +354,7 @@ benchmark_result_t *load_benchmark_json(const char *filename) {
             }
         }
     }
+    free(line);
 
     double *times   = malloc(sample_count * sizeof(double));
     double *lengths = malloc(sample_count * sizeof(double));

@@ -236,8 +236,8 @@ static void run_benchmark_internal(const char *type, int warmup_duration_ms, int
         comparison_t time_comp = compare_samples(result->solve_times_ms, result->sample_count, previous->solve_times_ms,
                                                  previous->sample_count);
 
-        printf("Solve Time:       %.3f ms → %.3f ms   (%+.1f%%)   %s\n", result->time_stats.mean,
-               previous->time_stats.mean, time_comp.mean_diff_pct,
+        printf("Solve Time:       %.3f ms → %.3f ms   (%+.1f%%)   %s\n", previous->time_stats.mean,
+               result->time_stats.mean, time_comp.mean_diff_pct,
                time_comp.is_significant ? (time_comp.mean_diff < 0 ? "✓ FASTER" : "✗ SLOWER") : "~ NO CHANGE");
         printf("  Welch's t-test: t=%.2f, p=%.3f (%s at α=0.05)\n", time_comp.t_statistic, time_comp.p_value,
                time_comp.is_significant ? "significant" : "not significant");
@@ -257,8 +257,8 @@ static void run_benchmark_internal(const char *type, int warmup_duration_ms, int
 
         comparison_t length_comp = compare_samples(lengths1, result->sample_count, lengths2, previous->sample_count);
 
-        printf("Solution Length:  %.2f → %.2f moves       (%+.1f%%)   %s\n", result->length_stats.mean,
-               previous->length_stats.mean, length_comp.mean_diff_pct,
+        printf("Solution Length:  %.2f → %.2f moves       (%+.1f%%)   %s\n", previous->length_stats.mean,
+               result->length_stats.mean, length_comp.mean_diff_pct,
                length_comp.is_significant ? (length_comp.mean_diff < 0 ? "✓ BETTER" : "✗ WORSE") : "~ NO CHANGE");
         printf("  Welch's t-test: t=%.2f, p=%.3f (%s)\n", length_comp.t_statistic, length_comp.p_value,
                length_comp.is_significant ? "significant" : "not significant");
