@@ -270,7 +270,7 @@ move_t str_to_move(const char *move_str) {
 }
 
 void print_move_sequence(const move_t *moves) {
-    for (int i = 0; moves[i] != MOVE_NULL && moves[i] != -1; i++) {
+    for (int i = 0; moves[i] != MOVE_NULL; i++) {
         printf("%s ", move_to_str(moves[i]));
     }
     printf("\n");
