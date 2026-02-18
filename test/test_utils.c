@@ -89,6 +89,9 @@ void test_is_bad_move_false_cases() {
         int offset1 = i * 3;
 
         for (int j = i + 1; j < N_COLORS; j++) {
+            if (j - i == 3)
+                continue;
+            
             int offset2 = j * 3;
 
             TEST_ASSERT_FALSE(is_duplicated_or_undoes_move(MOVE_U1 + offset1, MOVE_U1 + offset2));
@@ -103,6 +106,27 @@ void test_is_bad_move_false_cases() {
             TEST_ASSERT_FALSE(is_duplicated_or_undoes_move(MOVE_U3 + offset1, MOVE_U2 + offset2));
             TEST_ASSERT_FALSE(is_duplicated_or_undoes_move(MOVE_U3 + offset1, MOVE_U3 + offset2));
         }
+    }
+}
+
+void test_is_bad_move_opposite_face_cases() {
+    // Opposite faces (U/D, R/L, F/B) commute, so only one ordering is canonical.
+    // When the previous move is the higher-indexed opposite face, we skip.
+    int opposite_pairs[][2] = {{0, 3}, {1, 4}, {2, 5}};
+
+    for (int p = 0; p < 3; p++) {
+        int low_offset  = opposite_pairs[p][0] * 3;
+        int high_offset = opposite_pairs[p][1] * 3;
+
+        // Higher-indexed face as previous (move2): should be pruned
+        TEST_ASSERT_TRUE(is_duplicated_or_undoes_move(MOVE_U1 + low_offset, MOVE_U1 + high_offset));
+        TEST_ASSERT_TRUE(is_duplicated_or_undoes_move(MOVE_U1 + low_offset, MOVE_U2 + high_offset));
+        TEST_ASSERT_TRUE(is_duplicated_or_undoes_move(MOVE_U1 + low_offset, MOVE_U3 + high_offset));
+
+        // Lower-indexed face as previous (move2): should be allowed
+        TEST_ASSERT_FALSE(is_duplicated_or_undoes_move(MOVE_U1 + high_offset, MOVE_U1 + low_offset));
+        TEST_ASSERT_FALSE(is_duplicated_or_undoes_move(MOVE_U1 + high_offset, MOVE_U2 + low_offset));
+        TEST_ASSERT_FALSE(is_duplicated_or_undoes_move(MOVE_U1 + high_offset, MOVE_U3 + low_offset));
     }
 }
 
@@ -157,6 +181,7 @@ int main() {
 
     RUN_TEST(test_is_bad_move_true_cases);
     RUN_TEST(test_is_bad_move_false_cases);
+    RUN_TEST(test_is_bad_move_opposite_face_cases);
 
     RUN_TEST(test_move_sequence_str_to_moves);
     RUN_TEST(test_str_to_move);
