@@ -33,6 +33,7 @@
 
 #include "benchmark.h"
 #include "benchmark_stats.h"
+#include "config.h"
 #include "cubie_cube.h"
 #include "facelets.h"
 #include "move_tables.h"
@@ -67,7 +68,17 @@ void apply_random_scramble(coord_cube_t *cube, int n_moves) {
     assert(!is_phase2_solved(cube));
 }
 
-static void run_benchmark_internal(const char *type, int warmup_duration_ms, int benchmark_duration_ms) {
+static void run_benchmark_internal(const char *base_type, int warmup_duration_ms, int benchmark_duration_ms) {
+    const config_t *config = get_config();
+
+    char type[16];
+    if (config->max_depth != 25) {
+        snprintf(type, sizeof(type), "%s_d%d", base_type, config->max_depth);
+    } else {
+        strncpy(type, base_type, sizeof(type) - 1);
+        type[sizeof(type) - 1] = '\0';
+    }
+
     printf("=== Cubotron Benchmark ===\n");
     printf("Type: %s\n", type);
     printf("Warmup duration: %d ms\n", warmup_duration_ms);
@@ -184,11 +195,7 @@ static void run_benchmark_internal(const char *type, int warmup_duration_ms, int
 
     char *prev_file = NULL;
 
-    if (strcmp(type, "slow") == 0) {
-        prev_file = find_latest_benchmark("slow");
-    } else {
-        prev_file = find_latest_benchmark(NULL);
-    }
+    prev_file = find_latest_benchmark(type);
 
     benchmark_result_t *previous = NULL;
 
