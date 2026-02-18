@@ -22,7 +22,7 @@ ifeq ($(UNAME_S),Linux)
   LDFLAGS = -lpcg_random -lm -Wl,-Ldeps/Unity/build/,-Ldeps/pcg-c/src/
 endif
 ifeq ($(UNAME_S),Darwin)
-  CFLAGS += -Wno-unused-command-line-argument -Wno-strict-prototypes -Wno-unterminated-string-initialization
+  CFLAGS += -Wno-unused-command-line-argument -Wno-strict-prototypes
   LDFLAGS = -lpcg_random -lm -Wl,-Ldeps/pcg-c/src/
 endif
 
