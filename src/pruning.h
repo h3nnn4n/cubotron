@@ -29,12 +29,6 @@
 void build_pruning_tables();
 void build_phase1_sym_table(void);
 void build_phase2_sym_table(void);
-void build_phase1_corner_table();
-void build_phase1_edge_table();
-void build_phase1_combined_table();
-void build_phase2_UD6_edge_table();
-void build_phase2_UD7_edge_table();
-void build_phase2_corner_table();
 int  get_phase1_pruning(const coord_cube_t *cube);
 int  get_phase2_pruning(const coord_cube_t *cube);
 

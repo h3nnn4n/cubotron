@@ -33,9 +33,9 @@
 #include "mem_utils.h"
 #include "move_tables.h"
 #include "pruning.h"
-#include "symmetry.h"
 #include "solve.h"
 #include "stats.h"
+#include "symmetry.h"
 #include "utils.h"
 
 static config_t *config;
