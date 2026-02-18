@@ -84,7 +84,7 @@ void finish_stats() {
     solve_stats[stats_pivot].solve_time =
         solve_stats[stats_pivot].phase1_solve_time + solve_stats[stats_pivot].phase2_solve_time;
 
-    if (stats_pivot < buffer_size) {
+    if (stats_pivot + 1 < buffer_size) {
         stats_pivot += 1;
     } else {
         if (increase_stats_buffer()) {
