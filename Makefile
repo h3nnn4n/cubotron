@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := build
 
-TARGET = $(notdir $(CURDIR))
+TARGET = cubotron
 BUILDDIR = $(abspath $(CURDIR)/build)
 
 TEST_TARGETS := $(basename $(foreach src,$(wildcard test/test_*.c), $(BUILDDIR)/$(src)))
@@ -45,6 +45,19 @@ OBJS_NO_MAIN := $(filter-out %main.o, $(OBJS)) \
 
 .PHONY: test
 .PHONY: clean
+.PHONY: cpplint
+.PHONY: cppcheck
+.PHONY: clang-format
+.PHONY: format
+.PHONY: lint-all
+.PHONY: test-ci
+.PHONY: solve
+.PHONY: solve-samples
+.PHONY: benchmark
+.PHONY: heapcheck-solve
+.PHONY: heapcheck-solve-blacklist
+.PHONY: heapcheck-benchmark
+.PHONY: ci
 
 all: build
 
@@ -117,3 +130,46 @@ clean:
 	@rm -rf "$(BUILDDIR)/deps/"
 	@rm -f "$(TARGET).o"
 	@rm -f "$(TARGET)"
+
+# Linters
+cpplint:
+	@.github/scripts/ci.sh cpplint
+
+cppcheck:
+	@.github/scripts/ci.sh cppcheck
+
+clang-format:
+	@.github/scripts/ci.sh clang-format
+
+format:
+	@.github/scripts/ci.sh format
+
+lint-all:
+	@.github/scripts/ci.sh lint-all
+
+# Tests
+test-ci:
+	@.github/scripts/ci.sh test
+
+solve:
+	@.github/scripts/ci.sh solve
+
+solve-samples:
+	@.github/scripts/ci.sh solve-samples
+
+benchmark:
+	@.github/scripts/ci.sh benchmark
+
+# Memory checks
+heapcheck-solve:
+	@.github/scripts/ci.sh heapcheck-solve
+
+heapcheck-solve-blacklist:
+	@.github/scripts/ci.sh heapcheck-solve-blacklist
+
+heapcheck-benchmark:
+	@.github/scripts/ci.sh heapcheck-benchmark
+
+# Run all CI checks
+ci:
+	@.github/scripts/ci.sh all
