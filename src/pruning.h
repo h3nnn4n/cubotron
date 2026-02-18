@@ -27,6 +27,8 @@
 #include "coord_cube.h"
 
 void build_pruning_tables();
+void build_phase1_sym_table(void);
+void build_phase2_sym_table(void);
 void build_phase1_corner_table();
 void build_phase1_edge_table();
 void build_phase1_combined_table();

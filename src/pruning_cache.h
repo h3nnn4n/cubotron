@@ -35,4 +35,9 @@ int  pruning_table_cache_load_u32(const char *cache_name, const char *table_name
 void pruning_table_cache_store_u32(const char *cache_name, const char *table_name, const uint32_t *pruning_table,
                                    int table_size);
 
+int  pruning_table_cache_load_u8(const char *cache_name, const char *table_name, uint8_t **pruning_table,
+                                 int table_size);
+void pruning_table_cache_store_u8(const char *cache_name, const char *table_name, const uint8_t *pruning_table,
+                                  int table_size);
+
 #endif /* end of include guard */

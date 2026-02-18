@@ -104,6 +104,55 @@ int pruning_table_cache_load_u32(const char *cache_name, const char *table_name,
     return 1;
 }
 
+int pruning_table_cache_load_u8(const char *cache_name, const char *table_name, uint8_t **pruning_table,
+                                int table_size) {
+    char filepath[512];
+    // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
+    snprintf(filepath, sizeof(filepath), "cache/%s/%s", cache_name, table_name);
+
+    if (!file_exists(filepath))
+        return 0;
+
+    fflush(stdout);
+    FILE *f = fopen(filepath, "rb");
+
+    *pruning_table = (uint8_t *)malloc(sizeof(uint8_t) * table_size);
+
+    size_t n = fread(*pruning_table, sizeof(uint8_t), table_size, f);
+    fclose(f);
+
+    if ((int)n != table_size) {
+        printf("pruning cache read error: expected %d entries, got %zu\n", table_size, n);
+        fflush(stdout);
+        abort();
+    }
+
+    return 1;
+}
+
+void pruning_table_cache_store_u8(const char *cache_name, const char *table_name, const uint8_t *pruning_table,
+                                  int table_size) {
+    char filepath[512];
+    char cachepath[512];
+
+    // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
+    snprintf(filepath, sizeof(filepath), "cache/%s/%s", cache_name, table_name);
+    // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
+    snprintf(cachepath, sizeof(cachepath), "cache/%s", cache_name);
+
+    uint32_t start_time = get_microseconds();
+    ensure_directory_exists(cachepath);
+
+    FILE  *f                = fopen(filepath, "wb");
+    size_t elements_written = fwrite(pruning_table, sizeof(uint8_t), table_size, f);
+    fclose(f);
+
+    uint32_t bytes_written = (uint32_t)(elements_written * sizeof(uint8_t));
+    uint32_t end_time      = get_microseconds();
+    printf("storing: %-45s %10u bytes stored in %6.4f seconds\n", filepath, bytes_written,
+           (float)(end_time - start_time) / 1000000.0);
+}
+
 void pruning_table_cache_store_u32(const char *cache_name, const char *table_name, const uint32_t *pruning_table,
                                    int table_size) {
     char filepath[512];

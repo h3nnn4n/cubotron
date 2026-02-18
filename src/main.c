@@ -33,6 +33,7 @@
 #include "mem_utils.h"
 #include "move_tables.h"
 #include "pruning.h"
+#include "symmetry.h"
 #include "solve.h"
 #include "stats.h"
 #include "utils.h"
@@ -150,6 +151,7 @@ int main(int argc, char **argv) {
     }
 
     build_move_tables();
+    build_symmetry_tables();
     build_pruning_tables();
     init_stats();
 
