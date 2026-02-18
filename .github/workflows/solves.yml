@@ -3,7 +3,7 @@ name: Sample Solves Test
 on: push
 
 jobs:
-  run-solver:
+  solve:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -19,19 +19,24 @@ jobs:
       - name: Build
         run: make
 
-      - name: Cache Tables
-        id: cache-tables
-        uses: actions/cache@v4
+      - name: Run solve test
+        run: ./cubotron --solve DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL --max-depth=27 --n-solutions=2 --move-blacklist='U U2 U'
+
+  solve-samples:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
         with:
-          path: cache
-          key: cache-tables
+          fetch-depth: 1
+          submodules: true
 
-      - name: Build Tables
-        if: steps.cache-tables.outputs.cache-hit != 'true'
-        run: ./cubotron --rebuild-tables
+      - name: Build
+        run: make
 
-      - name: Run Solver with blacklist
-        run: ./cubotron --solve DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL --max-depth=27 --n-solutions=2 --move-blacklist="U U2 U'"
-
-      - name: Run Solver
+      - name: Run solve samples
         run: ./solve_samples.sh

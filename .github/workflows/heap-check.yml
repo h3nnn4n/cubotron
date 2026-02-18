@@ -5,105 +5,51 @@ on: push
 jobs:
   heapcheck-solve:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
-          submodules: true
+          submodules: recursive
 
-      - name: Install gproftools
-        run: |
-          sudo apt-get install -y google-perftools libgoogle-perftools-dev
-          sudo ln -s /usr/lib/x86_64-linux-gnu/libtcmalloc.so /usr/lib/libtcmalloc.so
-          sudo ln -s /usr/bin/google-pprof /usr/bin/pprof
+      - name: Install google-perftools
+        run: sudo apt-get update && sudo apt-get install -y google-perftools libgoogle-perftools-dev
 
-      - name: Build
+      - name: Build with gperftools
         run: make gperftools
 
-      - name: Cache Tables
-        id: cache-tables
-        uses: actions/cache@v4
-        with:
-          path: cache
-          key: cache-tables
-
-      - name: Build Tables
-        if: steps.cache-tables.outputs.cache-hit != 'true'
-        run: ./cubotron --rebuild-tables
-
-      - name: Detect Leaks (Solve)
-        run: ./cubotron --solve DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL --max-depth=21 --n-solutions=5
-        env:
-          HEAPCHECK: normal
-          PPROF_PATH: /usr/bin/google-pprof
+      - name: Heap Check Solve
+        run: HEAPCHECK=normal ./cubotron --solve DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL --max-depth=21 --n-solutions=5
 
   heapcheck-solve-blacklist:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
-          submodules: true
+          submodules: recursive
 
-      - name: Install gproftools
-        run: |
-          sudo apt-get install -y google-perftools libgoogle-perftools-dev
-          sudo ln -s /usr/lib/x86_64-linux-gnu/libtcmalloc.so /usr/lib/libtcmalloc.so
-          sudo ln -s /usr/bin/google-pprof /usr/bin/pprof
+      - name: Install google-perftools
+        run: sudo apt-get update && sudo apt-get install -y google-perftools libgoogle-perftools-dev
 
-      - name: Build
+      - name: Build with gperftools
         run: make gperftools
 
-      - name: Cache Tables
-        id: cache-tables
-        uses: actions/cache@v4
-        with:
-          path: cache
-          key: cache-tables
+      - name: Heap Check Solve with Blacklist
+        run: HEAPCHECK=normal ./cubotron --solve DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL --max-depth=27 --n-solutions=5 --move-blacklist='U U2 U'
 
-      - name: Build Tables
-        if: steps.cache-tables.outputs.cache-hit != 'true'
-        run: ./cubotron --rebuild-tables
-
-      - name: Detect Leaks (Solve, with blacklist)
-        run: ./cubotron --solve DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL --max-depth=27 --n-solutions=5 --move-blacklist="U U2 U'"
-        env:
-          HEAPCHECK: normal
-          PPROF_PATH: /usr/bin/google-pprof
-
-  heapcheck-benchmarks:
+  heapcheck-benchmark:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
-          submodules: true
+          submodules: recursive
 
-      - name: Install gproftools
-        run: |
-          sudo apt-get install -y google-perftools libgoogle-perftools-dev
-          sudo ln -s /usr/lib/x86_64-linux-gnu/libtcmalloc.so /usr/lib/libtcmalloc.so
-          sudo ln -s /usr/bin/google-pprof /usr/bin/pprof
+      - name: Install google-perftools
+        run: sudo apt-get update && sudo apt-get install -y google-perftools libgoogle-perftools-dev
 
-      - name: Build
+      - name: Build with gperftools
         run: make gperftools
 
-      - name: Cache Tables
-        id: cache-tables
-        uses: actions/cache@v4
-        with:
-          path: cache
-          key: cache-tables
-
-      - name: Build Tables
-        if: steps.cache-tables.outputs.cache-hit != 'true'
-        run: ./cubotron --rebuild-tables
-
-      - name: Detect Leaks (benchmarks)
-        run: ./cubotron --benchmark-fast
-        env:
-          HEAPCHECK: normal
-          PPROF_PATH: /usr/bin/google-pprof
+      - name: Heap Check Benchmark
+        run: HEAPCHECK=normal ./cubotron --benchmark-fast

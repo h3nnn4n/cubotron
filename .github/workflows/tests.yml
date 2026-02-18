@@ -3,7 +3,7 @@ name: Unit Tests
 on: push
 
 jobs:
-  run-tests:
+  test:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -19,16 +19,8 @@ jobs:
       - name: Build
         run: make
 
-      - name: Cache Tables
-        id: cache-tables
-        uses: actions/cache@v4
-        with:
-          path: cache
-          key: cache-tables
+      - name: Rebuild tables if needed
+        run: '[ -d cache ] || ./cubotron --rebuild-tables'
 
-      - name: Build Tables
-        if: steps.cache-tables.outputs.cache-hit != 'true'
-        run: ./cubotron --rebuild-tables
-
-      - name: Run Tests
+      - name: Run tests
         run: make test

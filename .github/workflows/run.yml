@@ -3,7 +3,7 @@ name: Benchmarks Test
 on: push
 
 jobs:
-  run-benchmarks:
+  benchmark:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 5
 
@@ -20,16 +20,8 @@ jobs:
       - name: Build
         run: make
 
-      - name: Cache Tables
-        id: cache-tables
-        uses: actions/cache@v4
-        with:
-          path: cache
-          key: cache-tables
-
-      - name: Build Tables
-        if: steps.cache-tables.outputs.cache-hit != 'true'
-        run: ./cubotron --rebuild-tables
+      - name: Rebuild tables if needed
+        run: '[ -d cache ] || ./cubotron --rebuild-tables'
 
       - name: Run benchmarks
         run: ./cubotron --benchmark-fast
