@@ -151,7 +151,7 @@ static void run_benchmark_internal(const char *base_type, int warmup_duration_ms
     free(cube);
 
     benchmark_result_t *result = make_benchmark_result(sample_count);
-    strncpy(result->type, type, sizeof(result->type) - 1);
+    snprintf(result->type, sizeof(result->type), "%s", type);
     result->warmup_count          = warmup_count;
     result->warmup_duration_ms    = (int)(get_microseconds() - warmup_start) / 1000;
     result->benchmark_duration_ms = (int)actual_bench_duration / 1000;

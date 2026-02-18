@@ -272,7 +272,8 @@ void test_solve_with_move_blacklist() {
             move_t move                   = base_move + move_offset;
             config->move_black_list[move] = move;
 
-            sprintf(buffer, "%s %s", buffer, move_to_str(move));
+            strncat(buffer, " ", sizeof(buffer) - strlen(buffer) - 1);
+            strncat(buffer, move_to_str(move), sizeof(buffer) - strlen(buffer) - 1);
         }
 
         TEST_MESSAGE(buffer);
@@ -296,7 +297,8 @@ void test_solve_with_move_blacklist() {
                     sprintf(buffer, "solution has blacklisted move:");
 
                     for (int i = 0; solution->solution[i] != MOVE_NULL; i++) {
-                        sprintf(buffer, "%s %s", buffer, move_to_str(solution->solution[i]));
+                        strncat(buffer, " ", sizeof(buffer) - strlen(buffer) - 1);
+                        strncat(buffer, move_to_str(solution->solution[i]), sizeof(buffer) - strlen(buffer) - 1);
                     }
 
                     TEST_MESSAGE(buffer);

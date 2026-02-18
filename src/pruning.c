@@ -322,7 +322,7 @@ void build_phase2_UD6_edge_table() {
         return;
 
     if (pruning_table_cache_load("pruning_tables", "phase2_UD6_edge", &pruning_phase2_UD6_edge,
-                                 N_UD6_PHASE2_PERMUTATIONS * N_SORTED_SLICES))
+                                 N_UD6_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2))
         return;
 
     printf("bulding phase2 UD6_edge permutations pruning table\n");
@@ -404,7 +404,7 @@ void build_phase2_UD7_edge_table() {
         return;
 
     if (pruning_table_cache_load("pruning_tables", "phase2_UD7_edge", &pruning_phase2_UD7_edge,
-                                 N_UD7_PHASE2_PERMUTATIONS * N_SORTED_SLICES))
+                                 N_UD7_PHASE2_PERMUTATIONS * N_SORTED_SLICES_PHASE2))
         return;
 
     printf("bulding phase2 UD7_edge permutations pruning table\n");
@@ -486,7 +486,7 @@ void build_phase2_corner_table() {
         return;
 
     if (pruning_table_cache_load("pruning_tables", "phase2_corner", &pruning_phase2_corner,
-                                 N_CORNER_PERMUTATIONS * N_SORTED_SLICES))
+                                 N_CORNER_PERMUTATIONS * N_SORTED_SLICES_PHASE2))
         return;
 
     printf("bulding phase2 corner orientations pruning table\n");

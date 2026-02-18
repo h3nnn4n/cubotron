@@ -390,7 +390,7 @@ char *find_latest_benchmark(const char *type_filter) {
         char ts[32];
         if (sscanf(entry->d_name, "%*[^_]_%31[^.]", ts) == 1) {
             if (strcmp(ts, latest_ts) > 0) {
-                strncpy(latest_ts, ts, sizeof(latest_ts) - 1);
+                snprintf(latest_ts, sizeof(latest_ts), "%s", ts);
                 free(latest);
                 size_t path_size = strlen("benchmarks/results/") + strlen(entry->d_name) + 1;
                 latest           = malloc(path_size);
