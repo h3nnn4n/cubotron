@@ -130,17 +130,12 @@ int is_move_sequence_a_solution_for_cube(const coord_cube_t *cube, const move_t 
 }
 
 void scramble_cube(coord_cube_t *cube, int n_moves) {
-    // Fox debug purposes
-    move_t scramble_moves[256];
-    assert(n_moves <= 256);
-
     move_t prev_move = MOVE_NULL;
     for (int i = 0; i < n_moves;) {
         move_t move = pcg32_boundedrand(N_MOVES);
         if (i > 0 && is_duplicated_or_undoes_move(move, prev_move)) {
             continue;
         }
-        scramble_moves[i] = move;
         coord_apply_move(cube, move);
         prev_move = move;
         i++;

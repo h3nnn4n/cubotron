@@ -18,15 +18,14 @@ OPTIMIZATION=-O3
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
   ECHOFLAGS = -e
-  CFLAGS += -Wno-unterminated-string-initialization
   LDFLAGS = -lpcg_random -lm -Wl,-Ldeps/Unity/build/,-Ldeps/pcg-c/src/
 endif
 ifeq ($(UNAME_S),Darwin)
-  CFLAGS += -Wno-unused-command-line-argument -Wno-strict-prototypes -Wno-unterminated-string-initialization
+  CFLAGS += -Wno-unused-command-line-argument -Wno-strict-prototypes
   LDFLAGS = -lpcg_random -lm -Wl,-Ldeps/pcg-c/src/
 endif
 
-override CFLAGS += -Wall -Wextra -pedantic -std=gnu11 $(OPTIMIZATION) $(OPTIONS) $(INCLUDES)
+override CFLAGS += -Wall -Wextra -pedantic -Werror -std=gnu11 $(OPTIMIZATION) $(OPTIONS) $(INCLUDES)
 
 CC = gcc
 
@@ -99,16 +98,25 @@ test-%: $(BUILDDIR)/test/test_% pcg
 	@echo $(ECHOFLAGS) "[RUN]\t$(BUILDDIR)/test/test_$*"
 	@$(BUILDDIR)/test/test_$*
 
-pcg:
+pcg: $(BUILDDIR)/.pcg_core
+
+$(BUILDDIR)/.pcg_core:
 	@echo $(ECHOFLAGS) "[CC]\tpcg core"
 	@$(MAKE) -s -C deps/pcg-c/src/
+	@mkdir -p $(BUILDDIR)
+	@touch $@
 
-pcg_full:
+pcg_full: $(BUILDDIR)/.pcg_full
+
+$(BUILDDIR)/.pcg_full:
 	@echo $(ECHOFLAGS) "[CC]\tpcg full"
 	@$(MAKE) -s -C deps/pcg-c/
+	@mkdir -p $(BUILDDIR)
+	@touch $@
 
 pcg_clean:
 	@$(MAKE) clean -C deps/pcg-c/src/ > /dev/null
+	@rm -f $(BUILDDIR)/.pcg_core $(BUILDDIR)/.pcg_full
 
 $(TEST_TARGETS): $(OBJS_NO_MAIN) $(OBJS_TEST)
 	@echo $(ECHOFLAGS) "[LD]\t$@"
