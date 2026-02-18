@@ -39,6 +39,8 @@
 #include "coord_move_tables.h"
 #include "cubie_cube.h"
 #include "cubie_move_table.h"
+#include "solve.h"
+#include "stats.h"
 #include "utils.h"
 
 static char *_move_t_to_str_enum[] = {

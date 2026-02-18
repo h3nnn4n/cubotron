@@ -24,6 +24,9 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "definitions.h"
 
 typedef struct {
@@ -41,6 +44,9 @@ typedef struct {
     move_t move_black_list[18];
 
     move_t *scramble_moves;
+
+    uint32_t thread_count;
+    bool     die;
 } config_t;
 
 void      init_config();
