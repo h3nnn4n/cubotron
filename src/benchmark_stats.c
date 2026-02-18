@@ -384,8 +384,11 @@ char *find_latest_benchmark(const char *type_filter) {
         if (strstr(entry->d_name, ".json") == NULL)
             continue;
 
-        if (type_filter && strstr(entry->d_name, type_filter) == NULL)
-            continue;
+        if (type_filter) {
+            size_t type_len = strlen(type_filter);
+            if (strncmp(entry->d_name, type_filter, type_len) != 0 || entry->d_name[type_len] != '_')
+                continue;
+        }
 
         char ts[32];
         if (sscanf(entry->d_name, "%*[^_]_%31[^.]", ts) == 1) {

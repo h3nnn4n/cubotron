@@ -195,7 +195,18 @@ static void run_benchmark_internal(const char *base_type, int warmup_duration_ms
 
     char *prev_file = NULL;
 
-    prev_file = find_latest_benchmark(type);
+    if (strcmp(base_type, "fast") == 0) {
+        char slow_type[16];
+        if (config->max_depth != 25) {
+            snprintf(slow_type, sizeof(slow_type), "slow_d%d", config->max_depth);
+        } else {
+            strncpy(slow_type, "slow", sizeof(slow_type) - 1);
+            slow_type[sizeof(slow_type) - 1] = '\0';
+        }
+        prev_file = find_latest_benchmark(slow_type);
+    } else {
+        prev_file = find_latest_benchmark(type);
+    }
 
     benchmark_result_t *previous = NULL;
 
