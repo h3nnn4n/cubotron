@@ -99,16 +99,25 @@ test-%: $(BUILDDIR)/test/test_% pcg
 	@echo $(ECHOFLAGS) "[RUN]\t$(BUILDDIR)/test/test_$*"
 	@$(BUILDDIR)/test/test_$*
 
-pcg:
+pcg: $(BUILDDIR)/.pcg_core
+
+$(BUILDDIR)/.pcg_core:
 	@echo $(ECHOFLAGS) "[CC]\tpcg core"
 	@$(MAKE) -s -C deps/pcg-c/src/
+	@mkdir -p $(BUILDDIR)
+	@touch $@
 
-pcg_full:
+pcg_full: $(BUILDDIR)/.pcg_full
+
+$(BUILDDIR)/.pcg_full:
 	@echo $(ECHOFLAGS) "[CC]\tpcg full"
 	@$(MAKE) -s -C deps/pcg-c/
+	@mkdir -p $(BUILDDIR)
+	@touch $@
 
 pcg_clean:
 	@$(MAKE) clean -C deps/pcg-c/src/ > /dev/null
+	@rm -f $(BUILDDIR)/.pcg_core $(BUILDDIR)/.pcg_full
 
 $(TEST_TARGETS): $(OBJS_NO_MAIN) $(OBJS_TEST)
 	@echo $(ECHOFLAGS) "[LD]\t$@"
