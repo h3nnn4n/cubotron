@@ -110,7 +110,7 @@ static void run_benchmark_internal(const char *base_type, int warmup_duration_ms
     printf("  Completed %d warmup solves\n\n", warmup_count);
 
     printf("Benchmark phase...\n");
-    int     max_samples  = 10000;
+    int     max_samples  = 1000000;
     double *temp_times   = malloc(max_samples * sizeof(double));
     int    *temp_lengths = malloc(max_samples * sizeof(int));
     int     sample_count = 0;
