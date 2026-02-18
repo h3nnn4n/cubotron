@@ -376,6 +376,40 @@ void test_solution_validity() {
     free(cube);
 }
 
+void test_phase2_solves_r2_l2_in_2_moves() {
+    // solve_phase2 passes move_stack indices (0-9) instead of actual move_t values
+    // to is_duplicated_or_undoes_move. R2 (idx 6), L2 (idx 7), F2 (idx 8) all have
+    // index/3 == 2, so the function incorrectly treats them as the same face and prunes
+    // valid sequences like R2 L2 and L2 R2.
+    coord_cube_t *cube = get_coord_cube();
+    reset_coord_cube(cube);
+    coord_apply_move(cube, MOVE_R2);
+    coord_apply_move(cube, MOVE_L2);
+
+    TEST_ASSERT_TRUE(is_phase1_solved(cube));
+    TEST_ASSERT_FALSE(is_phase2_solved(cube));
+
+    solve_context_t *ctx = make_solve_context(cube);
+    copy_coord_cube(ctx->phase2_context->cube, cube);
+
+    move_t *solution = solve_phase2(ctx->phase2_context, get_config(), 2);
+
+    TEST_ASSERT_NOT_NULL(solution);
+
+    if (solution != NULL) {
+        coord_cube_t *verify = get_coord_cube();
+        copy_coord_cube(verify, cube);
+        for (int i = 0; solution[i] != MOVE_NULL; i++)
+            coord_apply_move(verify, solution[i]);
+        TEST_ASSERT_TRUE(is_phase2_solved(verify));
+        free(verify);
+        free(solution);
+    }
+
+    destroy_solve_context(ctx);
+    free(cube);
+}
+
 void test_edge_case_solved_cube() {
     coord_cube_t *cube = get_coord_cube();
     reset_coord_cube(cube);
@@ -488,6 +522,7 @@ int main() {
     // RUN_TEST(test_phase1_solution_count);
     RUN_TEST(test_solution_correctness_comprehensive);
     RUN_TEST(test_solution_validity);
+    RUN_TEST(test_phase2_solves_r2_l2_in_2_moves);
     RUN_TEST(test_edge_case_solved_cube);
     RUN_TEST(test_edge_case_single_move_scrambles);
     RUN_TEST(test_solution_correctness_varied_depths);
