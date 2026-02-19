@@ -8,6 +8,7 @@
 #include <pruning.h>
 #include <sample_facelets.h>
 #include <solve.h>
+#include <symmetry.h>
 #include <utils.h>
 
 void test_random_phase1_solving() {
@@ -513,6 +514,7 @@ void tearDown() {}
 
 int main() {
     build_move_tables();
+    build_symmetry_tables();
     build_pruning_tables();
 
     pcg32_srandom(43u, 55u);

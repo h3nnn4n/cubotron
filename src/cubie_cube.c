@@ -466,8 +466,8 @@ void multiply_cube_cubie_corners(cube_cubie_t *cube1, cube_cubie_t *cube2) {
 
             if (orientation < 3)
                 orientation += 3;
-        } else if (orientation_a >= 3 && 3 >= orientation_b) {
-            orientation = orientation_a - orientation_b;
+        } else if (orientation_a >= 3 && orientation_b >= 3) {
+            orientation = (orientation_a - orientation_b + 3) % 3;
         } else {
             // This should never happen
             abort();

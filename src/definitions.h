@@ -36,6 +36,15 @@
 #define N_UD7_PHASE1_PERMUTATIONS 3991680 // 791 * 5040 + 5040 or 12 * 11 * 10 * 9 * 8 * 7 * 6
 #define N_UD7_PHASE2_PERMUTATIONS 40320   // 7 * 5040 + 5040
 
+// 48 = 3 * 2 * 4 * 2: orders of the four generators (ROT_URF3, ROT_F2, ROT_U4, MIRR_LR2)
+#define N_SYMMETRIES 48
+// 16 = 2 * 4 * 2: the D4H subgroup generated without ROT_URF3; preserves the UD-slice structure
+#define N_SYMMETRIES_D4H 16
+// orbits of D4H acting on 2048 * 495 = 1,013,760 (flip, slice) pairs
+#define N_FLIPSLICE_CLASSES 64430
+// orbits of D4H acting on 40,320 corner permutations
+#define N_CORNER_CLASSES 2768
+
 #define N_CORNERS 8
 #define N_EDGES   12
 

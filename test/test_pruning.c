@@ -6,6 +6,7 @@
 #include <move_tables.h>
 #include <pruning.h>
 #include <solve.h>
+#include <symmetry.h>
 
 void test_pruning_solved_state() {
     coord_cube_t *cube = get_coord_cube();
@@ -95,6 +96,7 @@ void tearDown() {}
 
 int main() {
     build_move_tables();
+    build_symmetry_tables();
     build_pruning_tables();
 
     pcg32_srandom(43u, 55u);
