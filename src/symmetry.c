@@ -114,6 +114,7 @@ static void cache_store(const char *name, const void *data, size_t bytes) {
     size_t written = fwrite(data, 1, bytes, f);
     fclose(f);
     assert(written == bytes);
+    (void)written;
 }
 
 static int cache_load(const char *name, void *data, size_t bytes) {
@@ -197,6 +198,7 @@ static void build_sym_cubes_and_inv(void) {
         }
 
         assert(found);
+        (void)found;
     }
 }
 
@@ -241,6 +243,7 @@ static void build_conj_move(void) {
             }
 
             assert(found);
+            (void)found;
         }
     }
 }
