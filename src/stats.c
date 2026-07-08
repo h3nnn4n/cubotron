@@ -25,7 +25,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "config.h"
 #include "file_utils.h"
 #include "mem_utils.h"
 #include "stats.h"
@@ -142,24 +141,4 @@ void print_solve_stats(const solve_stats_t *stats) {
     printf("  Phase 2 move count: %d\n", stats->phase2_move_count);
     printf("  Move count: %d\n", stats->move_count);
     printf("  Moves per second: %.2f\n", stats->move_count / stats->solve_time);
-}
-
-solve_stats_t *aggregate_stats(solve_stats_t **thread_stats) {
-    solve_stats_t *aggregated = get_solve_stats();
-
-    const solve_stats_t *first_valid = NULL;
-    for (uint32_t i = 0; i < get_config()->thread_count; i++) {
-        if (thread_stats[i]->solution_length > 0 && thread_stats[i]->solution_length < 1000) {
-            first_valid = thread_stats[i];
-            break;
-        }
-    }
-
-    if (first_valid == NULL) {
-        return aggregated;
-    }
-
-    *aggregated = *first_valid;
-
-    return aggregated;
 }
