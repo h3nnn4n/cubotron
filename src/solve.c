@@ -207,7 +207,7 @@ move_t *patch_solution(solve_context_t *solve_context, solve_list_t *solution) {
         solution_length++;
     }
 
-    const move_t *partial_solution = solution->solution;
+    move_t *partial_solution = solution->solution;
     uint16_t      total_length     = solution_length + solve_context->prep_move_count;
     solution->solution             = malloc(sizeof(move_t) * (total_length + 1));
 
@@ -224,6 +224,8 @@ move_t *patch_solution(solve_context_t *solve_context, solve_list_t *solution) {
     }
 
     solution->solution[solve_context->prep_move_count + solution_length] = MOVE_NULL;
+
+    free(partial_solution);
 
     move_t *phase1_solution   = solution->phase1_solution;
     solution->phase1_solution = malloc(sizeof(move_t) * (solution_length + solve_context->prep_move_count + 1));
