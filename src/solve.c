@@ -393,7 +393,7 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
 
                     stats->phase1_depth      = pivot + 1;
                     stats->phase2_solve_time = (float)(phase2_end - phase2_start) / 1000000.0;
-                    stats->solution_length   = pivot + phase2_move_count + 1;
+                    stats->solution_length   = pivot + phase2_move_count + 1 + solve_context->prep_move_count;
                     stats->phase1_move_count = move_count;
                     stats->move_count        = move_count + phase2_move_count;
 
