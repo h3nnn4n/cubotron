@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
                                     {"benchmark-slow", no_argument, &config->do_benchmark_slow, 1},
                                     {"rebuild-tables", no_argument, &config->rebuild_tables, 1},
                                     {"solve", required_argument, 0, 's'},
-                                    {"solve-scramble", optional_argument, 0, 'c'},
+                                    {"solve-scramble", required_argument, 0, 'c'},
                                     {"max-depth", required_argument, 0, 'm'},
                                     {"n-solutions", required_argument, 0, 'n'},
                                     {"move-blacklist", required_argument, 0, 'b'},
