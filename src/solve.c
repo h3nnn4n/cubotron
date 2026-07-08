@@ -116,7 +116,7 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
         thread_contexts[i].solve_context = make_solve_context(original_cube);
         thread_contexts[i].solves        = new_solve_list_node();
         thread_contexts[i].stats         = get_solve_stats();
-        move_list[0]      = i;
+        move_list[0]                     = i;
         prep_phase1(thread_contexts[i].solve_context, 1, move_list);
     }
 
@@ -225,8 +225,8 @@ move_t *patch_solution(solve_context_t *solve_context, solve_list_t *solution) {
 
     solution->solution[solve_context->prep_move_count + solution_length] = MOVE_NULL;
 
-    move_t *phase1_solution = solution->phase1_solution;
-    solution->phase1_solution     = malloc(sizeof(move_t) * (solution_length + solve_context->prep_move_count + 1));
+    move_t *phase1_solution   = solution->phase1_solution;
+    solution->phase1_solution = malloc(sizeof(move_t) * (solution_length + solve_context->prep_move_count + 1));
 
     for (int i = 0; i < solution_length + solve_context->prep_move_count; i++) {
         solution->phase1_solution[i] = solution->solution[i];
