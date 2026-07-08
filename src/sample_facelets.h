@@ -28,6 +28,6 @@
 
 #define N_FACELETS_SAMPLES 100
 
-extern char sample_facelets[N_FACELETS_SAMPLES][N_FACELETS];
+extern char sample_facelets[N_FACELETS_SAMPLES][N_FACELETS + 1];
 
 #endif
