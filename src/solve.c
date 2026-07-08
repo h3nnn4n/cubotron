@@ -207,9 +207,9 @@ move_t *patch_solution(solve_context_t *solve_context, solve_list_t *solution) {
         solution_length++;
     }
 
-    move_t *partial_solution = solution->solution;
-    uint16_t      total_length     = solution_length + solve_context->prep_move_count;
-    solution->solution             = malloc(sizeof(move_t) * (total_length + 1));
+    move_t  *partial_solution = solution->solution;
+    uint16_t total_length     = solution_length + solve_context->prep_move_count;
+    solution->solution        = malloc(sizeof(move_t) * (total_length + 1));
 
     for (int i = 0; i < total_length; i++) {
         solution->solution[i] = MOVE_NULL;
