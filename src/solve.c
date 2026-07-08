@@ -132,26 +132,21 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
     solve_list_t *solves  = NULL;
     solve_list_t *current = NULL;
 
-    solve_stats_t *thread_stats[thread_count];
     for (int i = 0; i < thread_count; i++) {
-        thread_stats[i] = thread_contexts[i].stats;
-    }
-
-    for (int i = 0; i < thread_count; i++) {
-        if (thread_contexts[i].solves != NULL && thread_contexts[i].solves->solution != NULL) {
+        solve_list_t *thread_solves = thread_contexts[i].solves;
+        if (thread_solves != NULL && thread_solves->solution != NULL) {
             if (solves == NULL) {
-                solves  = thread_contexts[i].solves;
+                solves  = thread_solves;
                 current = solves;
             } else {
-                current->next = thread_contexts[i].solves;
+                current->next = thread_solves;
                 current       = current->next;
             }
+        } else {
+            thread_solves->stats = NULL;
+            destroy_solve_list(thread_solves);
+            free(thread_contexts[i].stats);
         }
-    }
-
-    if (solves != NULL) {
-        solve_stats_t *aggregated = aggregate_stats(thread_stats);
-        solves->stats             = aggregated;
     }
 
     for (int i = 0; i < thread_count; i++) {
