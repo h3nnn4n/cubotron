@@ -229,7 +229,7 @@ move_t *patch_solution(solve_context_t *solve_context, solve_list_t *solution) {
 
     solution->solution[solve_context->prep_move_count + solution_length] = MOVE_NULL;
 
-    const move_t *phase1_solution = solution->phase1_solution;
+    move_t *phase1_solution = solution->phase1_solution;
     solution->phase1_solution     = malloc(sizeof(move_t) * (solution_length + solve_context->prep_move_count + 1));
 
     for (int i = 0; i < solution_length + solve_context->prep_move_count; i++) {

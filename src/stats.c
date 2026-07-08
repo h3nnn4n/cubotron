@@ -148,7 +148,7 @@ solve_stats_t *aggregate_stats(solve_stats_t **thread_stats) {
     solve_stats_t *aggregated = get_solve_stats();
 
     const solve_stats_t *first_valid = NULL;
-    for (int i = 0; i < get_config()->thread_count; i++) {
+    for (uint32_t i = 0; i < get_config()->thread_count; i++) {
         if (thread_stats[i]->solution_length > 0 && thread_stats[i]->solution_length < 1000) {
             first_valid = thread_stats[i];
             break;

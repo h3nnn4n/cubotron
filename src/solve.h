@@ -47,7 +47,7 @@ typedef struct solve_list_s {
 typedef struct solve_context_s solve_context_t;
 
 typedef struct solve_context_s {
-    coord_cube_t *original_cube;
+    const coord_cube_t *original_cube;
 
     coord_cube_t *cube;
     move_t        move_stack[MAX_MOVES];
