@@ -13,17 +13,10 @@ jobs:
           submodules: true
 
       - name: Install deps
-        run: |
-          python3 -m pip install cpplint
-          python3 -m pip install scan-build
+        run: python3 -m pip install cpplint
 
       - name: Update Path
         run: echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Update compile database
-        run: |
-          make clean
-          intercept-build make
 
       - name: run cpplint
         run: cpplint --filter=-build/include_subdir,-readability/nolint,-whitespace/line_length,-whitespace/comments,-readability/casting,-build/header_guard,-runtime/arrays src/*.c
