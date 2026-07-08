@@ -417,12 +417,14 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
                     /*printf("\n");*/
 
                     if (solves != NULL) {
+                        if (solves->solution != NULL) {
+                            solves->next = new_solve_list_node();
+                            solves       = solves->next;
+                        }
+
                         solves->phase1_solution = phase1_solution;
                         solves->phase2_solution = phase2_solution;
                         solves->solution        = solution;
-
-                        solves->next = new_solve_list_node();
-                        solves       = solves->next;
                     } else {
                         free(phase1_solution);
                         free(phase2_solution);
