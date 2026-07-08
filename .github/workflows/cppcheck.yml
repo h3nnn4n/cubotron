@@ -16,11 +16,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get -y -qq install curl
-          sudo apt-get -y -qq install clang-tidy cmake jq clang cppcheck
-          python -m pip install scan-build
+          sudo apt-get -y -qq install clang-tidy cmake jq clang clang-tools cppcheck
 
       - name: Update Path
-        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+        run: echo "$(ls -d /usr/lib/llvm-*/bin | tail -1)" >> $GITHUB_PATH
 
       - name: Update compile database
         run: |
