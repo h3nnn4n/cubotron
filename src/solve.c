@@ -134,7 +134,7 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
 
     for (int i = 0; i < thread_count; i++) {
         solve_list_t *thread_solves = thread_contexts[i].solves;
-        if (thread_solves != NULL && thread_solves->solution != NULL) {
+        if (thread_solves->solution != NULL) {
             if (solves == NULL) {
                 solves  = thread_solves;
                 current = solves;
