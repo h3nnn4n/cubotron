@@ -1,0 +1,31 @@
+FROM ubuntu:latest
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    gcc \
+    make \
+    git \
+    python3 \
+    python3-pip \
+    clang-format-20 \
+    cppcheck \
+    clang \
+    clang-tidy \
+    cmake \
+    jq \
+    curl \
+    google-perftools \
+    libgoogle-perftools-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN python3 -m pip install --break-system-packages cpplint scan-build
+
+RUN ln -s /usr/bin/google-pprof /usr/bin/pprof 2>/dev/null || true
+
+ENV PATH="/root/.local/bin:${PATH}"
+ENV PPROF_PATH=/usr/bin/google-pprof
+
+WORKDIR /workspace
+
+CMD ["bash"]

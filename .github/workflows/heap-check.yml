@@ -103,7 +103,7 @@ jobs:
         run: ./cubotron --rebuild-tables
 
       - name: Detect Leaks (benchmarks)
-        run: ./cubotron --benchmarks
+        run: ./cubotron --benchmark-fast
         env:
           HEAPCHECK: normal
           PPROF_PATH: /usr/bin/google-pprof

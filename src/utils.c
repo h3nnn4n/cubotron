@@ -73,7 +73,11 @@ static move_t reverse_move[] = {
     /* MOVE_B3 */ MOVE_B1,
 };
 
-int is_duplicated_or_undoes_move(move_t move1, move_t move2) { return move1 / 3 == move2 / 3; }
+// Prunes same-face sequences and opposite-face sequences in non-canonical order.
+// Opposite faces (U/D, R/L, F/B) commute, so only the lower-indexed face first is explored.
+int is_duplicated_or_undoes_move(move_t move1, move_t move2) {
+    return move1 / 3 == move2 / 3 || move2 / 3 - move1 / 3 == 3;
+}
 
 int cubie_off_count(const cube_cubie_t *cube) {
     int count = 0;
@@ -268,7 +272,7 @@ move_t str_to_move(const char *move_str) {
 }
 
 void print_move_sequence(const move_t *moves) {
-    for (int i = 0; moves[i] != MOVE_NULL && moves[i] != -1; i++) {
+    for (int i = 0; moves[i] != MOVE_NULL; i++) {
         printf("%s ", move_to_str(moves[i]));
     }
     printf("\n");

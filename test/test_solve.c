@@ -272,7 +272,8 @@ void test_solve_with_move_blacklist() {
             move_t move                   = base_move + move_offset;
             config->move_black_list[move] = move;
 
-            sprintf(buffer, "%s %s", buffer, move_to_str(move));
+            strncat(buffer, " ", sizeof(buffer) - strlen(buffer) - 1);
+            strncat(buffer, move_to_str(move), sizeof(buffer) - strlen(buffer) - 1);
         }
 
         TEST_MESSAGE(buffer);
@@ -296,7 +297,8 @@ void test_solve_with_move_blacklist() {
                     sprintf(buffer, "solution has blacklisted move:");
 
                     for (int i = 0; solution->solution[i] != MOVE_NULL; i++) {
-                        sprintf(buffer, "%s %s", buffer, move_to_str(solution->solution[i]));
+                        strncat(buffer, " ", sizeof(buffer) - strlen(buffer) - 1);
+                        strncat(buffer, move_to_str(solution->solution[i]), sizeof(buffer) - strlen(buffer) - 1);
                     }
 
                     TEST_MESSAGE(buffer);
@@ -314,6 +316,198 @@ void test_solve_with_move_blacklist() {
     }
 }
 
+void test_solution_correctness_comprehensive() {
+    coord_cube_t *cube = get_coord_cube();
+
+    for (int i = 0; i < 100; i++) {
+        reset_coord_cube(cube);
+        scramble_cube(cube, 50);
+        coord_cube_t *original_cube = get_coord_cube();
+        copy_coord_cube(original_cube, cube);
+
+        TEST_ASSERT_FALSE(is_coord_solved(cube));
+
+        solve_list_t *solutions = solve_single(cube);
+        TEST_ASSERT_NOT_NULL(solutions);
+        TEST_ASSERT_NOT_NULL(solutions->solution);
+
+        TEST_ASSERT_TRUE(is_move_sequence_a_solution_for_cube(original_cube, solutions->solution));
+
+        coord_cube_t *test_cube = get_coord_cube();
+        copy_coord_cube(test_cube, original_cube);
+        for (int j = 0; solutions->solution[j] != MOVE_NULL; j++) {
+            coord_apply_move(test_cube, solutions->solution[j]);
+        }
+        TEST_ASSERT_TRUE(is_coord_solved(test_cube));
+        TEST_ASSERT_TRUE(is_phase1_solved(test_cube));
+        TEST_ASSERT_TRUE(is_phase2_solved(test_cube));
+        free(test_cube);
+
+        free(original_cube);
+        destroy_solve_list(solutions);
+    }
+
+    free(cube);
+}
+
+void test_solution_validity() {
+    coord_cube_t *cube = get_coord_cube();
+
+    for (int i = 0; i < 50; i++) {
+        reset_coord_cube(cube);
+        scramble_cube(cube, 50);
+
+        solve_list_t *solutions = solve_single(cube);
+        TEST_ASSERT_NOT_NULL(solutions);
+        TEST_ASSERT_NOT_NULL(solutions->solution);
+
+        int move_count = 0;
+        for (int j = 0; solutions->solution[j] != MOVE_NULL; j++) {
+            TEST_ASSERT_TRUE(solutions->solution[j] >= MOVE_U1);
+            TEST_ASSERT_TRUE(solutions->solution[j] < MOVE_NULL);
+            move_count++;
+
+            TEST_ASSERT_TRUE(move_count < 100);
+        }
+
+        TEST_ASSERT_EQUAL(MOVE_NULL, solutions->solution[move_count]);
+
+        destroy_solve_list(solutions);
+    }
+
+    free(cube);
+}
+
+void test_phase2_solves_r2_l2_in_2_moves() {
+    // solve_phase2 passes move_stack indices (0-9) instead of actual move_t values
+    // to is_duplicated_or_undoes_move. R2 (idx 6), L2 (idx 7), F2 (idx 8) all have
+    // index/3 == 2, so the function incorrectly treats them as the same face and prunes
+    // valid sequences like R2 L2 and L2 R2.
+    coord_cube_t *cube = get_coord_cube();
+    reset_coord_cube(cube);
+    coord_apply_move(cube, MOVE_R2);
+    coord_apply_move(cube, MOVE_L2);
+
+    TEST_ASSERT_TRUE(is_phase1_solved(cube));
+    TEST_ASSERT_FALSE(is_phase2_solved(cube));
+
+    solve_context_t *ctx = make_solve_context(cube);
+    copy_coord_cube(ctx->phase2_context->cube, cube);
+
+    move_t *solution = solve_phase2(ctx->phase2_context, get_config(), 2);
+
+    TEST_ASSERT_NOT_NULL(solution);
+
+    if (solution != NULL) {
+        coord_cube_t *verify = get_coord_cube();
+        copy_coord_cube(verify, cube);
+        for (int i = 0; solution[i] != MOVE_NULL; i++)
+            coord_apply_move(verify, solution[i]);
+        TEST_ASSERT_TRUE(is_phase2_solved(verify));
+        free(verify);
+        free(solution);
+    }
+
+    destroy_solve_context(ctx);
+    free(cube);
+}
+
+void test_edge_case_solved_cube() {
+    coord_cube_t *cube = get_coord_cube();
+    reset_coord_cube(cube);
+
+    TEST_ASSERT_TRUE(is_coord_solved(cube));
+
+    solve_list_t *solutions = solve_single(cube);
+    TEST_ASSERT_NOT_NULL(solutions);
+    TEST_ASSERT_NOT_NULL(solutions->solution);
+
+    TEST_ASSERT_TRUE(is_move_sequence_a_solution_for_cube(cube, solutions->solution));
+
+    coord_cube_t *test_cube = get_coord_cube();
+    copy_coord_cube(test_cube, cube);
+    coord_apply_moves(test_cube, solutions->solution, 0);
+    TEST_ASSERT_TRUE(is_coord_solved(test_cube));
+
+    free(test_cube);
+    free(cube);
+    destroy_solve_list(solutions);
+}
+
+void test_edge_case_single_move_scrambles() {
+    coord_cube_t *cube = get_coord_cube();
+
+    for (move_t move = MOVE_U1; move < MOVE_NULL; move++) {
+        reset_coord_cube(cube);
+        coord_apply_move(cube, move);
+
+        coord_cube_t *scrambled_cube = get_coord_cube();
+        copy_coord_cube(scrambled_cube, cube);
+
+        solve_list_t *solutions = solve_single(cube);
+        TEST_ASSERT_NOT_NULL(solutions);
+        TEST_ASSERT_NOT_NULL(solutions->solution);
+
+        TEST_ASSERT_TRUE(is_move_sequence_a_solution_for_cube(scrambled_cube, solutions->solution));
+
+        free(scrambled_cube);
+        destroy_solve_list(solutions);
+    }
+
+    free(cube);
+}
+
+void test_solution_correctness_varied_depths() {
+    coord_cube_t *cube = get_coord_cube();
+    int depths[] = {1, 3, 5, 10, 15, 20, 30, 50};
+    int n_depths = sizeof(depths) / sizeof(depths[0]);
+
+    for (int d = 0; d < n_depths; d++) {
+        int depth = depths[d];
+
+        for (int i = 0; i < 20; i++) {
+            reset_coord_cube(cube);
+            scramble_cube(cube, depth);
+            coord_cube_t *original_cube = get_coord_cube();
+            copy_coord_cube(original_cube, cube);
+
+            solve_list_t *solutions = solve_single(cube);
+            TEST_ASSERT_NOT_NULL(solutions);
+            TEST_ASSERT_NOT_NULL(solutions->solution);
+
+            TEST_ASSERT_TRUE(is_move_sequence_a_solution_for_cube(original_cube, solutions->solution));
+
+            free(original_cube);
+            destroy_solve_list(solutions);
+        }
+    }
+
+    free(cube);
+}
+
+void test_all_sample_facelets_produce_valid_solutions() {
+    for (int i = 0; i < N_FACELETS_SAMPLES; i++) {
+        cube_cubie_t *cubie_cube = build_cubie_cube_from_str(sample_facelets[i]);
+        coord_cube_t *cube = make_coord_cube(cubie_cube);
+        coord_cube_t *original_cube = get_coord_cube();
+        copy_coord_cube(original_cube, cube);
+
+        solve_list_t *solutions = solve_single(cube);
+        TEST_ASSERT_NOT_NULL_MESSAGE(solutions, sample_facelets[i]);
+        TEST_ASSERT_NOT_NULL_MESSAGE(solutions->solution, sample_facelets[i]);
+
+        TEST_ASSERT_TRUE_MESSAGE(
+            is_move_sequence_a_solution_for_cube(original_cube, solutions->solution),
+            sample_facelets[i]
+        );
+
+        free(original_cube);
+        free(cube);
+        free(cubie_cube);
+        destroy_solve_list(solutions);
+    }
+}
+
 void setUp() { init_config(); }
 void tearDown() {}
 
@@ -328,6 +522,13 @@ int main() {
     // RUN_TEST(test_random_phase1_solving);
     RUN_TEST(test_phase1_solution_generator);
     // RUN_TEST(test_phase1_solution_count);
+    RUN_TEST(test_solution_correctness_comprehensive);
+    RUN_TEST(test_solution_validity);
+    RUN_TEST(test_phase2_solves_r2_l2_in_2_moves);
+    RUN_TEST(test_edge_case_solved_cube);
+    RUN_TEST(test_edge_case_single_move_scrambles);
+    RUN_TEST(test_solution_correctness_varied_depths);
+    RUN_TEST(test_all_sample_facelets_produce_valid_solutions);
     // RUN_TEST(test_random_phase2_solving);
     // RUN_TEST(test_random_full_solver_with_random_scrambles_multiple_solution);
 

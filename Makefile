@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := build
 
-TARGET = $(notdir $(CURDIR))
+TARGET = cubotron
 BUILDDIR = $(abspath $(CURDIR)/build)
 
 TEST_TARGETS := $(basename $(foreach src,$(wildcard test/test_*.c), $(BUILDDIR)/$(src)))
@@ -18,15 +18,14 @@ OPTIMIZATION=-O3
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
   ECHOFLAGS = -e
-  CFLAGS += -Wno-unterminated-string-initialization
-  LDFLAGS = -lpcg_random -Wl,-Ldeps/Unity/build/,-Ldeps/pcg-c/src/
+  LDFLAGS = -lpcg_random -lm -Wl,-Ldeps/Unity/build/,-Ldeps/pcg-c/src/
 endif
 ifeq ($(UNAME_S),Darwin)
-  CFLAGS += -Wno-unused-command-line-argument -Wno-strict-prototypes -Wno-unterminated-string-initialization
-  LDFLAGS = -lpcg_random -Wl,-Ldeps/pcg-c/src/
+  CFLAGS += -Wno-unused-command-line-argument -Wno-strict-prototypes
+  LDFLAGS = -lpcg_random -lm -Wl,-Ldeps/pcg-c/src/
 endif
 
-override CFLAGS += -Wall -Wextra -pedantic -std=gnu11 $(OPTIMIZATION) $(OPTIONS) $(INCLUDES)
+override CFLAGS += -Wall -Wextra -pedantic -Werror -std=gnu11 $(OPTIMIZATION) $(OPTIONS) $(INCLUDES)
 
 CC = gcc
 
@@ -45,6 +44,19 @@ OBJS_NO_MAIN := $(filter-out %main.o, $(OBJS)) \
 
 .PHONY: test
 .PHONY: clean
+.PHONY: cpplint
+.PHONY: cppcheck
+.PHONY: clang-format
+.PHONY: format
+.PHONY: lint-all
+.PHONY: test-ci
+.PHONY: solve
+.PHONY: solve-samples
+.PHONY: benchmark
+.PHONY: heapcheck-solve
+.PHONY: heapcheck-solve-blacklist
+.PHONY: heapcheck-benchmark
+.PHONY: ci
 
 all: build
 
@@ -86,16 +98,25 @@ test-%: $(BUILDDIR)/test/test_% pcg
 	@echo $(ECHOFLAGS) "[RUN]\t$(BUILDDIR)/test/test_$*"
 	@$(BUILDDIR)/test/test_$*
 
-pcg:
+pcg: $(BUILDDIR)/.pcg_core
+
+$(BUILDDIR)/.pcg_core:
 	@echo $(ECHOFLAGS) "[CC]\tpcg core"
 	@$(MAKE) -s -C deps/pcg-c/src/
+	@mkdir -p $(BUILDDIR)
+	@touch $@
 
-pcg_full:
+pcg_full: $(BUILDDIR)/.pcg_full
+
+$(BUILDDIR)/.pcg_full:
 	@echo $(ECHOFLAGS) "[CC]\tpcg full"
 	@$(MAKE) -s -C deps/pcg-c/
+	@mkdir -p $(BUILDDIR)
+	@touch $@
 
 pcg_clean:
 	@$(MAKE) clean -C deps/pcg-c/src/ > /dev/null
+	@rm -f $(BUILDDIR)/.pcg_core $(BUILDDIR)/.pcg_full
 
 $(TEST_TARGETS): $(OBJS_NO_MAIN) $(OBJS_TEST)
 	@echo $(ECHOFLAGS) "[LD]\t$@"
@@ -117,3 +138,46 @@ clean:
 	@rm -rf "$(BUILDDIR)/deps/"
 	@rm -f "$(TARGET).o"
 	@rm -f "$(TARGET)"
+
+# Linters
+cpplint:
+	@.github/scripts/ci.sh cpplint
+
+cppcheck:
+	@.github/scripts/ci.sh cppcheck
+
+clang-format:
+	@.github/scripts/ci.sh clang-format
+
+format:
+	@.github/scripts/ci.sh format
+
+lint-all:
+	@.github/scripts/ci.sh lint-all
+
+# Tests
+test-ci:
+	@.github/scripts/ci.sh test
+
+solve:
+	@.github/scripts/ci.sh solve
+
+solve-samples:
+	@.github/scripts/ci.sh solve-samples
+
+benchmark:
+	@.github/scripts/ci.sh benchmark
+
+# Memory checks
+heapcheck-solve:
+	@.github/scripts/ci.sh heapcheck-solve
+
+heapcheck-solve-blacklist:
+	@.github/scripts/ci.sh heapcheck-solve-blacklist
+
+heapcheck-benchmark:
+	@.github/scripts/ci.sh heapcheck-benchmark
+
+# Run all CI checks
+ci:
+	@.github/scripts/ci.sh all

@@ -480,7 +480,7 @@ int is_phase1_moves_solved(const move_t *solution, const coord_cube_t *original_
     coord_cube_t *cube = get_coord_cube();
     copy_coord_cube(cube, original_cube);
 
-    for (int i = 0; solution[i] != MOVE_NULL && solution[i] != -1; i++) {
+    for (int i = 0; solution[i] != MOVE_NULL; i++) {
         coord_apply_move(cube, solution[i]);
     }
 
@@ -546,7 +546,7 @@ move_t *solve_phase2(solve_context_t *solve_context, __attribute__((unused)) con
                 continue;
             }
 
-            if (pivot > 0 && is_duplicated_or_undoes_move(move_stack[pivot], move_stack[pivot - 1]))
+            if (pivot > 0 && is_duplicated_or_undoes_move(moves[move_stack[pivot]], moves[move_stack[pivot - 1]]))
                 continue;
 
             coord_apply_move(cube_stack[pivot], moves[move_stack[pivot]]);

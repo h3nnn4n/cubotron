@@ -43,8 +43,14 @@ int pruning_table_cache_load(const char *cache_name, const char *table_name, int
 
     *pruning_table = (int *)malloc(sizeof(int) * table_size);
 
-    fread(*pruning_table, sizeof(int), table_size, f);
+    size_t n = fread(*pruning_table, sizeof(int), table_size, f);
     fclose(f);
+
+    if ((int)n != table_size) {
+        printf("pruning cache read error: expected %d entries, got %zu\n", table_size, n);
+        fflush(stdout);
+        abort();
+    }
 
     return 1;
 }

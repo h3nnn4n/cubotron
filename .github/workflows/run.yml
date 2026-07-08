@@ -32,4 +32,4 @@ jobs:
         run: ./cubotron --rebuild-tables
 
       - name: Run benchmarks
-        run: ./cubotron --benchmarks
+        run: ./cubotron --benchmark-fast
