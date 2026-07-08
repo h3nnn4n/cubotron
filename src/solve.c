@@ -102,6 +102,8 @@ solve_list_t *solve_single(const coord_cube_t *original_cube) {
 }
 
 solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
+    get_config()->die = false;
+
     const int        thread_count = config->thread_count;
     thread_context_t thread_contexts[thread_count];
     move_t           move_list[thread_count];
