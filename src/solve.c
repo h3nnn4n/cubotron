@@ -169,7 +169,6 @@ solve_list_t *solve_thread(void *arg) {
     const move_t *solution = solve_phase1(solve_context, solves, thread_context->stats);
 
     if (solution == NULL) {
-        destroy_solve_list(solves);
         return NULL;
     } else {
         coord_cube_t *cube = get_coord_cube();
