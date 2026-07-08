@@ -141,6 +141,7 @@ comparison_t compare_samples(const double *data1, size_t n1, const double *data2
 benchmark_result_t *make_benchmark_result(int sample_count) {
     benchmark_result_t *result = calloc(1, sizeof(benchmark_result_t));
     result->sample_count       = sample_count;
+    result->solves_per_second  = 0.0;
     result->solve_times_ms     = calloc(sample_count, sizeof(double));
     result->solution_lengths   = calloc(sample_count, sizeof(int));
     result->phase1_lengths     = calloc(sample_count, sizeof(int));
@@ -171,6 +172,7 @@ int save_benchmark_json(const benchmark_result_t *result, const char *filename) 
     fprintf(f, "  \"benchmark_duration_ms\": %d,\n", result->benchmark_duration_ms);
     fprintf(f, "  \"warmup_count\": %d,\n", result->warmup_count);
     fprintf(f, "  \"sample_count\": %d,\n", result->sample_count);
+    fprintf(f, "  \"solves_per_second\": %.2f,\n", result->solves_per_second);
 
     fprintf(f, "  \"solve_times_ms\": [");
     for (int i = 0; i < result->sample_count; i++) {
@@ -223,7 +225,8 @@ int save_benchmark_txt(const benchmark_result_t *result, const char *filename, c
     fprintf(f, "Date: %s\n", result->timestamp);
     fprintf(f, "Git:  %s\n", result->git_commit);
     fprintf(f, "Warmup: %d solves in %d ms\n", result->warmup_count, result->warmup_duration_ms);
-    fprintf(f, "Benchmark: %d solves in %d ms\n\n", result->sample_count, result->benchmark_duration_ms);
+    fprintf(f, "Benchmark: %d solves in %d ms\n", result->sample_count, result->benchmark_duration_ms);
+    fprintf(f, "SPS: %.2f solves/s\n\n", result->solves_per_second);
 
     fprintf(f, "--- Solve Time (ms) ---\n");
     fprintf(f, "  Mean:     %7.3f ms\n", result->time_stats.mean);

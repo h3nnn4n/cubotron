@@ -6,15 +6,15 @@
 #include <sample_facelets.h>
 
 void test_facelets_color_count() {
-    char facelets_correct[N_FACELETS] = "UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB";
+    char facelets_correct[N_FACELETS + 1] = "UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB";
     TEST_ASSERT_TRUE(verify_valid_facelets(facelets_correct));
 
-    char facelets_wrong[N_FACELETS] = "FUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB";
+    char facelets_wrong[N_FACELETS + 1] = "FUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB";
     TEST_ASSERT_FALSE(verify_valid_facelets(facelets_wrong));
 }
 
 void test_build_cube_from_facelet_string_solved() {
-    char          facelets[N_FACELETS] = "UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB";
+    char          facelets[N_FACELETS + 1] = "UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB";
     cube_cubie_t *cubie_cube           = build_cubie_cube_from_str(facelets);
 
     int edge_orientation = get_edge_orientations(cubie_cube);
@@ -39,7 +39,7 @@ void test_build_cube_from_facelet_string_solved() {
 }
 
 void test_build_cube_from_facelet_string_scrambled() {
-    char          facelets[N_FACELETS] = "BBURUDBFUFFFRRFUUFLULUFUDLRRDBBDBDBLUDDFLLRRBRLLLBRDDF";
+    char          facelets[N_FACELETS + 1] = "BBURUDBFUFFFRRFUUFLULUFUDLRRDBBDBDBLUDDFLLRRBRLLLBRDDF";
     cube_cubie_t *cubie_cube           = build_cubie_cube_from_str(facelets);
 
     int edge_orientation = get_edge_orientations(cubie_cube);

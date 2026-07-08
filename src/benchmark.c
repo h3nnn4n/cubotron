@@ -155,6 +155,7 @@ static void run_benchmark_internal(const char *base_type, int warmup_duration_ms
     result->warmup_count          = warmup_count;
     result->warmup_duration_ms    = (int)(get_microseconds() - warmup_start) / 1000;
     result->benchmark_duration_ms = (int)actual_bench_duration / 1000;
+    result->solves_per_second     = sample_count / (actual_bench_duration / 1000000.0);
 
     for (int i = 0; i < sample_count; i++) {
         result->solve_times_ms[i]   = temp_times[i];
@@ -228,7 +229,8 @@ static void run_benchmark_internal(const char *base_type, int warmup_duration_ms
     printf("Date: %s\n", result->timestamp);
     printf("Git:  %s\n", result->git_commit);
     printf("Warmup: %d solves in %d ms\n", result->warmup_count, result->warmup_duration_ms);
-    printf("Benchmark: %d solves in %d ms\n\n", result->sample_count, result->benchmark_duration_ms);
+    printf("Benchmark: %d solves in %d ms\n", result->sample_count, result->benchmark_duration_ms);
+    printf("SPS: %.2f solves/s\n\n", result->solves_per_second);
 
     printf("--- Solve Time (ms) ---\n");
     printf("  Mean:     %7.3f ms\n", result->time_stats.mean);

@@ -17,13 +17,14 @@ typedef struct {
 } stats_t;
 
 typedef struct {
-    char timestamp[32];
-    char type[16];
-    char git_commit[64];
-    int  warmup_count;
-    int  sample_count;
-    int  warmup_duration_ms;
-    int  benchmark_duration_ms;
+    char   timestamp[32];
+    char   type[16];
+    char   git_commit[64];
+    int    warmup_count;
+    int    sample_count;
+    int    warmup_duration_ms;
+    int    benchmark_duration_ms;
+    double solves_per_second;
 
     double *solve_times_ms;
     int    *solution_lengths;
