@@ -307,7 +307,11 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
     // printf("solving phase1 with prep moves: ");
     // print_move_sequence(solve_context->prep_moves);
 
-    for (int allowed_depth = 1; allowed_depth <= config->max_depth; allowed_depth++) {
+    /* max_depth caps the TOTAL solution length (prep + phase1 + phase2).
+     * Prep moves are already applied, so the search budget is reduced by them. */
+    const int search_budget = config->max_depth - solve_context->prep_move_count;
+
+    for (int allowed_depth = 1; allowed_depth <= search_budget; allowed_depth++) {
         int pivot = 0;
         /*printf("searching with max depth: %d\n", allowed_depth);*/
 
@@ -406,7 +410,7 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
 
                 uint64_t phase2_start = get_microseconds();
                 move_t  *phase2_solution =
-                    solve_phase2(solve_context->phase2_context, config, config->max_depth - pivot - 1, stats);
+                    solve_phase2(solve_context->phase2_context, config, search_budget - pivot - 1, stats);
                 uint64_t phase2_end = get_microseconds();
                 phase2_time += phase2_end - phase2_start;
 
