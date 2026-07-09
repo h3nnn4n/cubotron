@@ -191,6 +191,21 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
         destroy_solve_context(thread_contexts[i].solve_context);
     }
 
+    if (config->n_solutions > 0) {
+        int      n       = 0;
+        solve_list_t *cur = solves;
+        while (cur != NULL && cur->solution != NULL) {
+            n++;
+            if (n == config->n_solutions) {
+                solve_list_t *tail = cur->next;
+                cur->next          = NULL;
+                destroy_solve_list(tail);
+                break;
+            }
+            cur = cur->next;
+        }
+    }
+
     return solves;
 }
 
