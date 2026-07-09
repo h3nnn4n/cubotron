@@ -710,6 +710,62 @@ void test_multi_solution_no_duplicates() {
     destroy_solve_list(solutions);
 }
 
+void test_stats_per_thread_consistent() {
+    config_t *config   = get_config();
+    config->n_solutions = 3;
+    config->max_depth   = 15;
+
+    coord_cube_t *cube = get_coord_cube();
+    scramble_cube(cube, 5);
+
+    solve_list_t *solutions = solve(cube, config);
+    TEST_ASSERT_NOT_NULL(solutions);
+    TEST_ASSERT_NOT_NULL(solutions->stats);
+
+    solve_stats_t *stats = solutions->stats;
+
+    TEST_ASSERT_EQUAL(stats->phase1_move_count + stats->phase2_move_count, stats->total_moves);
+
+    float phase_sum = stats->phase1_solve_time + stats->total_phase2_time;
+    TEST_ASSERT_TRUE(stats->wall_time >= phase_sum - 0.001f);
+
+    int sol_len = solution_length(solutions->solution);
+
+    TEST_ASSERT_EQUAL(sol_len, stats->solution_length);
+    TEST_ASSERT_EQUAL(sol_len, stats->solution_length);
+
+    free(cube);
+    destroy_solve_list(solutions);
+}
+
+void test_aggregate_consistent() {
+    config_t *config   = get_config();
+    config->n_solutions = 1;
+    config->max_depth   = 15;
+
+    coord_cube_t *cube = get_coord_cube();
+    scramble_cube(cube, 5);
+
+    solve_list_t *solutions = solve(cube, config);
+    TEST_ASSERT_NOT_NULL(solutions);
+    TEST_ASSERT_NOT_NULL(solutions->aggregate);
+
+    aggregate_stats_t *agg = solutions->aggregate;
+
+    TEST_ASSERT_TRUE(agg->total_moves_all_threads > 0);
+    TEST_ASSERT_TRUE(agg->overall_wall_time > 0);
+
+    float expected_mps = (float)agg->total_moves_all_threads / agg->overall_wall_time;
+    TEST_ASSERT_FLOAT_WITHIN(1.0f, expected_mps, agg->overall_moves_per_second);
+
+    TEST_ASSERT_EQUAL(agg->thread_count, agg->threads_die_aborted + agg->threads_completed);
+    TEST_ASSERT_TRUE(agg->total_phase2_successes <= agg->total_phase2_attempts);
+    TEST_ASSERT_TRUE(agg->solution_lengths_count >= 1);
+
+    free(cube);
+    destroy_solve_list(solutions);
+}
+
 void setUp() { init_config(); }
 void tearDown() {}
 
@@ -739,6 +795,8 @@ int main() {
     RUN_TEST(test_multi_solution_all_valid);
     // RUN_TEST(test_n_solutions_find_all); // slow: enumerates all solutions
     RUN_TEST(test_multi_solution_no_duplicates);
+    RUN_TEST(test_stats_per_thread_consistent);
+    RUN_TEST(test_aggregate_consistent);
     // RUN_TEST(test_random_phase2_solving);
     // RUN_TEST(test_random_full_solver_with_random_scrambles_multiple_solution);
 

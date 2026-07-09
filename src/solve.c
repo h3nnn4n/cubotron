@@ -519,11 +519,6 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
                     solution[pivot + phase2_move_count + 1] = MOVE_NULL;
 
                     stats->phase2_successes++;
-                    if (stats->solutions_found == 0) {
-                        stats->phase1_depth    = pivot + 1;
-                        stats->phase2_depth    = phase2_move_count;
-                        stats->solution_length = pivot + phase2_move_count + 1 + solve_context->prep_move_count;
-                    }
                     stats->phase1_move_count = move_count;
 
                     /*printf("phase1 solution found with depth %2d - ", pivot + 1);*/
@@ -572,6 +567,11 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
                             solves->phase2_solution = phase2_solution;
                             solves->solution        = solution;
 
+                            if (stats->solutions_found == 0) {
+                                stats->phase1_depth    = pivot + 1;
+                                stats->phase2_depth    = phase2_move_count;
+                                stats->solution_length = pivot + phase2_move_count + 1 + solve_context->prep_move_count;
+                            }
                             stats->solutions_found++;
                         } else {
                             free(phase1_solution);
@@ -716,7 +716,6 @@ move_t *solve_phase2(solve_context_t *solve_context, __attribute__((unused)) con
                     solution[i] = moves[move_stack[i]];
                 solution[pivot + 1] = MOVE_NULL;
 
-                stats->phase2_depth = pivot + 1;
                 stats->phase2_move_count += move_count;
 
                 // print_move_sequence(solution);
