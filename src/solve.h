@@ -87,5 +87,6 @@ void             destroy_solve_context(solve_context_t *context);
 
 // Utility functions for testing
 int is_phase1_moves_solved(const move_t *solution, const coord_cube_t *original_cube);
+int are_solutions_equal(const move_t *a, const move_t *b);
 
 #endif /* end of include guard */

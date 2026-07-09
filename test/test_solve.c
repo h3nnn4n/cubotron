@@ -27,15 +27,6 @@ static int count_solutions(solve_list_t *list) {
     return count;
 }
 
-static int solutions_equal(const move_t *a, const move_t *b) {
-    int i = 0;
-    while (a[i] != MOVE_NULL && b[i] != MOVE_NULL) {
-        if (a[i] != b[i])
-            return 0;
-        i++;
-    }
-    return a[i] == b[i];
-}
 
 void test_random_phase1_solving() {
     coord_cube_t *cube = get_coord_cube();
@@ -534,6 +525,25 @@ void test_all_sample_facelets_produce_valid_solutions() {
     }
 }
 
+void test_are_solutions_equal() {
+    move_t a[] = {MOVE_U1, MOVE_R2, MOVE_NULL};
+    move_t b[] = {MOVE_U1, MOVE_R2, MOVE_NULL};
+    move_t c[] = {MOVE_U1, MOVE_R3, MOVE_NULL};
+    move_t d[] = {MOVE_U1, MOVE_NULL};
+    move_t e[] = {MOVE_NULL};
+
+    move_t f[] = {MOVE_U2, MOVE_R2, MOVE_NULL};
+    move_t g[] = {MOVE_R2, MOVE_NULL};
+
+    TEST_ASSERT_TRUE(are_solutions_equal(a, b));
+    TEST_ASSERT_TRUE(are_solutions_equal(e, e));
+    TEST_ASSERT_FALSE(are_solutions_equal(a, c));
+    TEST_ASSERT_FALSE(are_solutions_equal(a, d));
+    TEST_ASSERT_FALSE(are_solutions_equal(a, e));
+    TEST_ASSERT_FALSE(are_solutions_equal(a, f));
+    TEST_ASSERT_FALSE(are_solutions_equal(a, g));
+}
+
 void test_solved_cube_returns_zero_length() {
     coord_cube_t *cube = get_coord_cube();
     reset_coord_cube(cube);
@@ -690,7 +700,7 @@ void test_multi_solution_no_duplicates() {
 
     for (int i = 0; i < count; i++) {
         for (int j = i + 1; j < count; j++) {
-            if (solutions_equal(sols[i], sols[j])) {
+            if (are_solutions_equal(sols[i], sols[j])) {
                 TEST_FAIL_MESSAGE("duplicate solution found");
             }
         }
@@ -722,12 +732,13 @@ int main() {
     RUN_TEST(test_solution_correctness_varied_depths);
     RUN_TEST(test_all_sample_facelets_produce_valid_solutions);
 
+    RUN_TEST(test_are_solutions_equal);
     RUN_TEST(test_solved_cube_returns_zero_length);
     RUN_TEST(test_max_depth_caps_total_solution_length);
     RUN_TEST(test_n_solutions_returns_correct_count);
     RUN_TEST(test_multi_solution_all_valid);
     // RUN_TEST(test_n_solutions_find_all); // slow: enumerates all solutions
-    // RUN_TEST(test_multi_solution_no_duplicates); // solver can produce duplicates
+    RUN_TEST(test_multi_solution_no_duplicates);
     // RUN_TEST(test_random_phase2_solving);
     // RUN_TEST(test_random_full_solver_with_random_scrambles_multiple_solution);
 

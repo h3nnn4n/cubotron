@@ -206,6 +206,18 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
         }
     }
 
+    if (config->n_solutions > 0) {
+        solve_list_t *outer = solves;
+        while (outer != NULL && outer->solution != NULL) {
+            solve_list_t *inner = outer->next;
+            while (inner != NULL && inner->solution != NULL) {
+                assert(!are_solutions_equal(outer->solution, inner->solution));
+                inner = inner->next;
+            }
+            outer = outer->next;
+        }
+    }
+
     return solves;
 }
 
@@ -292,6 +304,16 @@ move_t *patch_solution(solve_context_t *solve_context, solve_list_t *solution) {
     return solution->solution;
 }
 
+int are_solutions_equal(const move_t *a, const move_t *b) {
+    int i = 0;
+    while (a[i] != MOVE_NULL && b[i] != MOVE_NULL) {
+        if (a[i] != b[i])
+            return 0;
+        i++;
+    }
+    return a[i] == b[i];
+}
+
 // FIXME: we need a decent way to get just the phase1 solution
 move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve_stats_t *stats) {
     move_t *solution = NULL;
@@ -310,6 +332,8 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
     if (solves != NULL) {
         solves->stats = stats;
     }
+
+    solve_list_t *solves_head = solves;
 
     uint64_t phase2_time = 0;
     uint64_t start_time  = get_microseconds();
@@ -473,30 +497,46 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
                     /*printf("length: %d\n", length);*/
                     /*printf("\n");*/
 
-                    if (solves != NULL) {
-                        if (solves->solution != NULL) {
-                            solves->next = new_solve_list_node();
-                            solves       = solves->next;
+                    int is_duplicate = 0;
+                    if (config->n_solutions > 0) {
+                        for (solve_list_t *n = solves_head; n != NULL && n->solution != NULL; n = n->next) {
+                            if (are_solutions_equal(solution, n->solution)) {
+                                is_duplicate = 1;
+                                break;
+                            }
                         }
-
-                        solves->phase1_solution = phase1_solution;
-                        solves->phase2_solution = phase2_solution;
-                        solves->solution        = solution;
-                    } else {
-                        free(phase1_solution);
-                        free(phase2_solution);
-                        free(solution);
                     }
 
-                    assert(is_coord_solved(phase2_cube));
+                    if (is_duplicate) {
+                        free(solution);
+                        free(phase1_solution);
+                        free(phase2_solution);
+                    } else {
+                        if (solves != NULL) {
+                            if (solves->solution != NULL) {
+                                solves->next = new_solve_list_node();
+                                solves       = solves->next;
+                            }
 
-                    stats->solve_time = stats->phase1_solve_time + stats->phase2_solve_time;
+                            solves->phase1_solution = phase1_solution;
+                            solves->phase2_solution = phase2_solution;
+                            solves->solution        = solution;
+                        } else {
+                            free(phase1_solution);
+                            free(phase2_solution);
+                            free(solution);
+                        }
 
-                    if (config->n_solutions > 0) {
-                        int global_count = atomic_fetch_add(&get_config()->solutions_found, 1) + 1;
-                        if (global_count >= config->n_solutions) {
-                            get_config()->die = true;
-                            goto solution_found;
+                        assert(is_coord_solved(phase2_cube));
+
+                        stats->solve_time = stats->phase1_solve_time + stats->phase2_solve_time;
+
+                        if (config->n_solutions > 0) {
+                            int global_count = atomic_fetch_add(&get_config()->solutions_found, 1) + 1;
+                            if (global_count >= config->n_solutions) {
+                                get_config()->die = true;
+                                goto solution_found;
+                            }
                         }
                     }
                 }
