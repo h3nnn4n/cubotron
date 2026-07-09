@@ -37,8 +37,9 @@ void init_config() {
     config.timeout           = 1;
     config.scramble_moves    = NULL;
 
-    config.thread_count = N_MOVES;
-    config.die          = false;
+    config.thread_count   = N_MOVES;
+    config.die            = false;
+    config.solutions_found = 0;
 
     for (int i = 0; i < N_MOVES; i++) {
         config.move_black_list[i] = MOVE_NULL;

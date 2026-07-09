@@ -102,7 +102,8 @@ solve_list_t *solve_single(const coord_cube_t *original_cube) {
 }
 
 solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
-    get_config()->die = false;
+    get_config()->die              = false;
+    get_config()->solutions_found  = 0;
 
     if (is_coord_solved(original_cube)) {
         solve_list_t *solves = new_solve_list_node();
@@ -161,12 +162,23 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
     for (int i = 0; i < thread_count; i++) {
         solve_list_t *thread_solves = thread_contexts[i].solves;
         if (thread_solves->solution != NULL) {
-            if (solves == NULL) {
-                solves  = thread_solves;
-                current = solves;
-            } else {
-                current->next = thread_solves;
-                current       = current->next;
+            /* Walk this thread's full chain, linking every real solution node. */
+            solve_list_t *node = thread_solves;
+            while (node != NULL && node->solution != NULL) {
+                solve_list_t *next = node->next;
+                node->next         = NULL;
+                if (solves == NULL) {
+                    solves  = node;
+                    current = solves;
+                } else {
+                    current->next = node;
+                    current       = node;
+                }
+                node = next;
+            }
+            /* Free any trailing empty node left by a die-aborted search. */
+            if (node != NULL) {
+                destroy_solve_list_node(node);
             }
         } else {
             thread_solves->stats = NULL;
@@ -278,8 +290,13 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
     coord_cube_t      **cube_stack    = solve_context->cube_stack;
     int                *pruning_stack = solve_context->pruning_stack;
 
-    int      solution_count = 0;
-    uint64_t move_count     = 0;
+    uint64_t move_count = 0;
+
+    /* Attach stats to head node once. Inner nodes (from multi-solution search)
+     * keep stats=NULL so destroy does not double-free the shared struct. */
+    if (solves != NULL) {
+        solves->stats = stats;
+    }
 
     uint64_t phase2_time = 0;
     uint64_t start_time  = get_microseconds();
@@ -356,10 +373,6 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
                 stats->phase1_depth      = pivot + 1;
                 stats->phase1_move_count = move_count;
                 stats->phase1_solve_time = (float)(end_time - phase2_time - start_time) / 1000000.0;
-
-                if (solves != NULL) {
-                    solves->stats = stats;
-                }
             }
 
             if (is_phase1_solved(cube_stack[pivot])) {
@@ -379,7 +392,10 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
                 // zero means just phase1 solution.
                 // -1 is find all solutions
                 if (config->n_solutions == 0) {
-                    /*printf("doing just phase1!\n");*/
+                    int global_count = atomic_fetch_add(&get_config()->solutions_found, 1) + 1;
+                    if (global_count >= 1) {
+                        get_config()->die = true;
+                    }
                     goto solution_found;
                 }
 
@@ -403,8 +419,6 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
 
                     /*printf("failed to solve phase2\n");*/
                 } else {
-                    solution_count += 1;
-
                     int phase2_move_count = 0;
                     for (int i = 0; phase2_solution[i] != MOVE_NULL; i++)
                         phase2_move_count++;
@@ -460,13 +474,14 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
                     assert(is_coord_solved(phase2_cube));
 
                     stats->solve_time = stats->phase1_solve_time + stats->phase2_solve_time;
-                }
 
-                if (config->n_solutions != -1 && solution_count >= config->n_solutions) {
-                    goto solution_found;
-                } else {
-                    /*free(solution);*/
-                    /*solution = NULL;*/
+                    if (config->n_solutions > 0) {
+                        int global_count = atomic_fetch_add(&get_config()->solutions_found, 1) + 1;
+                        if (global_count >= config->n_solutions) {
+                            get_config()->die = true;
+                            goto solution_found;
+                        }
+                    }
                 }
             }
 
@@ -602,8 +617,6 @@ move_t *solve_phase2(solve_context_t *solve_context, __attribute__((unused)) con
                 stats->phase2_depth = pivot + 1;
                 stats->phase2_move_count += move_count;
                 stats->phase2_solve_time = (float)(end_time - start_time) / 1000000.0;
-
-                get_config()->die = true;
 
                 // print_move_sequence(solution);
 
