@@ -214,24 +214,22 @@ solve_list_t *solve_thread(void *arg) {
     solve_context_t  *solve_context  = thread_context->solve_context;
     solve_list_t     *solves         = thread_context->solves;
 
-    const move_t *solution = solve_phase1(solve_context, solves, thread_context->stats);
+    solve_phase1(solve_context, solves, thread_context->stats);
 
-    if (solution == NULL) {
-        return NULL;
-    } else {
+    solve_list_t *node = solves;
+    while (node != NULL && node->solution != NULL) {
+        patch_solution(solve_context, node);
+
         coord_cube_t *cube = get_coord_cube();
         copy_coord_cube(cube, solve_context->original_cube);
-
-        solution = patch_solution(solve_context, solves);
-
-        for (int i = 0; solution[i] != MOVE_NULL; i++) {
-            coord_apply_move(cube, solution[i]);
+        for (int i = 0; node->solution[i] != MOVE_NULL; i++) {
+            coord_apply_move(cube, node->solution[i]);
         }
-
         assert(is_phase1_solved(cube));
         assert(is_phase2_solved(cube));
-
         free(cube);
+
+        node = node->next;
     }
 
     return solves;
