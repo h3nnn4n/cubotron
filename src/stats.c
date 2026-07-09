@@ -140,5 +140,6 @@ void print_solve_stats(const solve_stats_t *stats) {
     printf("  Phase 1 move count: %d\n", stats->phase1_move_count);
     printf("  Phase 2 move count: %d\n", stats->phase2_move_count);
     printf("  Move count: %d\n", stats->move_count);
-    printf("  Moves per second: %.2f\n", stats->move_count / stats->solve_time);
+    float mps = stats->solve_time > 0.0f ? (float)stats->move_count / stats->solve_time : 0.0f;
+    printf("  Moves per second: %.2f\n", mps);
 }
