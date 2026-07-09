@@ -24,27 +24,79 @@
 #ifndef _STATS
 #define _STATS
 
-typedef struct {
-    int used;
+#include <stdint.h>
 
+typedef struct {
     int phase1_depth;
     int phase2_depth;
     int solution_length;
 
     int phase1_move_count;
     int phase2_move_count;
-    int move_count;
+    int phase2_attempts;
+    int phase2_successes;
+    int solutions_found;
+    int die_aborted;
 
+    int   total_moves;
+    float total_phase2_time;
     float phase1_solve_time;
-    float phase2_solve_time;
-    float solve_time;
+    float wall_time;
 } solve_stats_t;
 
-solve_stats_t *get_current_stat();
-void           finish_stats();
+typedef struct {
+    float min, max, avg, std, p90, p95, p99;
+} float_aggregate_t;
+
+typedef struct {
+    int   min, max;
+    float avg, std, p90, p95, p99;
+} int_aggregate_t;
+
+typedef struct {
+    int thread_count;
+
+    float_aggregate_t phase1_time;
+    float_aggregate_t phase2_time;
+    float_aggregate_t wall_time;
+    int_aggregate_t   phase1_moves;
+    int_aggregate_t   phase2_moves;
+    int_aggregate_t   total_moves;
+    int_aggregate_t   solutions_found;
+
+    int64_t total_moves_all_threads;
+    float overall_wall_time;
+    float overall_moves_per_second;
+
+    int   total_phase2_attempts;
+    int   total_phase2_successes;
+    float phase2_success_rate;
+
+    int   threads_die_aborted;
+    int   threads_completed;
+
+    int   solution_lengths_min;
+    int   solution_lengths_max;
+    float solution_lengths_avg;
+    int   solution_lengths_count;
+} aggregate_stats_t;
+
+void finalize_solve_stats(solve_stats_t *stats, uint64_t start_us,
+                          uint64_t end_us, uint64_t total_phase2_time_us,
+                          int die_aborted);
+
+aggregate_stats_t *compute_aggregate_stats(solve_stats_t **thread_stats,
+                                           int thread_count,
+                                           const int *solution_lengths,
+                                           int n_solution_lengths);
+
+void print_aggregate_stats(const aggregate_stats_t *agg,
+                           const solve_stats_t *first_solution);
+
+void print_solve_stats(const solve_stats_t *stats);
+
 void           init_stats();
 void           dump_stats();
-void           print_solve_stats(const solve_stats_t *stats);
 solve_stats_t *get_solve_stats();
 
 #endif

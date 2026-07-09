@@ -117,15 +117,15 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
         solves->phase2_solution[0] = MOVE_NULL;
 
         solve_stats_t *stats = get_solve_stats();
-        stats->phase1_depth    = 0;
-        stats->phase2_depth    = 0;
-        stats->solution_length = 0;
-        stats->phase1_solve_time = 0.0f;
-        stats->phase2_solve_time = 0.0f;
-        stats->solve_time      = 0.0f;
-        stats->phase1_move_count = 0;
-        stats->phase2_move_count = 0;
-        stats->move_count      = 0;
+        stats->phase1_depth       = 0;
+        stats->phase2_depth       = 0;
+        stats->solution_length    = 0;
+        stats->phase1_solve_time  = 0.0f;
+        stats->total_phase2_time  = 0.0f;
+        stats->wall_time          = 0.0f;
+        stats->phase1_move_count  = 0;
+        stats->phase2_move_count  = 0;
+        stats->total_moves        = 0;
         solves->stats = stats;
 
         return solves;
@@ -159,12 +159,29 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
     solve_list_t *solves  = NULL;
     solve_list_t *current = NULL;
 
+    solve_stats_t *all_thread_stats[thread_count];
+    int is_winner[thread_count];
+    for (int i = 0; i < thread_count; i++) {
+        all_thread_stats[i] = thread_contexts[i].stats;
+        is_winner[i]        = 0;
+    }
+
+#define MAX_SOLUTION_LENGTHS 1024
+    int all_lengths[MAX_SOLUTION_LENGTHS];
+    int n_lengths = 0;
+
     for (int i = 0; i < thread_count; i++) {
         solve_list_t *thread_solves = thread_contexts[i].solves;
         if (thread_solves->solution != NULL) {
-            /* Walk this thread's full chain, linking every real solution node. */
+            is_winner[i] = 1;
             solve_list_t *node = thread_solves;
             while (node != NULL && node->solution != NULL) {
+                int len = 0;
+                while (node->solution[len] != MOVE_NULL) len++;
+                if (n_lengths < MAX_SOLUTION_LENGTHS) {
+                    all_lengths[n_lengths++] = len;
+                }
+
                 solve_list_t *next = node->next;
                 node->next         = NULL;
                 if (solves == NULL) {
@@ -176,13 +193,40 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
                 }
                 node = next;
             }
-            /* Free any trailing empty node left by a die-aborted search. */
             if (node != NULL) {
                 destroy_solve_list_node(node);
             }
         } else {
             thread_solves->stats = NULL;
             destroy_solve_list(thread_solves);
+        }
+    }
+
+    if (config->n_solutions > 0) {
+        int      n       = 0;
+        solve_list_t *cur = solves;
+        while (cur != NULL && cur->solution != NULL) {
+            n++;
+            if (n == config->n_solutions) {
+                solve_list_t *tail = cur->next;
+                cur->next          = NULL;
+                destroy_solve_list(tail);
+                break;
+            }
+            cur = cur->next;
+        }
+    }
+
+    aggregate_stats_t *aggregate = compute_aggregate_stats(
+        all_thread_stats, thread_count, all_lengths, n_lengths);
+    if (solves != NULL) {
+        solves->aggregate = aggregate;
+    } else {
+        free(aggregate);
+    }
+
+    for (int i = 0; i < thread_count; i++) {
+        if (!is_winner[i]) {
             free(thread_contexts[i].stats);
         }
     }
@@ -356,6 +400,8 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
 
         do {
             if (get_config()->die) {
+                uint64_t die_end = get_microseconds();
+                finalize_solve_stats(stats, start_time, die_end, phase2_time, 1);
                 return NULL;
             }
 
@@ -433,6 +479,7 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
                 // zero means just phase1 solution.
                 // -1 is find all solutions
                 if (config->n_solutions == 0) {
+                    stats->solutions_found++;
                     int global_count = atomic_fetch_add(&get_config()->solutions_found, 1) + 1;
                     if (global_count >= 1) {
                         get_config()->die = true;
@@ -450,6 +497,7 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
                     solve_phase2(solve_context->phase2_context, config, search_budget - pivot - 1, stats);
                 uint64_t phase2_end = get_microseconds();
                 phase2_time += phase2_end - phase2_start;
+                stats->phase2_attempts++;
 
                 if (phase2_solution == NULL) {
                     free(solution);
@@ -470,11 +518,13 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
                     }
                     solution[pivot + phase2_move_count + 1] = MOVE_NULL;
 
-                    stats->phase1_depth      = pivot + 1;
-                    stats->phase2_solve_time = (float)(phase2_end - phase2_start) / 1000000.0;
-                    stats->solution_length   = pivot + phase2_move_count + 1 + solve_context->prep_move_count;
+                    stats->phase2_successes++;
+                    if (stats->solutions_found == 0) {
+                        stats->phase1_depth    = pivot + 1;
+                        stats->phase2_depth    = phase2_move_count;
+                        stats->solution_length = pivot + phase2_move_count + 1 + solve_context->prep_move_count;
+                    }
                     stats->phase1_move_count = move_count;
-                    stats->move_count        = move_count + phase2_move_count;
 
                     /*printf("phase1 solution found with depth %2d - ", pivot + 1);*/
                     /*for (int i = 0; i <= pivot; i++) {*/
@@ -521,6 +571,8 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
                             solves->phase1_solution = phase1_solution;
                             solves->phase2_solution = phase2_solution;
                             solves->solution        = solution;
+
+                            stats->solutions_found++;
                         } else {
                             free(phase1_solution);
                             free(phase2_solution);
@@ -528,8 +580,6 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
                         }
 
                         assert(is_coord_solved(phase2_cube));
-
-                        stats->solve_time = stats->phase1_solve_time + stats->phase2_solve_time;
 
                         if (config->n_solutions > 0) {
                             int global_count = atomic_fetch_add(&get_config()->solutions_found, 1) + 1;
@@ -568,7 +618,7 @@ solution_found:
         solves->next = NULL;
     }
 
-    stats->solve_time = (float)(end_time - start_time) / 1000000.0;
+    finalize_solve_stats(stats, start_time, end_time, phase2_time, 0);
 
     return solution;
 }
@@ -607,9 +657,6 @@ move_t *solve_phase2(solve_context_t *solve_context, __attribute__((unused)) con
     move_t             *move_stack    = solve_context->move_stack;
     coord_cube_t      **cube_stack    = solve_context->cube_stack;
     int                *pruning_stack = solve_context->pruning_stack;
-
-    uint64_t start_time = get_microseconds();
-    uint64_t end_time   = 0;
 
     for (int allowed_depth = 1; allowed_depth <= max_depth; allowed_depth++) {
         int pivot = 0;
@@ -669,11 +716,8 @@ move_t *solve_phase2(solve_context_t *solve_context, __attribute__((unused)) con
                     solution[i] = moves[move_stack[i]];
                 solution[pivot + 1] = MOVE_NULL;
 
-                end_time = get_microseconds();
-
                 stats->phase2_depth = pivot + 1;
                 stats->phase2_move_count += move_count;
-                stats->phase2_solve_time = (float)(end_time - start_time) / 1000000.0;
 
                 // print_move_sequence(solution);
 

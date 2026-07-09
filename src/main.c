@@ -189,7 +189,8 @@ int main(int argc, char **argv) {
         }
 
         if (solution != NULL) {
-            print_solve_stats(solution->stats);
+            printf("\n");
+            print_aggregate_stats(solution->aggregate, solution->stats);
         }
 
         destroy_solve_list(solution);

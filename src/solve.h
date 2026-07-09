@@ -41,7 +41,8 @@ typedef struct solve_list_s {
     move_t *phase2_solution;
     move_t *solution;
 
-    solve_stats_t *stats;
+    solve_stats_t     *stats;
+    aggregate_stats_t *aggregate;
 } solve_list_t;
 
 typedef struct solve_context_s solve_context_t;
