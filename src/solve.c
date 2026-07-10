@@ -110,6 +110,19 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
         solves->phase1_solution[0] = MOVE_NULL;
         solves->phase2_solution = malloc(sizeof(move_t));
         solves->phase2_solution[0] = MOVE_NULL;
+
+        solve_stats_t *stats = get_solve_stats();
+        stats->phase1_depth      = 0;
+        stats->phase2_depth      = 0;
+        stats->solution_length   = 0;
+        stats->phase1_solve_time = 0.0f;
+        stats->phase2_solve_time = 0.0f;
+        stats->solve_time        = 0.0f;
+        stats->phase1_move_count = 0;
+        stats->phase2_move_count = 0;
+        stats->move_count        = 0;
+        solves->stats = stats;
+
         return solves;
     }
 
