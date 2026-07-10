@@ -83,18 +83,18 @@ float percentile_f(const float *sorted, int n, float p) {
     return sorted[lower] + frac * (sorted[upper] - sorted[lower]);
 }
 
-void compute_float_aggregate(float *values, int n,
+void compute_float_aggregate(const float *values, int n,
                              float *out_min, float *out_max,
                              float *out_avg, float *out_std,
                              float *out_p90, float *out_p95, float *out_p99) {
     if (n <= 0) {
-        if (out_min) { *out_min = 0; }
-        if (out_max) { *out_max = 0; }
-        if (out_avg) { *out_avg = 0; }
-        if (out_std) { *out_std = 0; }
-        if (out_p90) { *out_p90 = 0; }
-        if (out_p95) { *out_p95 = 0; }
-        if (out_p99) { *out_p99 = 0; }
+        if (out_min) *out_min = 0;
+        if (out_max) *out_max = 0;
+        if (out_avg) *out_avg = 0;
+        if (out_std) *out_std = 0;
+        if (out_p90) *out_p90 = 0;
+        if (out_p95) *out_p95 = 0;
+        if (out_p99) *out_p99 = 0;
         return;
     }
 
@@ -116,13 +116,13 @@ void compute_int_aggregate(const int *values, int n,
                            float *out_avg, float *out_std,
                            float *out_p90, float *out_p95, float *out_p99) {
     if (n <= 0) {
-        if (out_min) { *out_min = 0; }
-        if (out_max) { *out_max = 0; }
-        if (out_avg) { *out_avg = 0; }
-        if (out_std) { *out_std = 0; }
-        if (out_p90) { *out_p90 = 0; }
-        if (out_p95) { *out_p95 = 0; }
-        if (out_p99) { *out_p99 = 0; }
+        if (out_min) *out_min = 0;
+        if (out_max) *out_max = 0;
+        if (out_avg) *out_avg = 0;
+        if (out_std) *out_std = 0;
+        if (out_p90) *out_p90 = 0;
+        if (out_p95) *out_p95 = 0;
+        if (out_p99) *out_p99 = 0;
         return;
     }
 
