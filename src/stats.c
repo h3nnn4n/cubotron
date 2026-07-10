@@ -75,6 +75,8 @@ aggregate_stats_t *compute_aggregate_stats(solve_stats_t **thread_stats,
 
     float buf_f[thread_count];
     int   buf_i[thread_count];
+    memset(buf_f, 0, sizeof(buf_f));
+    memset(buf_i, 0, sizeof(buf_i));
 
     extract_float(thread_stats, thread_count, buf_f, offsetof(solve_stats_t, phase1_solve_time));
     compute_float_aggregate(buf_f, thread_count, &agg->phase1_time.min, &agg->phase1_time.max,
@@ -116,7 +118,7 @@ aggregate_stats_t *compute_aggregate_stats(solve_stats_t **thread_stats,
     int died = 0;
     float max_wall = 0.0f;
     for (int i = 0; i < thread_count; i++) {
-        solve_stats_t *s = thread_stats[i];
+        const solve_stats_t *s = thread_stats[i];
         total_m  += s->total_moves;
         total_p2a += s->phase2_attempts;
         total_p2s += s->phase2_successes;
