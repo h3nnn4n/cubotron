@@ -44,5 +44,7 @@ solve_stats_t *get_current_stat();
 void           finish_stats();
 void           init_stats();
 void           dump_stats();
+void           print_solve_stats(const solve_stats_t *stats);
+solve_stats_t *get_solve_stats();
 
 #endif

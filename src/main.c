@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
                                     {"benchmark-slow", no_argument, &config->do_benchmark_slow, 1},
                                     {"rebuild-tables", no_argument, &config->rebuild_tables, 1},
                                     {"solve", required_argument, 0, 's'},
-                                    {"solve-scramble", optional_argument, 0, 'c'},
+                                    {"solve-scramble", required_argument, 0, 'c'},
                                     {"max-depth", required_argument, 0, 'm'},
                                     {"n-solutions", required_argument, 0, 'n'},
                                     {"move-blacklist", required_argument, 0, 'b'},
@@ -174,24 +174,23 @@ int main(int argc, char **argv) {
             solution = solve_facelets(facelets_to_solve, config);
         }
 
-        printf("solution:\n");
-        do {
+        // Print all solutions
+        solve_list_t *current      = solution;
+        int           solution_num = 1;
+        while (current != NULL && current->solution != NULL) {
             int length = 0;
-
-            for (int i = 0; solution->solution[i] != MOVE_NULL; i++, length++) {
+            for (int i = 0; current->solution[i] != MOVE_NULL; i++, length++) {
             }
-            printf("length: %2d: ", length);
-            print_move_sequence(solution->solution);
+            printf("Solution %2d (length %d): ", solution_num, length);
+            print_move_sequence(current->solution);
 
-            solve_list_t *old_solution = solution;
+            current = current->next;
+            solution_num++;
+        }
 
-            solution = solution->next;
-
-            free(old_solution->phase1_solution);
-            free(old_solution->phase2_solution);
-            free(old_solution->solution);
-            free(old_solution);
-        } while (solution != NULL && solution->solution != NULL);
+        if (solution != NULL) {
+            print_solve_stats(solution->stats);
+        }
 
         destroy_solve_list(solution);
         free(facelets_to_solve);

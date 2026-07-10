@@ -122,3 +122,23 @@ void dump_stats() {
 
     fclose(f);
 }
+
+solve_stats_t *get_solve_stats() {
+    solve_stats_t *stats = (solve_stats_t *)malloc(sizeof(solve_stats_t));
+    memset_(stats, 0, sizeof(solve_stats_t));
+    return stats;
+}
+
+void print_solve_stats(const solve_stats_t *stats) {
+    printf("Solve stats:\n");
+    printf("  Phase 1 time: %f seconds\n", stats->phase1_solve_time);
+    printf("  Phase 2 time: %f seconds\n", stats->phase2_solve_time);
+    printf("  Total time: %f seconds\n", stats->solve_time);
+    printf("  Phase 1 depth: %d\n", stats->phase1_depth);
+    printf("  Phase 2 depth: %d\n", stats->phase2_depth);
+    printf("  Solution length: %d\n", stats->solution_length);
+    printf("  Phase 1 move count: %d\n", stats->phase1_move_count);
+    printf("  Phase 2 move count: %d\n", stats->phase2_move_count);
+    printf("  Move count: %d\n", stats->move_count);
+    printf("  Moves per second: %.2f\n", stats->move_count / stats->solve_time);
+}
