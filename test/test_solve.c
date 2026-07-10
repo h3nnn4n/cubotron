@@ -436,6 +436,22 @@ void test_edge_case_solved_cube() {
     destroy_solve_list(solutions);
 }
 
+void test_solved_cube_returns_zero_length() {
+    coord_cube_t *cube = get_coord_cube();
+    reset_coord_cube(cube);
+
+    solve_list_t *solutions = solve_single(cube);
+    TEST_ASSERT_NOT_NULL(solutions);
+    TEST_ASSERT_NOT_NULL(solutions->solution);
+
+    int length = 0;
+    for (int i = 0; solutions->solution[i] != MOVE_NULL; i++) length++;
+    TEST_ASSERT_EQUAL(0, length);
+
+    free(cube);
+    destroy_solve_list(solutions);
+}
+
 void test_edge_case_single_move_scrambles() {
     coord_cube_t *cube = get_coord_cube();
 
@@ -528,6 +544,7 @@ int main() {
     RUN_TEST(test_solution_validity);
     RUN_TEST(test_phase2_solves_r2_l2_in_2_moves);
     RUN_TEST(test_edge_case_solved_cube);
+    RUN_TEST(test_solved_cube_returns_zero_length);
     RUN_TEST(test_edge_case_single_move_scrambles);
     RUN_TEST(test_solution_correctness_varied_depths);
     RUN_TEST(test_all_sample_facelets_produce_valid_solutions);

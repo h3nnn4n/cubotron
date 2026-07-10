@@ -102,6 +102,17 @@ solve_list_t *solve_single(const coord_cube_t *original_cube) {
 }
 
 solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
+    if (is_coord_solved(original_cube)) {
+        solve_list_t *solves = new_solve_list_node();
+        solves->solution = malloc(sizeof(move_t));
+        solves->solution[0] = MOVE_NULL;
+        solves->phase1_solution = malloc(sizeof(move_t));
+        solves->phase1_solution[0] = MOVE_NULL;
+        solves->phase2_solution = malloc(sizeof(move_t));
+        solves->phase2_solution[0] = MOVE_NULL;
+        return solves;
+    }
+
     get_config()->die = false;
 
     const int        thread_count = config->thread_count;
