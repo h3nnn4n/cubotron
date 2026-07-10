@@ -197,7 +197,7 @@ void print_aggregate_stats(const aggregate_stats_t *agg,
     print_int_aggregate("Solutions found (per thread)", &agg->solutions_found);
     printf("\n");
 
-    printf("  Total moves (all threads): %lld\n", (long long)agg->total_moves_all_threads);
+    printf("  Total moves (all threads): %" PRId64 "\n", agg->total_moves_all_threads);
     printf("  Moves per second:          %.2f\n", agg->overall_moves_per_second);
     printf("  Wall time:                 %.6f s\n", agg->overall_wall_time);
     printf("\n");
