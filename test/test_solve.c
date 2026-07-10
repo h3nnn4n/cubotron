@@ -92,17 +92,23 @@ void test_phase1_solution_generator() {
 void test_phase1_solution_count() {
     config_t *config             = get_config();
     uint32_t  original_max_depth = config->max_depth;
-    config->max_depth            = 10;
+    config->max_depth            = 22;
 
     cube_cubie_t *cubie_cube = build_cubie_cube_from_str(sample_facelets[0]);
     coord_cube_t *cube       = make_coord_cube(cubie_cube);
+    coord_cube_t *original   = get_coord_cube();
+    copy_coord_cube(original, cube);
 
     solve_list_t *solutions = solve(cube, config);
 
     config->max_depth = original_max_depth;
-    TEST_ASSERT_TRUE(solutions != NULL);
-    TEST_ASSERT_TRUE(solutions->solution != NULL);
+    TEST_ASSERT_NOT_NULL(solutions);
+    TEST_ASSERT_NOT_NULL(solutions->solution);
 
+    TEST_ASSERT_TRUE(is_move_sequence_a_solution_for_cube(original, solutions->solution));
+    TEST_ASSERT_TRUE(solution_length(solutions->solution) <= 22);
+
+    free(original);
     free(cubie_cube);
     free(cube);
     destroy_solve_list(solutions);
@@ -275,59 +281,58 @@ void test_random_full_solver_with_sample_cubes_single_solution() {
 }
 
 void test_solve_with_move_blacklist() {
-    for (move_t base_move = 0; base_move < N_MOVES; base_move += 3) {
+    struct {
+        const char *scramble;
+        move_t      bl[8];
+    } cases[] = {
+        {"R U R' F2 D",     {MOVE_B2,                                MOVE_NULL}},
+        {"F2 D L B' U",     {MOVE_R2,                                MOVE_NULL}},
+        {"U F2 D B' U2",    {MOVE_L1, MOVE_L2, MOVE_L3,
+                             MOVE_R1, MOVE_R2, MOVE_R3,              MOVE_NULL}},
+        {"L R' F2 B L2",    {MOVE_U1, MOVE_U2, MOVE_U3,
+                             MOVE_D1, MOVE_D2, MOVE_D3,              MOVE_NULL}},
+    };
+    int n_cases = sizeof(cases) / sizeof(cases[0]);
+
+    for (int c = 0; c < n_cases; c++) {
         init_config();
 
-        char buffer[512];
-        sprintf(buffer, "basemove: %2d %s  blacklist:", base_move, move_to_str(base_move));
+        config_t *config = get_config();
+        config->max_depth = 10;
 
-        config_t *config  = get_config();
-        config->max_depth = 30; // solves with blacklists take longer
-        for (int move_offset = 0; move_offset < 3; move_offset++) {
-            move_t move                   = base_move + move_offset;
-            config->move_black_list[move] = move;
-
-            strncat(buffer, " ", sizeof(buffer) - strlen(buffer) - 1);
-            strncat(buffer, move_to_str(move), sizeof(buffer) - strlen(buffer) - 1);
+        for (int b = 0; cases[c].bl[b] != MOVE_NULL; b++) {
+            config->move_black_list[cases[c].bl[b]] = cases[c].bl[b];
         }
 
-        TEST_MESSAGE(buffer);
+        coord_cube_t *cube = get_coord_cube();
+        move_t *scramble_moves = move_sequence_str_to_moves(cases[c].scramble);
+        for (int i = 0; scramble_moves[i] != MOVE_NULL; i++) {
+            coord_apply_move(cube, scramble_moves[i]);
+        }
+        free(scramble_moves);
 
-        char blacklisted_char = move_to_str(base_move)[0];
+        coord_cube_t *original = get_coord_cube();
+        copy_coord_cube(original, cube);
 
-        for (int i = 0; i < 10; i++) {
-            coord_cube_t *cube = get_coord_cube();
+        solve_list_t *solution = solve(cube, config);
+        TEST_ASSERT_NOT_NULL_MESSAGE(solution, cases[c].scramble);
 
-            scramble_cube(cube, 50);
-
-            TEST_ASSERT_FALSE(is_phase1_solved(cube));
-            TEST_ASSERT_FALSE(is_phase2_solved(cube));
-
-            solve_list_t *solution = solve(cube, config);
-
-            for (int i = 0; solution->solution[i] != MOVE_NULL; i++) {
-                coord_apply_move(cube, solution->solution[i]);
-
-                if (move_to_str(solution->solution[i])[0] == blacklisted_char) {
-                    sprintf(buffer, "solution has blacklisted move:");
-
-                    for (int i = 0; solution->solution[i] != MOVE_NULL; i++) {
-                        strncat(buffer, " ", sizeof(buffer) - strlen(buffer) - 1);
-                        strncat(buffer, move_to_str(solution->solution[i]), sizeof(buffer) - strlen(buffer) - 1);
-                    }
-
-                    TEST_MESSAGE(buffer);
-
-                    TEST_FAIL();
-                }
+        for (int j = 1; solution->solution[j] != MOVE_NULL; j++) {
+            if (config->move_black_list[solution->solution[j]] != MOVE_NULL) {
+                char msg[256];
+                snprintf(msg, sizeof(msg), "scramble %s: blacklisted move %s appears at index %d",
+                         cases[c].scramble, move_to_str(solution->solution[j]), j);
+                TEST_FAIL_MESSAGE(msg);
             }
-
-            TEST_ASSERT_TRUE(is_phase1_solved(cube));
-            TEST_ASSERT_TRUE(is_phase2_solved(cube));
-
-            free(solution);
-            free(cube);
         }
+
+        TEST_ASSERT_TRUE_MESSAGE(
+            is_move_sequence_a_solution_for_cube(original, solution->solution),
+            cases[c].scramble);
+
+        free(original);
+        free(cube);
+        destroy_solve_list(solution);
     }
 }
 
@@ -779,7 +784,7 @@ int main() {
 
     // RUN_TEST(test_random_phase1_solving);
     RUN_TEST(test_phase1_solution_generator);
-    // RUN_TEST(test_phase1_solution_count);
+    RUN_TEST(test_phase1_solution_count);
     RUN_TEST(test_solution_correctness_comprehensive);
     RUN_TEST(test_solution_validity);
     RUN_TEST(test_phase2_solves_r2_l2_in_2_moves);
@@ -801,9 +806,9 @@ int main() {
     // RUN_TEST(test_random_full_solver_with_random_scrambles_multiple_solution);
 
     // RUN_TEST(test_random_full_solver_with_sample_cubes_single_solution);
-    // RUN_TEST(test_facelets_solve_with_max_length);
+    RUN_TEST(test_facelets_solve_with_max_length);
     // RUN_TEST(test_random_full_solver_with_random_scrambles_single_solution);
-    // RUN_TEST(test_solve_with_move_blacklist); // Passing but way to slow
+    RUN_TEST(test_solve_with_move_blacklist);
 
     return UNITY_END();
 }
