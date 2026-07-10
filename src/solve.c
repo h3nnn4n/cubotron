@@ -41,6 +41,7 @@ solve_list_t *new_solve_list_node() {
 
     node->next            = NULL;
     node->stats           = NULL;
+    node->aggregate       = NULL;
     node->phase1_solution = NULL;
     node->phase2_solution = NULL;
     node->solution        = NULL;
@@ -66,6 +67,9 @@ void destroy_solve_list_node(solve_list_t *node) {
 
     free(node->stats);
     node->stats = NULL;
+
+    free(node->aggregate);
+    node->aggregate = NULL;
 
     free(node);
 }
