@@ -45,14 +45,14 @@ void finalize_solve_stats(solve_stats_t *stats, uint64_t start_us,
 static void extract_float(solve_stats_t **thread_stats, int n,
                           float *out, size_t field_offset) {
     for (int i = 0; i < n; i++) {
-        out[i] = *(float *)((char *)thread_stats[i] + field_offset);
+        memcpy(&out[i], (char *)thread_stats[i] + field_offset, sizeof(float));
     }
 }
 
 static void extract_int(solve_stats_t **thread_stats, int n,
                         int *out, size_t field_offset) {
     for (int i = 0; i < n; i++) {
-        out[i] = *(int *)((char *)thread_stats[i] + field_offset);
+        memcpy(&out[i], (char *)thread_stats[i] + field_offset, sizeof(int));
     }
 }
 
