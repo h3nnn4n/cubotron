@@ -109,6 +109,8 @@ static void run_benchmark_internal(const char *base_type, int warmup_duration_ms
 
     printf("  Completed %d warmup solves\n\n", warmup_count);
 
+    uint64_t warmup_end = get_microseconds();
+
     printf("Benchmark phase...\n");
     int     max_samples  = 1000000;
     double *temp_times   = malloc(max_samples * sizeof(double));
@@ -153,7 +155,7 @@ static void run_benchmark_internal(const char *base_type, int warmup_duration_ms
     benchmark_result_t *result = make_benchmark_result(sample_count);
     snprintf(result->type, sizeof(result->type), "%s", type);
     result->warmup_count          = warmup_count;
-    result->warmup_duration_ms    = (int)(get_microseconds() - warmup_start) / 1000;
+    result->warmup_duration_ms    = (int)(warmup_end - warmup_start) / 1000;
     result->benchmark_duration_ms = (int)actual_bench_duration / 1000;
     result->solves_per_second     = sample_count / (actual_bench_duration / 1000000.0);
 
