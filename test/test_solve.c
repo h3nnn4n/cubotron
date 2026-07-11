@@ -526,6 +526,39 @@ void test_all_sample_facelets_produce_valid_solutions() {
     }
 }
 
+void test_multiple_solutions() {
+    config_t *config = get_config();
+    int       orig_n_solutions = config->n_solutions;
+    int       orig_max_depth   = config->max_depth;
+    config->n_solutions = 3;
+    config->max_depth   = 12;
+
+    coord_cube_t *cube = get_coord_cube();
+    scramble_cube(cube, 10);
+
+    solve_list_t *solutions = solve(cube, config);
+
+    int count = 0;
+    for (solve_list_t *cur = solutions; cur != NULL && cur->solution != NULL; cur = cur->next) {
+        coord_cube_t *test_cube = get_coord_cube();
+        copy_coord_cube(test_cube, cube);
+        for (int i = 0; cur->solution[i] != MOVE_NULL; i++) {
+            coord_apply_move(test_cube, cur->solution[i]);
+        }
+        TEST_ASSERT_TRUE(is_coord_solved(test_cube));
+        free(test_cube);
+        count++;
+    }
+
+    TEST_ASSERT_TRUE(count >= 1);
+
+    destroy_solve_list(solutions);
+    free(cube);
+
+    config->n_solutions = orig_n_solutions;
+    config->max_depth   = orig_max_depth;
+}
+
 void setUp() { init_config(); }
 void tearDown() {}
 
@@ -545,6 +578,7 @@ int main() {
     RUN_TEST(test_phase2_solves_r2_l2_in_2_moves);
     RUN_TEST(test_edge_case_solved_cube);
     RUN_TEST(test_solved_cube_returns_zero_length);
+    RUN_TEST(test_multiple_solutions);
     RUN_TEST(test_edge_case_single_move_scrambles);
     RUN_TEST(test_solution_correctness_varied_depths);
     RUN_TEST(test_all_sample_facelets_produce_valid_solutions);
