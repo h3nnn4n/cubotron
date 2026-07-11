@@ -56,7 +56,6 @@ OBJS_NO_MAIN := $(filter-out %main.o, $(OBJS)) \
 .PHONY: heapcheck-solve
 .PHONY: heapcheck-solve-blacklist
 .PHONY: heapcheck-benchmark
-.PHONY: smoke
 .PHONY: ci
 
 all: build
@@ -98,10 +97,6 @@ test: pcg $(TEST_TARGETS)
 test-%: $(BUILDDIR)/test/test_% pcg
 	@echo $(ECHOFLAGS) "[RUN]\t$(BUILDDIR)/test/test_$*"
 	@$(BUILDDIR)/test/test_$*
-
-smoke: $(TARGET)
-	@echo $(ECHOFLAGS) "[SMOKE]\tbenchmark"
-	@test/smoke_benchmark.sh
 
 pcg: $(BUILDDIR)/.pcg_core
 
