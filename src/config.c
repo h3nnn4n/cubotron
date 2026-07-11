@@ -34,6 +34,7 @@ void init_config() {
     config.rebuild_tables    = 0;
     config.max_depth         = 25;
     config.n_solutions       = 1;
+    config.phase1_only       = false;
     config.timeout           = 1;
     config.scramble_moves    = NULL;
 

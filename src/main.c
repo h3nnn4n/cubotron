@@ -53,6 +53,7 @@ int main(int argc, char **argv) {
                                     {"max-depth", required_argument, 0, 'm'},
                                     {"n-solutions", required_argument, 0, 'n'},
                                     {"move-blacklist", required_argument, 0, 'b'},
+                                    {"phase1-only", no_argument, 0, '1'},
                                     {0, 0, 0, 0}};
 
     while (1) {
@@ -136,12 +137,21 @@ int main(int argc, char **argv) {
                 config->scramble_moves = move_sequence_str_to_moves(optarg);
             } break;
 
+            case '1':
+                config->phase1_only = true;
+                config->n_solutions = 0;
+                break;
+
             case '?':
                 /* getopt_long already printed an error message. */
                 break;
 
             default: abort();
         }
+    }
+
+    if (config->n_solutions == 0) {
+        config->phase1_only = true;
     }
 
     if (config->rebuild_tables) {
