@@ -22,6 +22,7 @@
  */
 
 #include <assert.h>
+#include <inttypes.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -42,13 +43,13 @@ void finalize_solve_stats(solve_stats_t *stats, uint64_t start_us, uint64_t end_
 
 static void extract_float(solve_stats_t **thread_stats, int n, float *out, size_t field_offset) {
     for (int i = 0; i < n; i++) {
-        out[i] = *(float *)((char *)thread_stats[i] + field_offset);
+        memcpy(&out[i], (char *)thread_stats[i] + field_offset, sizeof(float));
     }
 }
 
 static void extract_int(solve_stats_t **thread_stats, int n, int *out, size_t field_offset) {
     for (int i = 0; i < n; i++) {
-        out[i] = *(int *)((char *)thread_stats[i] + field_offset);
+        memcpy(&out[i], (char *)thread_stats[i] + field_offset, sizeof(int));
     }
 }
 
@@ -69,6 +70,8 @@ aggregate_stats_t *compute_aggregate_stats(solve_stats_t **thread_stats, int thr
 
     float buf_f[thread_count];
     int   buf_i[thread_count];
+    memset(buf_f, 0, sizeof(buf_f));
+    memset(buf_i, 0, sizeof(buf_i));
 
     extract_float(thread_stats, thread_count, buf_f, offsetof(solve_stats_t, phase1_solve_time));
     compute_float_aggregate(buf_f, thread_count, &agg->phase1_time.min, &agg->phase1_time.max, &agg->phase1_time.avg,
@@ -106,7 +109,7 @@ aggregate_stats_t *compute_aggregate_stats(solve_stats_t **thread_stats, int thr
     int     died     = 0;
     float   max_wall = 0.0f;
     for (int i = 0; i < thread_count; i++) {
-        solve_stats_t *s = thread_stats[i];
+        const solve_stats_t *s = thread_stats[i];
         total_m += s->total_moves;
         total_p2a += s->phase2_attempts;
         total_p2s += s->phase2_successes;
@@ -187,7 +190,7 @@ void print_aggregate_stats(const aggregate_stats_t *agg, const solve_stats_t *fi
     print_int_aggregate("Solutions found (per thread)", &agg->solutions_found);
     printf("\n");
 
-    printf("  Total moves (all threads): %lld\n", (long long)agg->total_moves_all_threads);
+    printf("  Total moves (all threads): %" PRId64 "\n", agg->total_moves_all_threads);
     printf("  Moves per second:          %.2f\n", agg->overall_moves_per_second);
     printf("  Wall time:                 %.6f s\n", agg->overall_wall_time);
     printf("\n");
