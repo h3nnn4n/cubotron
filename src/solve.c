@@ -72,7 +72,7 @@ void destroy_solve_list_node(solve_list_t *node) {
 }
 
 void destroy_solve_list(solve_list_t *solves) {
-    solve_stats_t *prev_stats = NULL;
+    const solve_stats_t *prev_stats = NULL;
 
     while (solves != NULL) {
         solve_list_t *next = solves->next;
