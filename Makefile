@@ -13,7 +13,7 @@ INCLUDES = -Isrc \
            -Ideps/pcg-c/include \
            -Ideps/pcg-c/extras
 
-OPTIMIZATION=-O3
+OPTIMIZATION=-O3 -DNDEBUG
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
