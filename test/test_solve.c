@@ -745,31 +745,34 @@ void test_phase1_only_solution() {
     config->n_solutions = 0;
     config->max_depth   = 15;
 
-    coord_cube_t *cube = get_coord_cube();
-    scramble_cube(cube, 5);
-    coord_cube_t *original = get_coord_cube();
-    copy_coord_cube(original, cube);
+    for (int iter = 0; iter < 5; iter++) {
+        coord_cube_t *cube = get_coord_cube();
+        scramble_cube(cube, 50);
+        coord_cube_t *original = get_coord_cube();
+        copy_coord_cube(original, cube);
 
-    solve_list_t *solutions = solve(cube, config);
-    TEST_ASSERT_NOT_NULL(solutions);
-    TEST_ASSERT_NOT_NULL(solutions->solution);
-    TEST_ASSERT_NOT_NULL(solutions->phase1_solution);
+        solve_list_t *solutions = solve(cube, config);
+        TEST_ASSERT_NOT_NULL(solutions);
+        TEST_ASSERT_NOT_NULL(solutions->solution);
+        TEST_ASSERT_NOT_NULL(solutions->phase1_solution);
+        TEST_ASSERT_NULL(solutions->phase2_solution);
 
-    coord_cube_t *test = get_coord_cube();
-    copy_coord_cube(test, original);
+        coord_cube_t *test = get_coord_cube();
+        copy_coord_cube(test, original);
 
-    for (int i = 0; solutions->solution[i] != MOVE_NULL; i++)
-        coord_apply_move(test, solutions->solution[i]);
+        for (int i = 0; solutions->solution[i] != MOVE_NULL; i++)
+            coord_apply_move(test, solutions->solution[i]);
 
-    TEST_ASSERT_TRUE(is_phase1_solved(test));
+        TEST_ASSERT_TRUE(is_phase1_solved(test));
+
+        free(original);
+        free(test);
+        free(cube);
+        destroy_solve_list(solutions);
+    }
 
     config->n_solutions = 1;
     config->max_depth   = 25;
-
-    free(original);
-    free(test);
-    free(cube);
-    destroy_solve_list(solutions);
 }
 
 void setUp() { init_config(); }
