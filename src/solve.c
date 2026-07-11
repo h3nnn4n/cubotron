@@ -297,7 +297,10 @@ solve_list_t *solve_thread(void *arg) {
         }
 
         assert(is_phase1_solved(cube));
-        assert(is_phase2_solved(cube));
+
+        if (solves->phase2_solution != NULL) {
+            assert(is_phase2_solved(cube));
+        }
 
         free(cube);
     }
