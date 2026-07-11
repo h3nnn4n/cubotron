@@ -685,6 +685,61 @@ void test_aggregate_consistent() {
     config->max_depth   = orig_d;
 }
 
+void test_is_duplicate_solution() {
+    solve_list_t *head = new_solve_list_node();
+    solve_list_t *empty = new_solve_list_node();
+
+    move_t sol1[] = {MOVE_U1, MOVE_R2, MOVE_NULL};
+    move_t sol2[] = {MOVE_U2, MOVE_R2, MOVE_NULL};
+
+    head->solution = sol1;
+    head->next = new_solve_list_node();
+    move_t sol3[] = {MOVE_D1, MOVE_NULL};
+    head->next->solution = sol3;
+
+    TEST_ASSERT_TRUE(is_duplicate_solution(head, sol1));
+    TEST_ASSERT_TRUE(is_duplicate_solution(head, sol3));
+    TEST_ASSERT_FALSE(is_duplicate_solution(head, sol2));
+    TEST_ASSERT_FALSE(is_duplicate_solution(empty, sol1));
+
+    head->solution = NULL;
+    head->next->solution = NULL;
+    destroy_solve_list(head);
+    destroy_solve_list(empty);
+}
+
+void test_truncate_solutions() {
+    solve_list_t *head = new_solve_list_node();
+    solve_list_t *cur  = head;
+
+    cur->solution = malloc(sizeof(move_t) * 2);
+    cur->solution[0] = MOVE_U1;
+    cur->solution[1] = MOVE_NULL;
+
+    for (int i = 1; i < 5; i++) {
+        cur->next       = new_solve_list_node();
+        cur             = cur->next;
+        cur->solution   = malloc(sizeof(move_t) * 2);
+        cur->solution[0] = MOVE_U1 + i;
+        cur->solution[1] = MOVE_NULL;
+    }
+
+    truncate_solutions(head, 3);
+
+    int count = 0;
+    for (solve_list_t *n = head; n != NULL && n->solution != NULL; n = n->next)
+        count++;
+    TEST_ASSERT_EQUAL(3, count);
+
+    truncate_solutions(head, 1);
+    count = 0;
+    for (solve_list_t *n = head; n != NULL && n->solution != NULL; n = n->next)
+        count++;
+    TEST_ASSERT_EQUAL(1, count);
+
+    destroy_solve_list(head);
+}
+
 void setUp() { init_config(); }
 void tearDown() {}
 
@@ -707,6 +762,8 @@ int main() {
     RUN_TEST(test_multiple_solutions);
     RUN_TEST(test_are_solutions_equal);
     RUN_TEST(test_multi_solution_no_duplicates);
+    RUN_TEST(test_is_duplicate_solution);
+    RUN_TEST(test_truncate_solutions);
     RUN_TEST(test_stats_per_thread_consistent);
     RUN_TEST(test_aggregate_consistent);
     RUN_TEST(test_edge_case_single_move_scrambles);

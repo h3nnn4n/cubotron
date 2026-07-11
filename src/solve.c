@@ -72,14 +72,17 @@ void destroy_solve_list_node(solve_list_t *node) {
 }
 
 void destroy_solve_list(solve_list_t *solves) {
-    if (solves == NULL)
-        return;
-
-    free(solves->stats);
-    solves->stats = NULL;
+    solve_stats_t *prev_stats = NULL;
 
     while (solves != NULL) {
         solve_list_t *next = solves->next;
+
+        if (solves->stats != NULL && solves->stats != prev_stats) {
+            prev_stats = solves->stats;
+            free(solves->stats);
+            solves->stats = NULL;
+        }
+
         destroy_solve_list_node(solves);
         solves = next;
     }
@@ -180,7 +183,7 @@ static solve_list_t *collect_results(thread_context_t *thread_contexts, int thre
     return solves;
 }
 
-static void truncate_solutions(solve_list_t *solves, int n_solutions) {
+void truncate_solutions(solve_list_t *solves, int n_solutions) {
     int           n   = 0;
     solve_list_t *cur = solves;
     while (cur != NULL && cur->solution != NULL) {
@@ -428,7 +431,7 @@ int are_solutions_equal(const move_t *a, const move_t *b) {
     return a[i] == b[i];
 }
 
-static int is_duplicate_solution(solve_list_t *solves_head, const move_t *solution) {
+int is_duplicate_solution(solve_list_t *solves_head, const move_t *solution) {
     for (solve_list_t *n = solves_head; n != NULL && n->solution != NULL; n = n->next) {
         if (are_solutions_equal(solution, n->solution))
             return 1;
