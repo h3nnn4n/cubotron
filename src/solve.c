@@ -101,29 +101,57 @@ solve_list_t *solve_single(const coord_cube_t *original_cube) {
     return solution;
 }
 
+static solve_list_t *make_trivial_solution() {
+    solve_list_t *solves       = new_solve_list_node();
+    solves->solution           = malloc(sizeof(move_t));
+    solves->solution[0]        = MOVE_NULL;
+    solves->phase1_solution    = malloc(sizeof(move_t));
+    solves->phase1_solution[0] = MOVE_NULL;
+    solves->phase2_solution    = malloc(sizeof(move_t));
+    solves->phase2_solution[0] = MOVE_NULL;
+
+    solve_stats_t *stats     = get_solve_stats();
+    stats->phase1_depth      = 0;
+    stats->phase2_depth      = 0;
+    stats->solution_length   = 0;
+    stats->phase1_solve_time = 0.0f;
+    stats->phase2_solve_time = 0.0f;
+    stats->solve_time        = 0.0f;
+    stats->phase1_move_count = 0;
+    stats->phase2_move_count = 0;
+    stats->move_count        = 0;
+    solves->stats            = stats;
+
+    return solves;
+}
+
+static solve_list_t *collect_thread_results(thread_context_t *thread_contexts, int thread_count) {
+    solve_list_t *solves  = NULL;
+    solve_list_t *current = NULL;
+
+    for (int i = 0; i < thread_count; i++) {
+        solve_list_t *thread_solves = thread_contexts[i].solves;
+        if (thread_solves->solution != NULL) {
+            if (solves == NULL) {
+                solves  = thread_solves;
+                current = solves;
+            } else {
+                current->next = thread_solves;
+                current       = current->next;
+            }
+        } else {
+            thread_solves->stats = NULL;
+            destroy_solve_list(thread_solves);
+            free(thread_contexts[i].stats);
+        }
+    }
+
+    return solves;
+}
+
 solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
     if (is_coord_solved(original_cube)) {
-        solve_list_t *solves       = new_solve_list_node();
-        solves->solution           = malloc(sizeof(move_t));
-        solves->solution[0]        = MOVE_NULL;
-        solves->phase1_solution    = malloc(sizeof(move_t));
-        solves->phase1_solution[0] = MOVE_NULL;
-        solves->phase2_solution    = malloc(sizeof(move_t));
-        solves->phase2_solution[0] = MOVE_NULL;
-
-        solve_stats_t *stats     = get_solve_stats();
-        stats->phase1_depth      = 0;
-        stats->phase2_depth      = 0;
-        stats->solution_length   = 0;
-        stats->phase1_solve_time = 0.0f;
-        stats->phase2_solve_time = 0.0f;
-        stats->solve_time        = 0.0f;
-        stats->phase1_move_count = 0;
-        stats->phase2_move_count = 0;
-        stats->move_count        = 0;
-        solves->stats            = stats;
-
-        return solves;
+        return make_trivial_solution();
     }
 
     get_config()->die = false;
@@ -153,25 +181,7 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
         pthread_join(threads[i], NULL);
     }
 
-    solve_list_t *solves  = NULL;
-    solve_list_t *current = NULL;
-
-    for (int i = 0; i < thread_count; i++) {
-        solve_list_t *thread_solves = thread_contexts[i].solves;
-        if (thread_solves->solution != NULL) {
-            if (solves == NULL) {
-                solves  = thread_solves;
-                current = solves;
-            } else {
-                current->next = thread_solves;
-                current       = current->next;
-            }
-        } else {
-            thread_solves->stats = NULL;
-            destroy_solve_list(thread_solves);
-            free(thread_contexts[i].stats);
-        }
-    }
+    solve_list_t *solves = collect_thread_results(thread_contexts, thread_count);
 
     for (int i = 0; i < thread_count; i++) {
         destroy_solve_context(thread_contexts[i].solve_context);
