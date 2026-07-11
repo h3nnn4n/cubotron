@@ -623,6 +623,14 @@ int is_phase1_moves_solved(const move_t *solution, const coord_cube_t *original_
     return result;
 }
 
+static move_t *build_phase2_solution(const move_t *moves, const move_t *move_stack, int pivot) {
+    move_t *solution = malloc(sizeof(move_t) * (pivot + 2));
+    for (int i = 0; i <= pivot; i++)
+        solution[i] = moves[move_stack[i]];
+    solution[pivot + 1] = MOVE_NULL;
+    return solution;
+}
+
 move_t *solve_phase2(solve_context_t *solve_context, __attribute__((unused)) const config_t *config, int max_depth,
                      solve_stats_t *stats) {
     move_t *solution = NULL;
@@ -684,28 +692,9 @@ move_t *solve_phase2(solve_context_t *solve_context, __attribute__((unused)) con
             pruning_stack[pivot] = get_phase2_pruning(cube_stack[pivot]);
             move_count++;
 
-            /*
-            if (move_count % 1000000 == 0) {
-                char buffer[512];
-                sprintf(buffer, " moves: %4d pivot: %2d", move_count, pivot);
-                sprintf(buffer, "%s : %4d -> ", buffer, cube_stack[pivot]->corner_permutations);
-                for (int i = 0; i <= pivot; i++)
-                    sprintf(buffer, "%s %s", buffer, move_to_str(move_stack[i]));
-                printf("%s\n", buffer);
-            }
-            */
-
             if (is_phase2_solved(cube_stack[pivot])) {
-                solution = malloc(sizeof(move_t) * (pivot + 2));
-
-                for (int i = 0; i <= pivot; i++)
-                    solution[i] = moves[move_stack[i]];
-                solution[pivot + 1] = MOVE_NULL;
-
+                solution = build_phase2_solution(moves, move_stack, pivot);
                 stats->phase2_move_count += move_count;
-
-                // print_move_sequence(solution);
-
                 goto solution_found;
             }
 
