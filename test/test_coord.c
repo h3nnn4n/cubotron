@@ -64,7 +64,7 @@ void test_is_phase2_solved() {
     coord_apply_move(cube, MOVE_R3);
     coord_apply_move(cube, MOVE_F3);
 
-    TEST_ASSERT_TRUE(is_phase1_solved(cube));
+    TEST_ASSERT_TRUE(is_phase2_solved(cube));
 
     free(cube);
 }

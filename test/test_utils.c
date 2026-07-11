@@ -153,9 +153,17 @@ void test_are_move_sequences_equal() {
     move_t *moves2 = move_sequence_str_to_moves("U R2 F D' L B");
     move_t *moves3 = move_sequence_str_to_moves("D R2 F D' L B'");
 
+    // Same sequence
     TEST_ASSERT_TRUE(are_move_sequences_equal(moves1, moves2));
+    // Different same-length sequences
     TEST_ASSERT_FALSE(are_move_sequences_equal(moves1, moves3));
     TEST_ASSERT_FALSE(are_move_sequences_equal(moves2, moves3));
+
+    // Different-length sequences — should NOT be equal
+    move_t *short_moves = move_sequence_str_to_moves("U R2");
+    TEST_ASSERT_FALSE(are_move_sequences_equal(moves1, short_moves));
+    TEST_ASSERT_FALSE(are_move_sequences_equal(short_moves, moves1));
+    free(short_moves);
 
     free(moves1);
     free(moves2);
