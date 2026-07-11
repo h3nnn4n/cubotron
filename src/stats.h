@@ -89,8 +89,6 @@ aggregate_stats_t *compute_aggregate_stats(solve_stats_t **thread_stats, int thr
 
 void print_aggregate_stats(const aggregate_stats_t *agg, const solve_stats_t *first_solution);
 
-void           init_stats();
-void           dump_stats();
 void           print_solve_stats(const solve_stats_t *stats);
 solve_stats_t *get_solve_stats();
 

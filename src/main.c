@@ -151,8 +151,6 @@ int main(int argc, char **argv) {
 
     build_move_tables();
     build_pruning_tables();
-    init_stats();
-
     if (config->do_benchmark_fast) {
         run_benchmark_fast();
     } else if (config->do_benchmark_slow) {
@@ -200,8 +198,6 @@ int main(int argc, char **argv) {
     }
 
     purge_cubie_move_table();
-
-    dump_stats();
 
     return 0;
 }

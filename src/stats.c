@@ -228,6 +228,3 @@ solve_stats_t *get_solve_stats() {
     memset(stats, 0, sizeof(solve_stats_t));
     return stats;
 }
-
-void init_stats() {}
-void dump_stats() {}
