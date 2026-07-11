@@ -504,7 +504,7 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
 
             assert(move_stack[pivot] <= N_MOVES);
 
-            coord_apply_move(cube_stack[pivot], move_stack[pivot]);
+            coord_apply_move_phase1(cube_stack[pivot], move_stack[pivot]);
             pruning_stack[pivot] = get_phase1_pruning(cube_stack[pivot]);
             move_count++;
 
@@ -531,7 +531,18 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
                     goto solution_found;
                 }
 
-                copy_coord_cube(solve_context->phase2_context->cube, cube_stack[pivot]);
+                // Replay phase1 moves through full coord_apply_move to reconstruct
+                // phase2 coordinates (phase1-only DFS skipped them for performance).
+                // solve_context->cube has prep_moves applied via full coord_apply_move
+                // and is never modified by the DFS — safe to replay from here.
+                coord_cube_t *temp_cube = get_coord_cube();
+                copy_coord_cube(temp_cube, solve_context->cube);
+                for (int i = 0; i <= pivot; i++) {
+                    coord_apply_move(temp_cube, move_stack[i]);
+                }
+                copy_coord_cube(solve_context->phase2_context->cube, temp_cube);
+                free(temp_cube);
+
                 coord_cube_t *phase2_cube = solve_context->phase2_context->cube;
 
                 uint64_t phase2_start = get_microseconds();
