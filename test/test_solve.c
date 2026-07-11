@@ -394,7 +394,8 @@ void test_phase2_solves_r2_l2_in_2_moves() {
     solve_context_t *ctx = make_solve_context(cube);
     copy_coord_cube(ctx->phase2_context->cube, cube);
 
-    move_t *solution = solve_phase2(ctx->phase2_context, get_config(), 2);
+    solve_stats_t *stats = get_solve_stats();
+    move_t        *solution = solve_phase2(ctx->phase2_context, get_config(), 2, stats);
 
     TEST_ASSERT_NOT_NULL(solution);
 
@@ -408,6 +409,7 @@ void test_phase2_solves_r2_l2_in_2_moves() {
         free(solution);
     }
 
+    free(stats);
     destroy_solve_context(ctx);
     free(cube);
 }

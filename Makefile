@@ -70,7 +70,7 @@ debug_prepare:
 gperftools: gperftools_prepare build
 
 gperftools_prepare:
-	$(eval OPTIMIZATION=-DWITHGPERFTOOLS -lprofiler -ltcmalloc -g -pg -O2 -DNDEBUG -fno-inline-functions -fno-inline-functions-called-once -fno-optimize-sibling-calls)
+	$(eval OPTIMIZATION=-DWITHGPERFTOOLS -lprofiler -ltcmalloc -O2 -DNDEBUG -fno-inline-functions -fno-inline-functions-called-once -fno-optimize-sibling-calls)
 
 callgrind: callgrind_prepare build
 
