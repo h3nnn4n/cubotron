@@ -279,10 +279,11 @@ void print_move_sequence(const move_t *moves) {
 }
 
 int are_move_sequences_equal(const move_t *moves1, const move_t *moves2) {
-    for (int i = 0; moves1[i] != MOVE_NULL && moves2[i] != MOVE_NULL; i++) {
+    int i = 0;
+    while (moves1[i] != MOVE_NULL && moves2[i] != MOVE_NULL) {
         if (moves1[i] != moves2[i])
             return 0;
+        i++;
     }
-
-    return 1;
+    return moves1[i] == MOVE_NULL && moves2[i] == MOVE_NULL;
 }

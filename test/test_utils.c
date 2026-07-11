@@ -157,6 +157,11 @@ void test_are_move_sequences_equal() {
     TEST_ASSERT_FALSE(are_move_sequences_equal(moves1, moves3));
     TEST_ASSERT_FALSE(are_move_sequences_equal(moves2, moves3));
 
+    move_t *short_moves = move_sequence_str_to_moves("U R2");
+    TEST_ASSERT_FALSE(are_move_sequences_equal(moves1, short_moves));
+    TEST_ASSERT_FALSE(are_move_sequences_equal(short_moves, moves1));
+    free(short_moves);
+
     free(moves1);
     free(moves2);
     free(moves3);

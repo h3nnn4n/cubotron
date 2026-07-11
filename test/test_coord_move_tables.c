@@ -119,7 +119,6 @@ void test_coord_sanity_brute_force() {
 }
 
 void test_coord_orientation_changes() {
-    TEST_PASS();
     coord_cube_t *coord_cube = get_coord_cube();
 
     coord_apply_move(coord_cube, MOVE_R1);

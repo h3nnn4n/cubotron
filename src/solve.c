@@ -480,7 +480,7 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
 
             do {
                 move_stack[pivot]++;
-            } while (config->move_black_list[move_stack[pivot]] != MOVE_NULL && move_stack[pivot] < N_MOVES);
+            } while (move_stack[pivot] < N_MOVES && config->move_black_list[move_stack[pivot]] != MOVE_NULL);
 
             if (move_stack[pivot] >= N_MOVES) {
                 pruning_stack[pivot] = -1; // ?

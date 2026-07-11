@@ -118,6 +118,11 @@ int main(int argc, char **argv) {
                 }
 
                 config->max_depth = atoi(optarg);
+
+                if (config->max_depth > MAX_MOVES - 1) {
+                    fprintf(stderr, "Error: max_depth must be <= %d\n", MAX_MOVES - 1);
+                    return 1;
+                }
             } break;
 
             case 'n': {
