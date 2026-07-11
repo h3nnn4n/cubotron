@@ -41,7 +41,8 @@ typedef struct solve_list_s {
     move_t *phase2_solution;
     move_t *solution;
 
-    solve_stats_t *stats;
+    solve_stats_t     *stats;
+    aggregate_stats_t *aggregate;
 } solve_list_t;
 
 typedef struct solve_context_s solve_context_t;
@@ -86,6 +87,9 @@ void             clear_solve_context(solve_context_t *solve_context);
 void             destroy_solve_context(solve_context_t *context);
 
 // Utility functions for testing
-int is_phase1_moves_solved(const move_t *solution, const coord_cube_t *original_cube);
+int  is_phase1_moves_solved(const move_t *solution, const coord_cube_t *original_cube);
+int  are_solutions_equal(const move_t *a, const move_t *b);
+int  is_duplicate_solution(solve_list_t *solves_head, const move_t *solution);
+void truncate_solutions(solve_list_t *solves, int n_solutions);
 
 #endif /* end of include guard */
