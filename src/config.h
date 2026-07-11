@@ -24,6 +24,7 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
+#include <stdatomic.h>
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -45,8 +46,9 @@ typedef struct {
 
     move_t *scramble_moves;
 
-    uint32_t thread_count;
-    bool     die;
+    uint32_t   thread_count;
+    bool       die;
+    atomic_int solutions_found;
 } config_t;
 
 void      init_config();
