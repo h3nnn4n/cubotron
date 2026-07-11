@@ -56,6 +56,8 @@ OBJS_NO_MAIN := $(filter-out %main.o, $(OBJS)) \
 .PHONY: heapcheck-solve
 .PHONY: heapcheck-solve-blacklist
 .PHONY: heapcheck-benchmark
+.PHONY: release
+.PHONY: release-native
 .PHONY: ci
 
 all: build
@@ -76,6 +78,16 @@ callgrind: callgrind_prepare build
 
 callgrind_prepare:
 	$(eval OPTIMIZATION=-g -O2 -DNDEBUG -fno-inline-functions -fno-inline-functions-called-once -fno-optimize-sibling-calls -fno-default-inline -fno-inline)
+
+release: clean release_prepare build
+release_prepare:
+	$(eval OPTIMIZATION=-O3 -DNDEBUG -flto)
+	$(eval override LDFLAGS += -flto)
+
+release-native: clean release_native_prepare build
+release_native_prepare:
+	$(eval OPTIMIZATION=-O3 -DNDEBUG -flto -march=native -mtune=native -funroll-loops)
+	$(eval override LDFLAGS += -flto)
 
 rebuild: clean $(TARGET)
 

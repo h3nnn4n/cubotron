@@ -17,8 +17,8 @@ jobs:
           fetch-depth: 1
           submodules: true
 
-      - name: Build
-        run: make
+      - name: Build (release mode)
+        run: make release
 
       - name: Cache Tables
         id: cache-tables
