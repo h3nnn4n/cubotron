@@ -275,6 +275,65 @@ move_t *patch_solution(solve_context_t *solve_context, solve_list_t *solution) {
     return solution->solution;
 }
 
+static void build_phase1_solution(const move_t *move_stack, int pivot, move_t **solution, move_t **phase1_solution) {
+    *solution        = malloc(sizeof(move_t) * 40);
+    *phase1_solution = malloc(sizeof(move_t) * 40);
+
+    for (int i = 0; i <= pivot; i++) {
+        (*solution)[i]        = move_stack[i];
+        (*phase1_solution)[i] = move_stack[i];
+    }
+    (*solution)[pivot + 1]        = MOVE_NULL;
+    (*phase1_solution)[pivot + 1] = MOVE_NULL;
+}
+
+static int assemble_full_solution(move_t *solution, int pivot, const move_t *phase2_solution,
+                                  coord_cube_t *phase2_cube) {
+    int phase2_move_count = 0;
+    for (int i = 0; phase2_solution[i] != MOVE_NULL; i++)
+        phase2_move_count++;
+
+    for (int i = 0; phase2_solution[i] != MOVE_NULL; i++) {
+        coord_apply_move(phase2_cube, phase2_solution[i]);
+        solution[pivot + i + 1] = phase2_solution[i];
+    }
+    solution[pivot + phase2_move_count + 1] = MOVE_NULL;
+
+    return phase2_move_count;
+}
+
+static void record_solution_stats(solve_stats_t *stats, int pivot, int phase2_move_count, uint64_t move_count,
+                                  uint64_t phase2_start, uint64_t phase2_end, uint8_t prep_move_count) {
+    stats->phase1_depth      = pivot + 1;
+    stats->phase2_solve_time = (float)(phase2_end - phase2_start) / 1000000.0;
+    stats->solution_length   = pivot + phase2_move_count + 1 + prep_move_count;
+    stats->phase1_move_count = move_count;
+    stats->move_count        = move_count + phase2_move_count;
+    stats->solve_time        = stats->phase1_solve_time + stats->phase2_solve_time;
+}
+
+static void store_solution_in_list(solve_list_t **solves_ptr, move_t *phase1_solution, move_t *phase2_solution,
+                                   move_t *solution) {
+    solve_list_t *solves = *solves_ptr;
+
+    if (solves != NULL) {
+        if (solves->solution != NULL) {
+            solves->next = new_solve_list_node();
+            solves       = solves->next;
+        }
+
+        solves->phase1_solution = phase1_solution;
+        solves->phase2_solution = phase2_solution;
+        solves->solution        = solution;
+    } else {
+        free(phase1_solution);
+        free(phase2_solution);
+        free(solution);
+    }
+
+    *solves_ptr = solves;
+}
+
 // FIXME: we need a decent way to get just the phase1 solution
 move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve_stats_t *stats) {
     move_t *solution = NULL;
@@ -371,30 +430,25 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
             }
 
             if (is_phase1_solved(cube_stack[pivot])) {
-                // printf("phase1 solution found with depth %2d: ", pivot);
-                solution                = malloc(sizeof(move_t) * (40));
-                move_t *phase1_solution = malloc(sizeof(move_t) * (40));
+                end_time = get_microseconds();
 
-                for (int i = 0; i <= pivot; i++) {
-                    solution[i]        = move_stack[i];
-                    phase1_solution[i] = move_stack[i];
-                    // printf(" %s", move_to_str(solution[i]));
+                stats->phase1_depth      = pivot + 1;
+                stats->phase1_move_count = move_count;
+                stats->phase1_solve_time = (float)(end_time - phase2_time - start_time) / 1000000.0;
+
+                if (solves != NULL) {
+                    solves->stats = stats;
                 }
-                solution[pivot + 1]        = MOVE_NULL;
-                phase1_solution[pivot + 1] = MOVE_NULL;
-                // printf("\n");
 
-                // zero means just phase1 solution.
-                // -1 is find all solutions
+                move_t *phase1_solution;
+                build_phase1_solution(move_stack, pivot, &solution, &phase1_solution);
+
                 if (config->n_solutions == 0) {
-                    /*printf("doing just phase1!\n");*/
                     goto solution_found;
                 }
 
                 copy_coord_cube(solve_context->phase2_context->cube, cube_stack[pivot]);
                 coord_cube_t *phase2_cube = solve_context->phase2_context->cube;
-
-                stats->phase1_solve_time = (float)(end_time - phase2_time - start_time) / 1000000.0;
 
                 uint64_t phase2_start = get_microseconds();
                 move_t  *phase2_solution =
@@ -408,73 +462,19 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
 
                     free(phase1_solution);
                     phase1_solution = NULL;
-
-                    /*printf("failed to solve phase2\n");*/
                 } else {
-                    solution_count += 1;
+                    solution_count++;
 
-                    int phase2_move_count = 0;
-                    for (int i = 0; phase2_solution[i] != MOVE_NULL; i++)
-                        phase2_move_count++;
-
-                    for (int i = 0; phase2_solution[i] != MOVE_NULL; i++) {
-                        coord_apply_move(phase2_cube, phase2_solution[i]);
-                        solution[pivot + i + 1] = phase2_solution[i];
-                    }
-                    solution[pivot + phase2_move_count + 1] = MOVE_NULL;
-
-                    stats->phase1_depth      = pivot + 1;
-                    stats->phase2_solve_time = (float)(phase2_end - phase2_start) / 1000000.0;
-                    stats->solution_length   = pivot + phase2_move_count + 1 + solve_context->prep_move_count;
-                    stats->phase1_move_count = move_count;
-                    stats->move_count        = move_count + phase2_move_count;
-
-                    /*printf("phase1 solution found with depth %2d - ", pivot + 1);*/
-                    /*for (int i = 0; i <= pivot; i++) {*/
-                    /*printf(" %s", move_to_str(solution[i]));*/
-                    /*}*/
-                    /*printf("\n");*/
-
-                    /*printf("phase2 solution found with depth %2d - ", phase2_move_count);*/
-                    /*for (int i = 0; phase2_solution[i] != MOVE_NULL; i++) {*/
-                    /*printf(" %s", move_to_str(phase2_solution[i]));*/
-                    /*}*/
-                    /*printf("\n");*/
-
-                    /*int length = 0;*/
-                    /*printf("solution:\n");*/
-                    /*for (int i = 0; solution[i] != MOVE_NULL; i++, length++) {*/
-                    /*printf(" %s", move_to_str(solution[i]));*/
-                    /*}*/
-                    /*printf("\n");*/
-                    /*printf("length: %d\n", length);*/
-                    /*printf("\n");*/
-
-                    if (solves != NULL) {
-                        if (solves->solution != NULL) {
-                            solves->next = new_solve_list_node();
-                            solves       = solves->next;
-                        }
-
-                        solves->phase1_solution = phase1_solution;
-                        solves->phase2_solution = phase2_solution;
-                        solves->solution        = solution;
-                    } else {
-                        free(phase1_solution);
-                        free(phase2_solution);
-                        free(solution);
-                    }
+                    int phase2_move_count = assemble_full_solution(solution, pivot, phase2_solution, phase2_cube);
+                    record_solution_stats(stats, pivot, phase2_move_count, move_count, phase2_start, phase2_end,
+                                          solve_context->prep_move_count);
+                    store_solution_in_list(&solves, phase1_solution, phase2_solution, solution);
 
                     assert(is_coord_solved(phase2_cube));
-
-                    stats->solve_time = stats->phase1_solve_time + stats->phase2_solve_time;
                 }
 
                 if (config->n_solutions != -1 && solution_count >= config->n_solutions) {
                     goto solution_found;
-                } else {
-                    /*free(solution);*/
-                    /*solution = NULL;*/
                 }
             }
 
