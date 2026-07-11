@@ -50,6 +50,30 @@ int *get_move_table_UD7_edge_permutations() { return move_table_UD7_edge_permuta
 int *get_move_table_corner_permutations() { return move_table_corner_permutations; }
 int *get_move_table_parity() { return move_table_parity; }
 
+void coord_apply_move_phase1(coord_cube_t *cube, move_t move) {
+    assert(cube != NULL);
+    assert(move >= 0);
+    assert(move < N_MOVES);
+    assert(move_table_edge_orientations != NULL);
+    assert(move_table_corner_orientations != NULL);
+    assert(move_table_E_slice != NULL);
+
+    assert(cube->edge_orientations * N_MOVES + move < N_EDGE_ORIENTATIONS * N_MOVES);
+    assert(cube->corner_orientations * N_MOVES + move < N_CORNER_ORIENTATIONS * N_MOVES);
+    assert(cube->E_slice * N_MOVES + move < N_SLICES * N_MOVES);
+
+    cube->edge_orientations   = move_table_edge_orientations[cube->edge_orientations * N_MOVES + move];
+    cube->corner_orientations = move_table_corner_orientations[cube->corner_orientations * N_MOVES + move];
+    cube->E_slice             = move_table_E_slice[cube->E_slice * N_MOVES + move];
+
+    assert(cube->edge_orientations >= 0);
+    assert(cube->corner_orientations >= 0);
+    assert(cube->E_slice >= 0);
+    assert(cube->edge_orientations < N_EDGE_ORIENTATIONS);
+    assert(cube->corner_orientations < N_CORNER_ORIENTATIONS);
+    assert(cube->E_slice < N_SLICES);
+}
+
 void coord_apply_move(coord_cube_t *cube, move_t move) {
     assert(cube != NULL);
     assert(move >= 0);
