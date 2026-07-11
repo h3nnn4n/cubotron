@@ -190,6 +190,14 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
 
     solve_list_t *solves = collect_thread_results(thread_contexts, thread_count);
 
+    if (config->n_solutions > 0 && solves != NULL && solves->solution != NULL) {
+        for (solve_list_t *outer = solves; outer != NULL && outer->solution != NULL; outer = outer->next) {
+            for (solve_list_t *inner = outer->next; inner != NULL && inner->solution != NULL; inner = inner->next) {
+                assert(!are_solutions_equal(outer->solution, inner->solution));
+            }
+        }
+    }
+
     for (int i = 0; i < thread_count; i++) {
         destroy_solve_context(thread_contexts[i].solve_context);
     }
@@ -341,6 +349,16 @@ static void store_solution_in_list(solve_list_t **solves_ptr, move_t *phase1_sol
     *solves_ptr = solves;
 }
 
+int are_solutions_equal(const move_t *a, const move_t *b) {
+    int i = 0;
+    while (a[i] != MOVE_NULL && b[i] != MOVE_NULL) {
+        if (a[i] != b[i])
+            return 0;
+        i++;
+    }
+    return a[i] == b[i];
+}
+
 // FIXME: we need a decent way to get just the phase1 solution
 move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve_stats_t *stats) {
     move_t *solution = NULL;
@@ -362,6 +380,8 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
 
     // printf("solving phase1 with prep moves: ");
     // print_move_sequence(solve_context->prep_moves);
+
+    solve_list_t *solves_head = solves;
 
     for (int allowed_depth = 1; allowed_depth <= config->max_depth; allowed_depth++) {
         int pivot = 0;
@@ -458,26 +478,48 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
                     free(phase1_solution);
                     phase1_solution = NULL;
                 } else {
-                    int global_count = atomic_fetch_add(&get_config()->solutions_found, 1) + 1;
+                    int phase2_move_count = assemble_full_solution(solution, pivot, phase2_solution, phase2_cube);
 
-                    if (config->n_solutions != -1 && global_count > config->n_solutions) {
-                        free(solution);
-                        free(phase1_solution);
-                        free(phase2_solution);
-                        get_config()->die = true;
-                        goto solution_found;
+                    int is_duplicate = 0;
+                    if (config->n_solutions > 0) {
+                        for (solve_list_t *n = solves_head; n != NULL && n->solution != NULL; n = n->next) {
+                            if (are_solutions_equal(solution, n->solution)) {
+                                is_duplicate = 1;
+                                break;
+                            }
+                        }
                     }
 
-                    int phase2_move_count = assemble_full_solution(solution, pivot, phase2_solution, phase2_cube);
-                    record_solution_stats(stats, pivot, phase2_move_count, move_count, phase2_start, phase2_end,
-                                          solve_context->prep_move_count);
-                    store_solution_in_list(&solves, phase1_solution, phase2_solution, solution);
+                    if (is_duplicate) {
+                        free(solution);
+                        solution = NULL;
 
-                    assert(is_coord_solved(phase2_cube));
+                        free(phase1_solution);
+                        phase1_solution = NULL;
 
-                    if (config->n_solutions != -1 && global_count >= config->n_solutions) {
-                        get_config()->die = true;
-                        goto solution_found;
+                        free(phase2_solution);
+                        phase2_solution = NULL;
+                    } else {
+                        int global_count = atomic_fetch_add(&get_config()->solutions_found, 1) + 1;
+
+                        if (config->n_solutions != -1 && global_count > config->n_solutions) {
+                            free(solution);
+                            free(phase1_solution);
+                            free(phase2_solution);
+                            get_config()->die = true;
+                            goto solution_found;
+                        }
+
+                        record_solution_stats(stats, pivot, phase2_move_count, move_count, phase2_start, phase2_end,
+                                              solve_context->prep_move_count);
+                        store_solution_in_list(&solves, phase1_solution, phase2_solution, solution);
+
+                        assert(is_coord_solved(phase2_cube));
+
+                        if (config->n_solutions != -1 && global_count >= config->n_solutions) {
+                            get_config()->die = true;
+                            goto solution_found;
+                        }
                     }
                 }
             }

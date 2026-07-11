@@ -559,6 +559,61 @@ void test_multiple_solutions() {
     config->max_depth   = orig_max_depth;
 }
 
+void test_are_solutions_equal() {
+    move_t a[] = {MOVE_U1, MOVE_R2, MOVE_NULL};
+    move_t b[] = {MOVE_U1, MOVE_R2, MOVE_NULL};
+    move_t c[] = {MOVE_U1, MOVE_R3, MOVE_NULL};
+    move_t d[] = {MOVE_U1, MOVE_NULL};
+    move_t e[] = {MOVE_NULL};
+
+    move_t f[] = {MOVE_U2, MOVE_R2, MOVE_NULL};
+    move_t g[] = {MOVE_R2, MOVE_NULL};
+
+    TEST_ASSERT_TRUE(are_solutions_equal(a, b));
+    TEST_ASSERT_TRUE(are_solutions_equal(e, e));
+    TEST_ASSERT_FALSE(are_solutions_equal(a, c));
+    TEST_ASSERT_FALSE(are_solutions_equal(a, d));
+    TEST_ASSERT_FALSE(are_solutions_equal(a, e));
+    TEST_ASSERT_FALSE(are_solutions_equal(a, f));
+    TEST_ASSERT_FALSE(are_solutions_equal(a, g));
+}
+
+void test_multi_solution_no_duplicates() {
+    config_t *config    = get_config();
+    int       orig_n    = config->n_solutions;
+    int       orig_d    = config->max_depth;
+    config->n_solutions = 5;
+    config->max_depth   = 15;
+
+    coord_cube_t *cube = get_coord_cube();
+    scramble_cube(cube, 5);
+
+    solve_list_t *solutions = solve(cube, config);
+    TEST_ASSERT_NOT_NULL(solutions);
+
+    const move_t *sols[32];
+    int           count   = 0;
+    solve_list_t *current = solutions;
+    while (current != NULL && current->solution != NULL && count < 32) {
+        sols[count++] = current->solution;
+        current       = current->next;
+    }
+
+    for (int i = 0; i < count; i++) {
+        for (int j = i + 1; j < count; j++) {
+            if (are_solutions_equal(sols[i], sols[j])) {
+                TEST_FAIL_MESSAGE("duplicate solution found");
+            }
+        }
+    }
+
+    free(cube);
+    destroy_solve_list(solutions);
+
+    config->n_solutions = orig_n;
+    config->max_depth   = orig_d;
+}
+
 void setUp() { init_config(); }
 void tearDown() {}
 
@@ -579,6 +634,8 @@ int main() {
     RUN_TEST(test_edge_case_solved_cube);
     RUN_TEST(test_solved_cube_returns_zero_length);
     RUN_TEST(test_multiple_solutions);
+    RUN_TEST(test_are_solutions_equal);
+    RUN_TEST(test_multi_solution_no_duplicates);
     RUN_TEST(test_edge_case_single_move_scrambles);
     RUN_TEST(test_solution_correctness_varied_depths);
     RUN_TEST(test_all_sample_facelets_produce_valid_solutions);
