@@ -23,6 +23,7 @@
 
 #include <getopt.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "benchmark.h"
@@ -53,6 +54,8 @@ int main(int argc, char **argv) {
                                     {"max-depth", required_argument, 0, 'm'},
                                     {"n-solutions", required_argument, 0, 'n'},
                                     {"move-blacklist", required_argument, 0, 'b'},
+                                    {"compare-against", required_argument, 0, 'A'},
+                                    {"compare-benchmarks", required_argument, 0, 'B'},
                                     {0, 0, 0, 0}};
 
     while (1) {
@@ -136,12 +139,39 @@ int main(int argc, char **argv) {
                 config->scramble_moves = move_sequence_str_to_moves(optarg);
             } break;
 
+            case 'A': {
+                config->compare_against = strdup(optarg);
+            } break;
+
+            case 'B': {
+                config->compare_benchmarks = strdup(optarg);
+            } break;
+
             case '?':
                 /* getopt_long already printed an error message. */
                 break;
 
             default: abort();
         }
+    }
+
+    if (config->compare_benchmarks != NULL) {
+        char *comma = strchr(config->compare_benchmarks, ',');
+
+        if (comma == NULL) {
+            fprintf(stderr, "Error: --compare-benchmarks expects two filenames separated by comma\n");
+            return 1;
+        }
+
+        *comma            = '\0';
+        const char *file1 = config->compare_benchmarks;
+        const char *file2 = comma + 1;
+
+        build_move_tables();
+        build_pruning_tables();
+
+        compare_benchmark_files(file1, file2);
+        return 0;
     }
 
     if (config->rebuild_tables) {

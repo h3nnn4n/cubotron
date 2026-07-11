@@ -24,7 +24,13 @@
 #ifndef _BENCHMARK
 #define _BENCHMARK
 
+#include "benchmark_stats.h"
+
 void run_benchmark_fast();
 void run_benchmark_slow();
+
+void print_benchmark_results(const benchmark_result_t *result);
+void print_benchmark_comparison(const benchmark_result_t *current, const benchmark_result_t *previous);
+void compare_benchmark_files(const char *file1, const char *file2);
 
 #endif

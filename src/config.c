@@ -41,6 +41,9 @@ void init_config() {
     config.die             = false;
     config.solutions_found = 0;
 
+    config.compare_against    = NULL;
+    config.compare_benchmarks = NULL;
+
     for (int i = 0; i < N_MOVES; i++) {
         config.move_black_list[i] = MOVE_NULL;
     }

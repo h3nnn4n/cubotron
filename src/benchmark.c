@@ -196,15 +196,8 @@ static void run_benchmark_internal(const char *base_type, int warmup_duration_ms
 
     char *prev_file = NULL;
 
-    if (strcmp(base_type, "fast") == 0) {
-        char slow_type[16];
-        if (config->max_depth != 25) {
-            snprintf(slow_type, sizeof(slow_type), "slow_d%d", config->max_depth);
-        } else {
-            strncpy(slow_type, "slow", sizeof(slow_type) - 1);
-            slow_type[sizeof(slow_type) - 1] = '\0';
-        }
-        prev_file = find_latest_benchmark(slow_type);
+    if (config->compare_against != NULL) {
+        prev_file = strdup(config->compare_against);
     } else {
         prev_file = find_latest_benchmark(type);
     }
@@ -224,6 +217,21 @@ static void run_benchmark_internal(const char *base_type, int warmup_duration_ms
     save_benchmark_json(result, json_filename);
     save_benchmark_txt(result, txt_filename, previous);
 
+    print_benchmark_results(result);
+    print_benchmark_comparison(result, previous);
+
+    printf("\nResults saved to:\n");
+    printf("  %s\n", json_filename);
+    printf("  %s\n", txt_filename);
+
+    if (previous) {
+        destroy_benchmark_result(previous);
+    }
+
+    destroy_benchmark_result(result);
+}
+
+void print_benchmark_results(const benchmark_result_t *result) {
     printf("=== Cubotron Benchmark Results ===\n");
     printf("Type: %s\n", result->type);
     printf("Date: %s\n", result->timestamp);
@@ -248,68 +256,89 @@ static void run_benchmark_internal(const char *base_type, int warmup_duration_ms
     printf("  Min:      %7.0f moves\n", result->length_stats.min);
     printf("  Median:   %7.0f moves\n", result->length_stats.median);
     printf("  Max:      %7.0f moves\n\n", result->length_stats.max);
+}
 
-    if (previous) {
-        printf("=== Comparison vs Previous Benchmark ===\n");
-        printf("Previous: %s (%d samples)\n\n", previous->timestamp, previous->sample_count);
-
-        comparison_t time_comp = compare_samples(result->solve_times_ms, result->sample_count, previous->solve_times_ms,
-                                                 previous->sample_count);
-
-        printf("Solve Time:       %.3f ms → %.3f ms   (%+.1f%%)   %s\n", previous->time_stats.mean,
-               result->time_stats.mean, time_comp.mean_diff_pct,
-               time_comp.is_significant ? (time_comp.mean_diff < 0 ? "✓ FASTER" : "✗ SLOWER") : "~ NO CHANGE");
-        printf("  Welch's t-test: t=%.2f, p=%.3f (%s at α=0.05)\n", time_comp.t_statistic, time_comp.p_value,
-               time_comp.is_significant ? "significant" : "not significant");
-        printf("  95%% CI:         [%.3f, %.3f] ms\n", time_comp.ci_lower, time_comp.ci_upper);
-        printf("  Effect size:    Cohen's d = %.2f\n\n", time_comp.cohens_d);
-
-        double *lengths1 = malloc(result->sample_count * sizeof(double));
-        double *lengths2 = malloc(previous->sample_count * sizeof(double));
-
-        for (int i = 0; i < result->sample_count; i++) {
-            lengths1[i] = (double)result->solution_lengths[i];
-        }
-
-        for (int i = 0; i < previous->sample_count; i++) {
-            lengths2[i] = (double)previous->solution_lengths[i];
-        }
-
-        comparison_t length_comp = compare_samples(lengths1, result->sample_count, lengths2, previous->sample_count);
-
-        printf("Solution Length:  %.2f → %.2f moves       (%+.1f%%)   %s\n", previous->length_stats.mean,
-               result->length_stats.mean, length_comp.mean_diff_pct,
-               length_comp.is_significant ? (length_comp.mean_diff < 0 ? "✓ BETTER" : "✗ WORSE") : "~ NO CHANGE");
-        printf("  Welch's t-test: t=%.2f, p=%.3f (%s)\n", length_comp.t_statistic, length_comp.p_value,
-               length_comp.is_significant ? "significant" : "not significant");
-        printf("  95%% CI:         [%.2f, %.2f] moves\n\n", length_comp.ci_lower, length_comp.ci_upper);
-
-        int verdict = 0;
-
-        if (time_comp.is_significant && time_comp.mean_diff < 0) {
-            verdict = 1;
-        } else if (time_comp.is_significant && time_comp.mean_diff > 0) {
-            verdict = -1;
-        }
-
-        if (verdict > 0) {
-            printf("Verdict: ✓ Performance IMPROVED (time significantly faster)\n");
-        } else if (verdict < 0) {
-            printf("Verdict: ✗ Performance REGRESSED (time significantly slower)\n");
-        } else {
-            printf("Verdict: ~ No significant change\n");
-        }
-
-        free(lengths1);
-        free(lengths2);
-        destroy_benchmark_result(previous);
+void print_benchmark_comparison(const benchmark_result_t *current, const benchmark_result_t *previous) {
+    if (previous == NULL) {
+        return;
     }
 
-    printf("\nResults saved to:\n");
-    printf("  %s\n", json_filename);
-    printf("  %s\n", txt_filename);
+    printf("=== Comparison vs Previous Benchmark ===\n");
+    printf("Previous: %s (%d samples)\n\n", previous->timestamp, previous->sample_count);
 
-    destroy_benchmark_result(result);
+    comparison_t time_comp = compare_samples(current->solve_times_ms, current->sample_count, previous->solve_times_ms,
+                                             previous->sample_count);
+
+    printf("Solve Time:       %.3f ms → %.3f ms   (%+.1f%%)   %s\n", previous->time_stats.mean,
+           current->time_stats.mean, time_comp.mean_diff_pct,
+           time_comp.is_significant ? (time_comp.mean_diff < 0 ? "✓ FASTER" : "✗ SLOWER") : "~ NO CHANGE");
+    printf("  Welch's t-test: t=%.2f, p=%.3f (%s at α=0.05)\n", time_comp.t_statistic, time_comp.p_value,
+           time_comp.is_significant ? "significant" : "not significant");
+    printf("  95%% CI:         [%.3f, %.3f] ms\n", time_comp.ci_lower, time_comp.ci_upper);
+    printf("  Effect size:    Cohen's d = %.2f\n\n", time_comp.cohens_d);
+
+    double *lengths1 = malloc(current->sample_count * sizeof(double));
+    double *lengths2 = malloc(previous->sample_count * sizeof(double));
+
+    for (int i = 0; i < current->sample_count; i++) {
+        lengths1[i] = (double)current->solution_lengths[i];
+    }
+
+    for (int i = 0; i < previous->sample_count; i++) {
+        lengths2[i] = (double)previous->solution_lengths[i];
+    }
+
+    comparison_t length_comp = compare_samples(lengths1, current->sample_count, lengths2, previous->sample_count);
+
+    printf("Solution Length:  %.2f → %.2f moves       (%+.1f%%)   %s\n", previous->length_stats.mean,
+           current->length_stats.mean, length_comp.mean_diff_pct,
+           length_comp.is_significant ? (length_comp.mean_diff < 0 ? "✓ BETTER" : "✗ WORSE") : "~ NO CHANGE");
+    printf("  Welch's t-test: t=%.2f, p=%.3f (%s)\n", length_comp.t_statistic, length_comp.p_value,
+           length_comp.is_significant ? "significant" : "not significant");
+    printf("  95%% CI:         [%.2f, %.2f] moves\n\n", length_comp.ci_lower, length_comp.ci_upper);
+
+    free(lengths1);
+    free(lengths2);
+
+    int verdict = 0;
+
+    if (time_comp.is_significant && time_comp.mean_diff < 0) {
+        verdict = 1;
+    } else if (time_comp.is_significant && time_comp.mean_diff > 0) {
+        verdict = -1;
+    }
+
+    if (verdict > 0) {
+        printf("Verdict: ✓ Performance IMPROVED (time significantly faster)\n");
+    } else if (verdict < 0) {
+        printf("Verdict: ✗ Performance REGRESSED (time significantly slower)\n");
+    } else {
+        printf("Verdict: ~ No significant change\n");
+    }
+}
+
+void compare_benchmark_files(const char *file1, const char *file2) {
+    benchmark_result_t *result1 = load_benchmark_json(file1);
+    benchmark_result_t *result2 = load_benchmark_json(file2);
+
+    if (result1 == NULL || result2 == NULL) {
+        printf("Error: could not load benchmark files\n");
+        printf("  File 1: %s\n", file1);
+        printf("  File 2: %s\n", file2);
+        destroy_benchmark_result(result1);
+        destroy_benchmark_result(result2);
+        return;
+    }
+
+    printf("=== Benchmark Comparison ===\n");
+    printf("File 1: %s (%s)\n", file1, result1->timestamp);
+    printf("File 2: %s (%s)\n\n", file2, result2->timestamp);
+
+    print_benchmark_results(result1);
+    print_benchmark_comparison(result1, result2);
+
+    destroy_benchmark_result(result1);
+    destroy_benchmark_result(result2);
 }
 
 void run_benchmark_fast() { run_benchmark_internal("fast", 500, 5000); }

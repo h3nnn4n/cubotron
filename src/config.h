@@ -49,6 +49,9 @@ typedef struct {
     uint32_t   thread_count;
     bool       die;
     atomic_int solutions_found;
+
+    char *compare_against;
+    char *compare_benchmarks;
 } config_t;
 
 void      init_config();
