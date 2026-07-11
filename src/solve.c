@@ -132,6 +132,74 @@ static solve_list_t *make_trivial_solution() {
     return solves;
 }
 
+#define MAX_SOLUTION_LENGTHS 1024
+
+static solve_list_t *collect_results(thread_context_t *thread_contexts, int thread_count,
+                                     solve_stats_t **all_thread_stats, int *is_winner, int *all_lengths,
+                                     int *n_lengths) {
+    solve_list_t *solves  = NULL;
+    solve_list_t *current = NULL;
+
+    for (int i = 0; i < thread_count; i++) {
+        all_thread_stats[i] = thread_contexts[i].stats;
+        is_winner[i]        = 0;
+    }
+
+    for (int i = 0; i < thread_count; i++) {
+        solve_list_t *thread_solves = thread_contexts[i].solves;
+        if (thread_solves->solution != NULL) {
+            is_winner[i]       = 1;
+            solve_list_t *node = thread_solves;
+            while (node != NULL && node->solution != NULL) {
+                int len = 0;
+                while (node->solution[len] != MOVE_NULL)
+                    len++;
+                if (*n_lengths < MAX_SOLUTION_LENGTHS) {
+                    all_lengths[(*n_lengths)++] = len;
+                }
+                solve_list_t *next = node->next;
+                node->next         = NULL;
+                if (solves == NULL) {
+                    solves  = node;
+                    current = solves;
+                } else {
+                    current->next = node;
+                    current       = node;
+                }
+                node = next;
+            }
+            if (node != NULL) {
+                destroy_solve_list_node(node);
+            }
+        } else {
+            thread_solves->stats = NULL;
+            destroy_solve_list(thread_solves);
+        }
+    }
+
+    return solves;
+}
+
+static void truncate_solutions(solve_list_t *solves, int n_solutions) {
+    int           n   = 0;
+    solve_list_t *cur = solves;
+    while (cur != NULL && cur->solution != NULL) {
+        n++;
+        if (n == n_solutions) {
+            solve_list_t *tail = cur->next;
+            cur->next          = NULL;
+            while (tail != NULL) {
+                solve_list_t *next = tail->next;
+                tail->stats        = NULL;
+                destroy_solve_list_node(tail);
+                tail = next;
+            }
+            break;
+        }
+        cur = cur->next;
+    }
+}
+
 solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
     if (is_coord_solved(original_cube)) {
         return make_trivial_solution();
@@ -165,70 +233,17 @@ solve_list_t *solve(const coord_cube_t *original_cube, const config_t *config) {
         pthread_join(threads[i], NULL);
     }
 
-#define MAX_SOLUTION_LENGTHS 1024
     int all_lengths[MAX_SOLUTION_LENGTHS];
     int n_lengths = 0;
 
-    solve_list_t *solves  = NULL;
-    solve_list_t *current = NULL;
-
     solve_stats_t *all_thread_stats[thread_count];
     int            is_winner[thread_count];
-    for (int i = 0; i < thread_count; i++) {
-        all_thread_stats[i] = thread_contexts[i].stats;
-        is_winner[i]        = 0;
-    }
 
-    for (int i = 0; i < thread_count; i++) {
-        solve_list_t *thread_solves = thread_contexts[i].solves;
-        if (thread_solves->solution != NULL) {
-            is_winner[i]       = 1;
-            solve_list_t *node = thread_solves;
-            while (node != NULL && node->solution != NULL) {
-                int len = 0;
-                while (node->solution[len] != MOVE_NULL)
-                    len++;
-                if (n_lengths < MAX_SOLUTION_LENGTHS) {
-                    all_lengths[n_lengths++] = len;
-                }
-                solve_list_t *next = node->next;
-                node->next         = NULL;
-                if (solves == NULL) {
-                    solves  = node;
-                    current = solves;
-                } else {
-                    current->next = node;
-                    current       = node;
-                }
-                node = next;
-            }
-            if (node != NULL) {
-                destroy_solve_list_node(node);
-            }
-        } else {
-            thread_solves->stats = NULL;
-            destroy_solve_list(thread_solves);
-        }
-    }
+    solve_list_t *solves =
+        collect_results(thread_contexts, thread_count, all_thread_stats, is_winner, all_lengths, &n_lengths);
 
     if (config->n_solutions > 0) {
-        int           n   = 0;
-        solve_list_t *cur = solves;
-        while (cur != NULL && cur->solution != NULL) {
-            n++;
-            if (n == config->n_solutions) {
-                solve_list_t *tail = cur->next;
-                cur->next          = NULL;
-                while (tail != NULL) {
-                    solve_list_t *next = tail->next;
-                    tail->stats        = NULL;
-                    destroy_solve_list_node(tail);
-                    tail = next;
-                }
-                break;
-            }
-            cur = cur->next;
-        }
+        truncate_solutions(solves, config->n_solutions);
     }
 
     aggregate_stats_t *aggregate = compute_aggregate_stats(all_thread_stats, thread_count, all_lengths, n_lengths);
@@ -413,6 +428,14 @@ int are_solutions_equal(const move_t *a, const move_t *b) {
     return a[i] == b[i];
 }
 
+static int is_duplicate_solution(solve_list_t *solves_head, const move_t *solution) {
+    for (solve_list_t *n = solves_head; n != NULL && n->solution != NULL; n = n->next) {
+        if (are_solutions_equal(solution, n->solution))
+            return 1;
+    }
+    return 0;
+}
+
 // FIXME: we need a decent way to get just the phase1 solution
 move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve_stats_t *stats) {
     move_t *solution = NULL;
@@ -480,25 +503,6 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
             pruning_stack[pivot] = get_phase1_pruning(cube_stack[pivot]);
             move_count++;
 
-            /*
-            if (move_count % 10000000 == 0) {
-                char buffer[512];
-                sprintf(buffer, " moves: %14lu pivot: %2d estimated_dist: %2d", move_count, pivot,
-                        pruning_stack[pivot]);
-                sprintf(buffer, "%s : %4d %4d %3d -> ", buffer, cube_stack[pivot]->edge_orientations,
-                        cube_stack[pivot]->corner_orientations, cube_stack[pivot]->E_slice);
-                for (int i = 0; i <= pivot; i++)
-                    sprintf(buffer, "%s %s", buffer, move_to_str(move_stack[i]));
-                printf("%s", buffer);
-
-                uint64_t end_time = get_microseconds();
-                printf("  :  elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);
-                printf("moves: %lu - ", move_count);
-                printf("moves per second : %.2f", ((float)move_count / (end_time - start_time)) * 1000000.0);
-                printf("\n");
-            }
-            */
-
             if (is_phase1_solved(cube_stack[pivot])) {
                 end_time = get_microseconds();
 
@@ -537,15 +541,7 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
                 } else {
                     int phase2_move_count = assemble_full_solution(solution, pivot, phase2_solution, phase2_cube);
 
-                    int is_duplicate = 0;
-                    if (config->n_solutions > 0) {
-                        for (solve_list_t *n = solves_head; n != NULL && n->solution != NULL; n = n->next) {
-                            if (are_solutions_equal(solution, n->solution)) {
-                                is_duplicate = 1;
-                                break;
-                            }
-                        }
-                    }
+                    int is_duplicate = (config->n_solutions > 0) && is_duplicate_solution(solves_head, solution);
 
                     if (is_duplicate) {
                         free(solution);
@@ -597,10 +593,6 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
     }
 
 solution_found:
-
-    /*printf("elapsed time: %f seconds - ", (float)(end_time - start_time) / 1000000.0);*/
-    /*printf("moves: %lu - ", move_count);*/
-    /*printf("moves per second : %.2f\n", ((float)move_count / (end_time - start_time)) * 1000000.0);*/
 
     // We allocate a new node eargely, but the last to be allocated will always
     // have to be discarted, otherwise we would have an empty node at the end.
