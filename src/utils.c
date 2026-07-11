@@ -117,7 +117,7 @@ char *move_to_str(move_t move) {
     return _move_t_to_str[move];
 }
 
-int is_valid(cube_cubie_t *cube) {
+int is_valid_structure(cube_cubie_t *cube) {
     int edge_count[12]     = {0};
     int corner_count[8]    = {0};
     int edge_orientation   = 0;
@@ -147,10 +147,15 @@ int is_valid(cube_cubie_t *cube) {
     if (corner_orientation % 3 != 0)
         return 0;
 
-    // FIXME: This cant be used yet, because is causes several contracts to fail
-    // Caused due to things like corner permutation being set but not the edges
-    // if (get_corner_parity(cube) != get_edge_parity(cube))
-    //     return 0;
+    return 1;
+}
+
+int is_valid(cube_cubie_t *cube) {
+    if (!is_valid_structure(cube))
+        return 0;
+
+    if (get_corner_parity(cube) != get_edge_parity(cube))
+        return 0;
 
     return 1;
 }

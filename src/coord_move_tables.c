@@ -155,6 +155,13 @@ void coord_build_move_tables() {
         for (int slice = 0; slice < N_SLICES; slice++) {
             for (int move = 0; move < N_MOVES; move++) {
                 set_E_slice(cube, slice);
+
+                if (get_corner_parity(cube) != get_edge_parity(cube)) {
+                    corner_t tmp                   = cube->corner_permutations[UFL];
+                    cube->corner_permutations[UFL] = cube->corner_permutations[UBR];
+                    cube->corner_permutations[UBR] = tmp;
+                }
+
                 cubie_apply_move(cube, move);
                 move_table_E_slice[slice * N_MOVES + move] = get_E_slice(cube);
             }
@@ -172,6 +179,13 @@ void coord_build_move_tables() {
         for (int slice = 0; slice < N_SORTED_SLICES; slice++) {
             for (int move = 0; move < N_MOVES; move++) {
                 set_E_sorted_slice(cube, slice);
+
+                if (get_corner_parity(cube) != get_edge_parity(cube)) {
+                    corner_t tmp                   = cube->corner_permutations[UFL];
+                    cube->corner_permutations[UFL] = cube->corner_permutations[UBR];
+                    cube->corner_permutations[UBR] = tmp;
+                }
+
                 cubie_apply_move(cube, move);
                 assert(slice * N_MOVES + move < N_SORTED_SLICES * N_MOVES);
                 move_table_E_sorted_slice[slice * N_MOVES + move] = get_E_sorted_slice(cube);
@@ -196,6 +210,13 @@ void coord_build_move_tables() {
         for (int permutations = 0; permutations < N_CORNER_PERMUTATIONS; permutations++) {
             for (int move = 0; move < N_MOVES; move++) {
                 set_corner_permutations(cube, permutations);
+
+                if (get_corner_parity(cube) != get_edge_parity(cube)) {
+                    edge_t tmp                  = cube->edge_permutations[UR];
+                    cube->edge_permutations[UR] = cube->edge_permutations[UF];
+                    cube->edge_permutations[UF] = tmp;
+                }
+
                 cubie_apply_move(cube, move);
                 move_table_corner_permutations[permutations * N_MOVES + move] = get_corner_permutations(cube);
             }
@@ -222,6 +243,13 @@ void build_UD6_edge_permutations_move_table() {
     for (int permutations = 0; permutations < N_UD6_PHASE1_PERMUTATIONS; permutations++) {
         for (int move = 0; move < N_MOVES; move++) {
             set_UD6_edges(cube, permutations);
+
+            if (get_corner_parity(cube) != get_edge_parity(cube)) {
+                corner_t tmp                   = cube->corner_permutations[UFL];
+                cube->corner_permutations[UFL] = cube->corner_permutations[UBR];
+                cube->corner_permutations[UBR] = tmp;
+            }
+
             cubie_apply_move(cube, move);
             move_table_UD6_edge_permutations[permutations * N_MOVES + move] = get_UD6_edges(cube);
         }
@@ -250,6 +278,13 @@ void build_UD7_edge_permutations_move_table() {
     for (int permutations = 0; permutations < N_UD7_PHASE1_PERMUTATIONS; permutations++) {
         for (int move = 0; move < N_MOVES; move++) {
             set_UD7_edges(cube, permutations);
+
+            if (get_corner_parity(cube) != get_edge_parity(cube)) {
+                corner_t tmp                   = cube->corner_permutations[UFL];
+                cube->corner_permutations[UFL] = cube->corner_permutations[UBR];
+                cube->corner_permutations[UBR] = tmp;
+            }
+
             cubie_apply_move(cube, move);
             int value = get_UD7_edges(cube);
 

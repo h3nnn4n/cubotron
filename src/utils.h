@@ -39,6 +39,7 @@ int   cubie_off_count(const cube_cubie_t *cube);
 char *move_to_str_enum(move_t move);
 char *move_to_str(move_t move);
 int   is_valid(cube_cubie_t *cube);
+int   is_valid_structure(cube_cubie_t *cube);
 
 cube_cubie_t *random_cubie_cube();
 coord_cube_t *random_coord_cube();

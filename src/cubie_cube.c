@@ -284,7 +284,7 @@ void set_UD7_edges(cube_cubie_t *cubiecube, int idx) {
         }
     }
 
-    assert(is_valid(cubiecube));
+    assert(is_valid_structure(cubiecube));
 }
 
 int get_UD6_edges(cube_cubie_t *cubiecube) {

@@ -217,7 +217,7 @@ void test_set_E_slice_only_makes_valid_cubes() {
     for (int i = 0; i < N_SLICES; i++) {
         set_E_slice(cube, i);
 
-        TEST_ASSERT_TRUE(is_valid(cube));
+        TEST_ASSERT_TRUE(is_valid_structure(cube));
     }
 
     free(cube);
@@ -262,7 +262,7 @@ void test_set_E_sorted_slice_only_makes_valid_cubes() {
     for (int i = 0; i < N_SORTED_SLICES; i++) {
         set_E_sorted_slice(cube, i);
 
-        TEST_ASSERT_TRUE(is_valid(cube));
+        TEST_ASSERT_TRUE(is_valid_structure(cube));
     }
 
     free(cube);
@@ -307,7 +307,7 @@ void test_set_UD6_edges_only_makes_valid_cubes() {
     for (int i = 0; i < N_UD6_PHASE1_PERMUTATIONS; i++) {
         set_UD6_edges(cube, i);
 
-        TEST_ASSERT_TRUE(is_valid(cube));
+        TEST_ASSERT_TRUE(is_valid_structure(cube));
     }
 
     free(cube);
@@ -352,7 +352,7 @@ void test_set_UD7_edges_only_makes_valid_cubes() {
     for (int i = 0; i < N_UD7_PHASE1_PERMUTATIONS; i++) {
         set_UD7_edges(cube, i);
 
-        TEST_ASSERT_TRUE(is_valid(cube));
+        TEST_ASSERT_TRUE(is_valid_structure(cube));
     }
 
     free(cube);
@@ -401,7 +401,7 @@ void test_set_corner_permutations_only_makes_valid_cubes() {
     for (int i = 0; i < N_CORNER_PERMUTATIONS; i++) {
         set_corner_permutations(cube, i);
 
-        TEST_ASSERT_TRUE(is_valid(cube));
+        TEST_ASSERT_TRUE(is_valid_structure(cube));
     }
 
     free(cube);
