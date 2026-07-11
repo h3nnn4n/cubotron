@@ -439,6 +439,7 @@ int is_duplicate_solution(solve_list_t *solves_head, const move_t *solution) {
     return 0;
 }
 
+// FIXME: we need a decent way to get just the phase1 solution
 move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve_stats_t *stats) {
     move_t *solution = NULL;
 
@@ -519,7 +520,7 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
                 move_t *phase1_solution;
                 build_phase1_solution(move_stack, pivot, &solution, &phase1_solution);
 
-                if (config->phase1_only) {
+                if (config->n_solutions == 0) {
                     get_config()->die = true;
                     goto solution_found;
                 }
