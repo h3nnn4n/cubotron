@@ -64,16 +64,13 @@ void destroy_solve_list_node(solve_list_t *node) {
         node->solution = NULL;
     }
 
+    free(node->stats);
+    node->stats = NULL;
+
     free(node);
 }
 
 void destroy_solve_list(solve_list_t *solves) {
-    if (solves == NULL)
-        return;
-
-    free(solves->stats);
-    solves->stats = NULL;
-
     while (solves != NULL) {
         solve_list_t *next = solves->next;
         destroy_solve_list_node(solves);
@@ -363,6 +360,10 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
     // printf("solving phase1 with prep moves: ");
     // print_move_sequence(solve_context->prep_moves);
 
+    if (solves != NULL) {
+        solves->stats = stats;
+    }
+
     for (int allowed_depth = 1; allowed_depth <= config->max_depth; allowed_depth++) {
         int pivot = 0;
         /*printf("searching with max depth: %d\n", allowed_depth);*/
@@ -429,10 +430,6 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
                 stats->phase1_depth      = pivot + 1;
                 stats->phase1_move_count = move_count;
                 stats->phase1_solve_time = (float)(end_time - phase2_time - start_time) / 1000000.0;
-
-                if (solves != NULL) {
-                    solves->stats = stats;
-                }
 
                 move_t *phase1_solution;
                 build_phase1_solution(move_stack, pivot, &solution, &phase1_solution);
