@@ -1,6 +1,6 @@
 name: Memory Leak Check
 
-on: push
+on: [push, pull_request]
 
 jobs:
   heapcheck-solve:
