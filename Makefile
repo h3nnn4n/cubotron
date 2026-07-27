@@ -25,7 +25,7 @@ ifeq ($(UNAME_S),Darwin)
   LDFLAGS = -lpcg_random -lm -Wl,-Ldeps/pcg-c/src/
 endif
 
-override CFLAGS += -Wall -Wextra -pedantic -Werror -std=gnu11 $(OPTIMIZATION) $(OPTIONS) $(INCLUDES)
+override CFLAGS += -Wall -Wextra -Wshadow -pedantic -Werror -std=gnu11 $(OPTIMIZATION) $(OPTIONS) $(INCLUDES)
 
 CC = gcc
 

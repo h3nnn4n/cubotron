@@ -35,8 +35,8 @@ void test_random_phase1_solving() {
 
         move_t *solution = solutions->solution;
 
-        for (int i = 0; solution[i] != MOVE_NULL; i++) {
-            coord_apply_move(cube, solution[i]);
+        for (int j = 0; solution[j] != MOVE_NULL; j++) {
+            coord_apply_move(cube, solution[j]);
         }
 
         TEST_ASSERT_TRUE(is_phase1_solved(cube));
@@ -171,8 +171,8 @@ void test_random_full_solver_with_random_scrambles_single_solution() {
 
         solve_list_t *solution = solve_single(cube);
 
-        for (int i = 0; solution->solution[i] != MOVE_NULL; i++) {
-            coord_apply_move(cube, solution->solution[i]);
+        for (int j = 0; solution->solution[j] != MOVE_NULL; j++) {
+            coord_apply_move(cube, solution->solution[j]);
         }
 
         TEST_ASSERT_TRUE(is_phase1_solved(cube));
@@ -254,8 +254,8 @@ void test_random_full_solver_with_sample_cubes_single_solution() {
 
         solve_list_t *solution = solve_single(cube);
 
-        for (int i = 0; solution->solution[i] != MOVE_NULL; i++) {
-            coord_apply_move(cube, solution->solution[i]);
+        for (int j = 0; solution->solution[j] != MOVE_NULL; j++) {
+            coord_apply_move(cube, solution->solution[j]);
         }
 
         TEST_ASSERT_TRUE(is_phase1_solved(cube));
@@ -297,15 +297,15 @@ void test_solve_with_move_blacklist() {
 
             solve_list_t *solution = solve(cube, config);
 
-            for (int i = 0; solution->solution[i] != MOVE_NULL; i++) {
-                coord_apply_move(cube, solution->solution[i]);
+            for (int j = 0; solution->solution[j] != MOVE_NULL; j++) {
+                coord_apply_move(cube, solution->solution[j]);
 
-                if (move_to_str(solution->solution[i])[0] == blacklisted_char) {
+                if (move_to_str(solution->solution[j])[0] == blacklisted_char) {
                     sprintf(buffer, "solution has blacklisted move:");
 
-                    for (int i = 0; solution->solution[i] != MOVE_NULL; i++) {
+                    for (int k = 0; solution->solution[k] != MOVE_NULL; k++) {
                         strncat(buffer, " ", sizeof(buffer) - strlen(buffer) - 1);
-                        strncat(buffer, move_to_str(solution->solution[i]), sizeof(buffer) - strlen(buffer) - 1);
+                        strncat(buffer, move_to_str(solution->solution[k]), sizeof(buffer) - strlen(buffer) - 1);
                     }
 
                     TEST_MESSAGE(buffer);

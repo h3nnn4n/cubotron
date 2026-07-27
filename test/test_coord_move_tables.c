@@ -134,7 +134,7 @@ void test_moves_are_reversible() {
     const int n_moves = 50;
     move_t    moves[52];
 
-    for (int i = 0; i < 1000; i++) {
+    for (int iter = 0; iter < 1000; iter++) {
         coord_cube_t *cube      = random_coord_cube();
         coord_cube_t *reference = get_coord_cube();
         copy_coord_cube(reference, cube);
