@@ -366,8 +366,10 @@ move_t *patch_solution(solve_context_t *solve_context, solve_list_t *solution) {
 }
 
 static void build_phase1_solution(const move_t *move_stack, int pivot, move_t **solution, move_t **phase1_solution) {
-    *solution        = malloc(sizeof(move_t) * 40);
-    *phase1_solution = malloc(sizeof(move_t) * 40);
+    assert(pivot < MAX_MOVES);
+
+    *solution        = malloc(sizeof(move_t) * (MAX_MOVES + 1));
+    *phase1_solution = malloc(sizeof(move_t) * (pivot + 2));
 
     for (int i = 0; i <= pivot; i++) {
         (*solution)[i]        = move_stack[i];
