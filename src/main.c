@@ -153,35 +153,7 @@ int main(int argc, char **argv) {
                 config->compare_benchmarks = strdup(optarg);
             } break;
 
-            case 'h':
-                printf("Usage: cubotron [options]\n");
-                printf("\n");
-                printf("Solve modes:\n");
-                printf("  --solve <facelets>        Solve a cube from a 54-character facelet string\n");
-                printf("  --solve-scramble <moves>  Solve a cube from a scramble move sequence\n");
-                printf("\n");
-                printf("Solver options:\n");
-                printf("  --max-depth <n>            Maximum solution length (default: 25, max: 29)\n");
-                printf("  --n-solutions <n>          Number of solutions to find (default: 1, -1 = all)\n");
-                printf("  --move-blacklist <moves>   Exclude moves from search (e.g. \"U U2 U'\")\n");
-                printf("\n");
-                printf("Benchmark modes:\n");
-                printf("  --benchmark-fast           Run fast benchmark (500ms warmup, 5s measurement)\n");
-                printf("  --benchmark-slow           Run slow benchmark (1s warmup, 30s measurement)\n");
-                printf("  --compare-against <file>   Compare results against a specific baseline file\n");
-                printf("  --compare-benchmarks <a,b> Compare two benchmark result files directly\n");
-                printf("\n");
-                printf("Other:\n");
-                printf("  --rebuild-tables           Rebuild move and pruning tables from scratch\n");
-                printf("  --help                     Show this help message\n");
-                printf("\n");
-                printf("Example:\n");
-                printf("  cubotron --solve DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL\n");
-                printf("  cubotron --solve-scramble \"U R2 F D' L B\"\n");
-                printf("  cubotron --benchmark-fast\n");
-                printf("  cubotron --benchmark-fast --compare-against results/fast_baseline.json\n");
-                printf("  cubotron --compare-benchmarks results/a.json,results/b.json\n");
-                return 0;
+            case 'h': print_help(); return 0;
 
             default: abort();
         }
@@ -203,6 +175,12 @@ int main(int argc, char **argv) {
         build_pruning_tables();
 
         compare_benchmark_files(file1, file2);
+        return 0;
+    }
+
+    if (!config->do_benchmark_fast && !config->do_benchmark_slow && !config->do_solve &&
+        config->compare_benchmarks == NULL) {
+        print_help();
         return 0;
     }
 
@@ -255,8 +233,6 @@ int main(int argc, char **argv) {
 
         destroy_solve_list(solution);
         free(facelets_to_solve);
-    } else {
-        printf("No solve mode specified\n");
     }
 
     purge_cubie_move_table();
