@@ -1,6 +1,6 @@
 name: Sample Solves Test
 
-on: push
+on: [push, pull_request]
 
 jobs:
   run-solver:
