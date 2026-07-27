@@ -465,7 +465,7 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
 
     solve_list_t *solves_head = solves;
 
-    for (int allowed_depth = 1; allowed_depth <= config->max_depth; allowed_depth++) {
+    for (int allowed_depth = 1; allowed_depth <= config->max_depth - solve_context->prep_move_count; allowed_depth++) {
         int pivot = 0;
         /*printf("searching with max depth: %d\n", allowed_depth);*/
 
@@ -547,7 +547,8 @@ move_t *solve_phase1(solve_context_t *solve_context, solve_list_t *solves, solve
 
                 uint64_t phase2_start = get_microseconds();
                 move_t  *phase2_solution =
-                    solve_phase2(solve_context->phase2_context, config, config->max_depth - pivot - 1, stats);
+                    solve_phase2(solve_context->phase2_context, config,
+                                 config->max_depth - solve_context->prep_move_count - pivot - 1, stats);
                 uint64_t phase2_end = get_microseconds();
                 phase2_time += phase2_end - phase2_start;
                 stats->phase2_attempts++;
