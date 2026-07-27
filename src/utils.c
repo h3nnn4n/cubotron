@@ -287,3 +287,32 @@ int are_move_sequences_equal(const move_t *moves1, const move_t *moves2) {
     }
     return moves1[i] == MOVE_NULL && moves2[i] == MOVE_NULL;
 }
+
+void print_help(void) {
+    printf("Cubotron - A fast Rubik's cube solver\n\n");
+    printf("Usage: cubotron [options]\n\n");
+    printf("Solve modes:\n");
+    printf("  --solve <facelets>        Solve a cube from a 54-character facelet string\n");
+    printf("  --solve-scramble <moves>  Solve a cube from a scramble move sequence\n\n");
+    printf("Solver options:\n");
+    printf("  --max-depth <n>            Maximum solution length (default: 22, max: 29)\n");
+    printf("  --n-solutions <n>          Number of solutions to find (default: 1, -1 = all)\n");
+    printf("  --move-blacklist <moves>   Exclude moves from search (e.g. \"U R2 F'\")\n\n");
+    printf("Benchmark modes:\n");
+    printf("  --benchmark-fast           Run fast benchmark (500ms warmup, 5s measurement)\n");
+    printf("  --benchmark-slow           Run slow benchmark (1s warmup, 30s measurement)\n");
+    printf("  --compare-against <file>   Compare results against a specific baseline file\n");
+    printf("  --compare-benchmarks <a,b> Compare two benchmark result files directly\n\n");
+    printf("Other:\n");
+    printf("  --rebuild-tables           Rebuild move and pruning tables from scratch\n");
+    printf("  --help                     Show this help message\n\n");
+    printf("Facelet format:\n");
+    printf("  9 characters per face in order: U1-U9, R1-R9, F1-F9, D1-D9,\n");
+    printf("  L1-L9, B1-B9 (where U=up, R=right, F=front, D=down, L=left, B=back)\n\n");
+    printf("Example:\n");
+    printf("  cubotron --solve DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL\n");
+    printf("  cubotron --solve-scramble \"U R2 F D' L B\"\n");
+    printf("  cubotron --benchmark-fast\n");
+    printf("  cubotron --benchmark-fast --compare-against results/fast_baseline.json\n");
+    printf("  cubotron --compare-benchmarks results/a.json,results/b.json\n\n");
+}

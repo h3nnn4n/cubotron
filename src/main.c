@@ -56,13 +56,14 @@ int main(int argc, char **argv) {
                                     {"move-blacklist", required_argument, 0, 'b'},
                                     {"compare-against", required_argument, 0, 'A'},
                                     {"compare-benchmarks", required_argument, 0, 'B'},
+                                    {"help", no_argument, 0, 'h'},
                                     {0, 0, 0, 0}};
 
     while (1) {
         int c;
         int option_index = 0;
 
-        c = getopt_long(argc, argv, "abc:d:f:", long_options, &option_index);
+        c = getopt_long(argc, argv, "abc:d:f:h", long_options, &option_index);
 
         if (c == -1)
             break;
@@ -152,9 +153,7 @@ int main(int argc, char **argv) {
                 config->compare_benchmarks = strdup(optarg);
             } break;
 
-            case '?':
-                /* getopt_long already printed an error message. */
-                break;
+            case 'h': print_help(); return 0;
 
             default: abort();
         }
@@ -176,6 +175,12 @@ int main(int argc, char **argv) {
         build_pruning_tables();
 
         compare_benchmark_files(file1, file2);
+        return 0;
+    }
+
+    if (!config->do_benchmark_fast && !config->do_benchmark_slow && !config->do_solve &&
+        config->compare_benchmarks == NULL) {
+        print_help();
         return 0;
     }
 
@@ -228,8 +233,6 @@ int main(int argc, char **argv) {
 
         destroy_solve_list(solution);
         free(facelets_to_solve);
-    } else {
-        printf("No solve mode specified\n");
     }
 
     purge_cubie_move_table();

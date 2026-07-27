@@ -59,4 +59,6 @@ int  are_move_sequences_equal(const move_t *moves1, const move_t *moves2);
 
 int rmrf(char *path);
 
+void print_help(void);
+
 #endif /* end of include guard */
