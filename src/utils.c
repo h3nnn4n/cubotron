@@ -315,5 +315,4 @@ void print_help(void) {
     printf("  cubotron --benchmark-fast\n");
     printf("  cubotron --benchmark-fast --compare-against results/fast_baseline.json\n");
     printf("  cubotron --compare-benchmarks results/a.json,results/b.json\n\n");
-    printf("Without arguments, tables are built and cached to disk for future solves.\n");
 }
