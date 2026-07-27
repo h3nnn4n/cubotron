@@ -56,13 +56,14 @@ int main(int argc, char **argv) {
                                     {"move-blacklist", required_argument, 0, 'b'},
                                     {"compare-against", required_argument, 0, 'A'},
                                     {"compare-benchmarks", required_argument, 0, 'B'},
+                                    {"help", no_argument, 0, 'h'},
                                     {0, 0, 0, 0}};
 
     while (1) {
         int c;
         int option_index = 0;
 
-        c = getopt_long(argc, argv, "abc:d:f:", long_options, &option_index);
+        c = getopt_long(argc, argv, "abc:d:f:h", long_options, &option_index);
 
         if (c == -1)
             break;
@@ -152,9 +153,35 @@ int main(int argc, char **argv) {
                 config->compare_benchmarks = strdup(optarg);
             } break;
 
-            case '?':
-                /* getopt_long already printed an error message. */
-                break;
+            case 'h':
+                printf("Usage: cubotron [options]\n");
+                printf("\n");
+                printf("Solve modes:\n");
+                printf("  --solve <facelets>        Solve a cube from a 54-character facelet string\n");
+                printf("  --solve-scramble <moves>  Solve a cube from a scramble move sequence\n");
+                printf("\n");
+                printf("Solver options:\n");
+                printf("  --max-depth <n>            Maximum solution length (default: 25, max: 29)\n");
+                printf("  --n-solutions <n>          Number of solutions to find (default: 1, -1 = all)\n");
+                printf("  --move-blacklist <moves>   Exclude moves from search (e.g. \"U U2 U'\")\n");
+                printf("\n");
+                printf("Benchmark modes:\n");
+                printf("  --benchmark-fast           Run fast benchmark (500ms warmup, 5s measurement)\n");
+                printf("  --benchmark-slow           Run slow benchmark (1s warmup, 30s measurement)\n");
+                printf("  --compare-against <file>   Compare results against a specific baseline file\n");
+                printf("  --compare-benchmarks <a,b> Compare two benchmark result files directly\n");
+                printf("\n");
+                printf("Other:\n");
+                printf("  --rebuild-tables           Rebuild move and pruning tables from scratch\n");
+                printf("  --help                     Show this help message\n");
+                printf("\n");
+                printf("Example:\n");
+                printf("  cubotron --solve DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL\n");
+                printf("  cubotron --solve-scramble \"U R2 F D' L B\"\n");
+                printf("  cubotron --benchmark-fast\n");
+                printf("  cubotron --benchmark-fast --compare-against results/fast_baseline.json\n");
+                printf("  cubotron --compare-benchmarks results/a.json,results/b.json\n");
+                return 0;
 
             default: abort();
         }
