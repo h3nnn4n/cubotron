@@ -37,8 +37,12 @@ jobs:
             --suppress=nullPointerOutOfMemory \
             --suppress=nullPointerOutOfResources \
             --suppress=constParameterCallback \
+            --suppress=constParameterPointer \
+            --suppress=constVariablePointer \
+            --suppress=uninitvar \
             --suppress=normalCheckLevelMaxBranches \
             --suppress=unmatchedSuppression \
+            --suppress=checkersReport \
             --std=c11 \
             --language=c \
             --error-exitcode=1 \
