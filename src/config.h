@@ -28,7 +28,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "definitions.h"
+#include "puzzle_types.h"
 
 typedef struct {
     int do_benchmark_fast;

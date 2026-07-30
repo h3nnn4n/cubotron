@@ -21,40 +21,57 @@
  *
  */
 
-#ifndef _PUZZLE_H
-#define _PUZZLE_H
+#ifndef _PUZZLE_TYPES
+#define _PUZZLE_TYPES
 
-#include <stddef.h>
+#define N_CORNER_ORIENTATIONS 2187
+#define N_PARITY              2
+#define N_CORNER_PERMUTATIONS 40320
 
-#include "puzzle_types.h"
+#define N_CORNERS 8
+#define N_MOVES   18
+#define N_COLORS  6
 
-typedef struct puzzle_ops_s puzzle_ops_t;
-typedef struct puzzle_s     puzzle_t;
+typedef enum {
+    U = 0,
+    R = 1,
+    F = 2,
+    D = 3,
+    L = 4,
+    B = 5,
+} color_t;
 
-struct puzzle_ops_s {
-    const char *name;
-    int         n_moves;
-    size_t      state_size;
+typedef enum {
+    URF = 0,
+    UFL = 1,
+    ULB = 2,
+    UBR = 3,
+    DFR = 4,
+    DLF = 5,
+    DBL = 6,
+    DRB = 7,
+} corner_t;
 
-    void (*reset)(void *state);
-    int (*is_solved)(const void *state);
-    void (*apply_move)(void *state, move_t move);
-    void (*copy)(void *dst, const void *src);
-
-    int (*from_string)(void *state, const char *str);
-    void (*to_string)(const void *state, char *buf, size_t bufsz);
-};
-
-struct puzzle_s {
-    const puzzle_ops_t *ops;
-    void               *state;
-};
-
-void                puzzle_register(const puzzle_ops_t *ops);
-const puzzle_ops_t *puzzle_lookup(const char *name);
-int                 puzzle_count(void);
-const puzzle_ops_t *puzzle_by_index(int index);
-puzzle_t           *puzzle_create(const char *name);
-void                puzzle_destroy(puzzle_t *puzzle);
+typedef enum {
+    MOVE_U1   = 0,
+    MOVE_U2   = 1,
+    MOVE_U3   = 2,
+    MOVE_R1   = 3,
+    MOVE_R2   = 4,
+    MOVE_R3   = 5,
+    MOVE_F1   = 6,
+    MOVE_F2   = 7,
+    MOVE_F3   = 8,
+    MOVE_D1   = 9,
+    MOVE_D2   = 10,
+    MOVE_D3   = 11,
+    MOVE_L1   = 12,
+    MOVE_L2   = 13,
+    MOVE_L3   = 14,
+    MOVE_B1   = 15,
+    MOVE_B2   = 16,
+    MOVE_B3   = 17,
+    MOVE_NULL = 18,
+} move_t;
 
 #endif
