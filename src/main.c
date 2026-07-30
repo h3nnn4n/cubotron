@@ -35,6 +35,7 @@
 #include "move_tables.h"
 #include "pruning.h"
 #include "solve.h"
+#include "solver.h"
 #include "stats.h"
 #include "utils.h"
 
@@ -51,6 +52,7 @@ int main(int argc, char **argv) {
                                     {"rebuild-tables", no_argument, &config->rebuild_tables, 1},
                                     {"solve", required_argument, 0, 's'},
                                     {"solve-scramble", required_argument, 0, 'c'},
+                                    {"puzzle", required_argument, 0, 'p'},
                                     {"max-depth", required_argument, 0, 'm'},
                                     {"n-solutions", required_argument, 0, 'n'},
                                     {"move-blacklist", required_argument, 0, 'b'},
@@ -153,6 +155,15 @@ int main(int argc, char **argv) {
                 config->compare_benchmarks = strdup(optarg);
             } break;
 
+            case 'p': {
+                if (optarg == NULL) {
+                    fprintf(stderr, "optarg is missing for puzzle");
+                    break;
+                }
+
+                config->puzzle_type = strdup(optarg);
+            } break;
+
             case 'h': print_help(); return 0;
 
             default: abort();
@@ -209,7 +220,7 @@ int main(int argc, char **argv) {
 
             solution = solve_single(cube);
         } else {
-            solution = solve_facelets(facelets_to_solve, config);
+            solution = solve_puzzle(config->puzzle_type, facelets_to_solve, config);
         }
 
         // Print all solutions

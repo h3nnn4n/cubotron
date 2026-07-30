@@ -50,6 +50,8 @@ typedef struct {
     bool       die;
     atomic_int solutions_found;
 
+    char *puzzle_type;
+
     char *compare_against;
     char *compare_benchmarks;
 } config_t;
