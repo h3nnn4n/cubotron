@@ -56,6 +56,14 @@ const puzzle_ops_t *puzzle_lookup(const char *name) {
     return NULL;
 }
 
+int puzzle_count(void) { return n_puzzles; }
+
+const puzzle_ops_t *puzzle_by_index(int index) {
+    if (index < 0 || index >= n_puzzles)
+        return NULL;
+    return puzzle_registry[index];
+}
+
 puzzle_t *puzzle_create(const char *name) {
     const puzzle_ops_t *ops = puzzle_lookup(name);
 
@@ -92,9 +100,17 @@ const solver_ops_t *solver_lookup(const char *puzzle_name) {
     return NULL;
 }
 
+int solver_count(void) { return n_solvers; }
+
+const solver_ops_t *solver_by_index(int index) {
+    if (index < 0 || index >= n_solvers)
+        return NULL;
+    return solver_registry[index];
+}
+
 static int initialized = 0;
 
-static void init_registry(void) {
+void init_registry(void) {
     if (initialized)
         return;
 

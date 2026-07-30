@@ -58,6 +58,8 @@ int main(int argc, char **argv) {
                                     {"move-blacklist", required_argument, 0, 'b'},
                                     {"compare-against", required_argument, 0, 'A'},
                                     {"compare-benchmarks", required_argument, 0, 'B'},
+                                    {"list-puzzles", no_argument, 0, 1},
+                                    {"list-solvers", no_argument, 0, 2},
                                     {"help", no_argument, 0, 'h'},
                                     {0, 0, 0, 0}};
 
@@ -163,6 +165,22 @@ int main(int argc, char **argv) {
 
                 config->puzzle_type = strdup(optarg);
             } break;
+
+            case 1: {
+                init_registry();
+                printf("Available puzzles:\n");
+                for (int i = 0; i < puzzle_count(); i++)
+                    printf("  %s\n", puzzle_by_index(i)->name);
+                return 0;
+            }
+
+            case 2: {
+                init_registry();
+                printf("Available solvers:\n");
+                for (int i = 0; i < solver_count(); i++)
+                    printf("  %s (for %s)\n", solver_by_index(i)->name, solver_by_index(i)->puzzle_name);
+                return 0;
+            }
 
             case 'h': print_help(); return 0;
 

@@ -28,6 +28,8 @@
 #include "puzzle.h"
 #include "solution.h"
 
+void init_registry(void);
+
 typedef struct solver_ops_s solver_ops_t;
 
 struct solver_ops_s {
@@ -41,6 +43,8 @@ struct solver_ops_s {
 
 void                solver_register(const solver_ops_t *ops);
 const solver_ops_t *solver_lookup(const char *puzzle_name);
+int                 solver_count(void);
+const solver_ops_t *solver_by_index(int index);
 solve_list_t       *solve_puzzle(const char *puzzle_name, const char *state_str, const config_t *cfg);
 
 #endif

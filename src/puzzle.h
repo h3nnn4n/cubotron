@@ -52,6 +52,8 @@ struct puzzle_s {
 
 void                puzzle_register(const puzzle_ops_t *ops);
 const puzzle_ops_t *puzzle_lookup(const char *name);
+int                 puzzle_count(void);
+const puzzle_ops_t *puzzle_by_index(int index);
 puzzle_t           *puzzle_create(const char *name);
 void                puzzle_destroy(puzzle_t *puzzle);
 
