@@ -26,8 +26,10 @@
 #include <string.h>
 
 #include "puzzle.h"
+#include "puzzles/puzzle_2x2.h"
 #include "puzzles/puzzle_3x3.h"
 #include "solver.h"
+#include "solvers/solver_2x2_ida.h"
 #include "solvers/solver_3x3_kociemba.h"
 
 #define MAX_REGISTRATIONS 16
@@ -96,7 +98,9 @@ static void init_registry(void) {
     if (initialized)
         return;
 
+    puzzle_register(&puzzle_2x2_ops);
     puzzle_register(&puzzle_3x3_ops);
+    solver_register(&solver_2x2_ida_ops);
     solver_register(&solver_3x3_kociemba_ops);
 
     initialized = 1;

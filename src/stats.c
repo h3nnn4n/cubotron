@@ -168,6 +168,9 @@ static void print_int_aggregate(const char *label, const int_aggregate_t *a) {
 }
 
 void print_aggregate_stats(const aggregate_stats_t *agg, const solve_stats_t *first_solution) {
+    if (agg == NULL && first_solution == NULL)
+        return;
+
     printf("Solve stats:\n");
 
     if (first_solution != NULL) {
@@ -177,35 +180,37 @@ void print_aggregate_stats(const aggregate_stats_t *agg, const solve_stats_t *fi
         printf("\n");
     }
 
-    print_float_aggregate("Phase 1 time (s)", &agg->phase1_time);
-    print_float_aggregate("Phase 2 time (s)", &agg->phase2_time);
-    print_float_aggregate("Wall time (s)   ", &agg->wall_time);
-    printf("\n");
+    if (agg != NULL) {
+        print_float_aggregate("Phase 1 time (s)", &agg->phase1_time);
+        print_float_aggregate("Phase 2 time (s)", &agg->phase2_time);
+        print_float_aggregate("Wall time (s)   ", &agg->wall_time);
+        printf("\n");
 
-    print_int_aggregate("Phase 1 moves", &agg->phase1_moves);
-    print_int_aggregate("Phase 2 moves", &agg->phase2_moves);
-    print_int_aggregate("Total moves  ", &agg->total_moves);
-    printf("\n");
+        print_int_aggregate("Phase 1 moves", &agg->phase1_moves);
+        print_int_aggregate("Phase 2 moves", &agg->phase2_moves);
+        print_int_aggregate("Total moves  ", &agg->total_moves);
+        printf("\n");
 
-    print_int_aggregate("Solutions found (per thread)", &agg->solutions_found);
-    printf("\n");
+        print_int_aggregate("Solutions found (per thread)", &agg->solutions_found);
+        printf("\n");
 
-    printf("  Total moves (all threads): %" PRId64 "\n", agg->total_moves_all_threads);
-    printf("  Moves per second:          %.2f\n", agg->overall_moves_per_second);
-    printf("  Wall time:                 %.6f s\n", agg->overall_wall_time);
-    printf("\n");
+        printf("  Total moves (all threads): %" PRId64 "\n", agg->total_moves_all_threads);
+        printf("  Moves per second:          %.2f\n", agg->overall_moves_per_second);
+        printf("  Wall time:                 %.6f s\n", agg->overall_wall_time);
+        printf("\n");
 
-    printf("  Phase 2 attempts:     %d\n", agg->total_phase2_attempts);
-    printf("  Phase 2 successes:    %d\n", agg->total_phase2_successes);
-    printf("  Phase 2 success rate: %.2f%%\n", agg->phase2_success_rate);
-    printf("\n");
+        printf("  Phase 2 attempts:     %d\n", agg->total_phase2_attempts);
+        printf("  Phase 2 successes:    %d\n", agg->total_phase2_successes);
+        printf("  Phase 2 success rate: %.2f%%\n", agg->phase2_success_rate);
+        printf("\n");
 
-    printf("  Threads die-aborted: %d\n", agg->threads_die_aborted);
-    printf("  Threads completed:   %d\n", agg->threads_completed);
-    printf("\n");
+        printf("  Threads die-aborted: %d\n", agg->threads_die_aborted);
+        printf("  Threads completed:   %d\n", agg->threads_completed);
+        printf("\n");
 
-    printf("  Solution lengths: min=%d  max=%d  avg=%.1f  (count=%d)\n", agg->solution_lengths_min,
-           agg->solution_lengths_max, agg->solution_lengths_avg, agg->solution_lengths_count);
+        printf("  Solution lengths: min=%d  max=%d  avg=%.1f  (count=%d)\n", agg->solution_lengths_min,
+               agg->solution_lengths_max, agg->solution_lengths_avg, agg->solution_lengths_count);
+    }
 }
 
 void print_solve_stats(const solve_stats_t *stats) {
