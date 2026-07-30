@@ -41,3 +41,8 @@ jobs:
 
       - name: Run 2x2 Solver (scramble)
         run: ./cubotron --puzzle 2x2 --solve-scramble "U R F U' R' F'" --max-depth=27
+
+      - name: Verify 2x2 stats show no Phase 2
+        run: |
+          output=$(./cubotron --puzzle 2x2 --solve-scramble "U R F" --max-depth=27 2>&1)
+          echo "$output" | grep -q "Phase 2" && { echo "FAIL: Phase 2 found in 2x2 output"; exit 1; } || echo "OK — no Phase 2 in 2x2 output"

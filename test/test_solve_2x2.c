@@ -55,6 +55,32 @@ void test_single_move_scramble(void) {
     destroy_solve_list(solutions);
 }
 
+void test_blacklist_excludes_move(void) {
+    config_t *cfg = get_config();
+    cfg->move_black_list[MOVE_U1] = MOVE_U1;
+
+    char  facelets[N_FACELETS_2X2 + 1] = "UUUURRRRFFFFDDDDLLLLBBBB";
+    move_t scramble_moves[]             = {MOVE_U1, MOVE_NULL};
+
+    cube_2x2_t cube;
+    puzzle_2x2_ops.from_string(&cube, facelets);
+    for (int i = 0; scramble_moves[i] != MOVE_NULL; i++)
+        puzzle_2x2_ops.apply_move(&cube, scramble_moves[i]);
+    puzzle_2x2_ops.to_string(&cube, facelets, sizeof(facelets));
+
+    solve_list_t *solutions = solve_puzzle("2x2", facelets, cfg);
+    TEST_ASSERT_NOT_NULL(solutions);
+    TEST_ASSERT_NOT_NULL(solutions->solution);
+
+    for (int i = 0; solutions->solution[i] != MOVE_NULL; i++)
+        TEST_ASSERT_NOT_EQUAL(MOVE_U1, solutions->solution[i]);
+
+    TEST_ASSERT_TRUE(verify_solution(facelets, solutions->solution));
+    destroy_solve_list(solutions);
+
+    cfg->move_black_list[MOVE_U1] = MOVE_NULL;
+}
+
 void test_random_scrambles(void) {
     solver_2x2_ida_ops.init();
 
@@ -86,6 +112,7 @@ int main() {
     RUN_TEST(test_solved_cube_returns_trivial);
     RUN_TEST(test_single_move_scramble);
     RUN_TEST(test_random_scrambles);
+    RUN_TEST(test_blacklist_excludes_move);
 
     return UNITY_END();
 }

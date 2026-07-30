@@ -167,27 +167,42 @@ static void print_int_aggregate(const char *label, const int_aggregate_t *a) {
            a->p90, a->p95, a->p99, a->max);
 }
 
+static int is_single_phase(const aggregate_stats_t *agg) {
+    return agg->total_phase2_attempts == 0 && agg->total_phase2_successes == 0;
+}
+
 void print_aggregate_stats(const aggregate_stats_t *agg, const solve_stats_t *first_solution) {
     if (agg == NULL && first_solution == NULL)
         return;
+
+    int single_phase = agg != NULL ? is_single_phase(agg) : 0;
 
     printf("Solve stats:\n");
 
     if (first_solution != NULL) {
         printf("  Solution length: %d\n", first_solution->solution_length);
-        printf("  Phase 1 depth:   %d\n", first_solution->phase1_depth);
-        printf("  Phase 2 depth:   %d\n", first_solution->phase2_depth);
+        printf("  Search depth:    %d\n", first_solution->phase1_depth);
+
+        if (!single_phase)
+            printf("  Phase 2 depth:   %d\n", first_solution->phase2_depth);
+
         printf("\n");
     }
 
     if (agg != NULL) {
-        print_float_aggregate("Phase 1 time (s)", &agg->phase1_time);
-        print_float_aggregate("Phase 2 time (s)", &agg->phase2_time);
+        print_float_aggregate("Search time (s) ", &agg->phase1_time);
+
+        if (!single_phase)
+            print_float_aggregate("Phase 2 time (s)", &agg->phase2_time);
+
         print_float_aggregate("Wall time (s)   ", &agg->wall_time);
         printf("\n");
 
-        print_int_aggregate("Phase 1 moves", &agg->phase1_moves);
-        print_int_aggregate("Phase 2 moves", &agg->phase2_moves);
+        print_int_aggregate("Search moves", &agg->phase1_moves);
+
+        if (!single_phase)
+            print_int_aggregate("Phase 2 moves", &agg->phase2_moves);
+
         print_int_aggregate("Total moves  ", &agg->total_moves);
         printf("\n");
 
@@ -199,10 +214,12 @@ void print_aggregate_stats(const aggregate_stats_t *agg, const solve_stats_t *fi
         printf("  Wall time:                 %.6f s\n", agg->overall_wall_time);
         printf("\n");
 
-        printf("  Phase 2 attempts:     %d\n", agg->total_phase2_attempts);
-        printf("  Phase 2 successes:    %d\n", agg->total_phase2_successes);
-        printf("  Phase 2 success rate: %.2f%%\n", agg->phase2_success_rate);
-        printf("\n");
+        if (!single_phase) {
+            printf("  Phase 2 attempts:     %d\n", agg->total_phase2_attempts);
+            printf("  Phase 2 successes:    %d\n", agg->total_phase2_successes);
+            printf("  Phase 2 success rate: %.2f%%\n", agg->phase2_success_rate);
+            printf("\n");
+        }
 
         printf("  Threads die-aborted: %d\n", agg->threads_die_aborted);
         printf("  Threads completed:   %d\n", agg->threads_completed);
