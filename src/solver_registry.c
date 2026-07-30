@@ -57,6 +57,7 @@ const puzzle_ops_t *puzzle_lookup(const char *name) {
 }
 
 puzzle_t *puzzle_create(const char *name) {
+    init_registry();
     const puzzle_ops_t *ops = puzzle_lookup(name);
 
     if (ops == NULL)
@@ -94,7 +95,7 @@ const solver_ops_t *solver_lookup(const char *puzzle_name) {
 
 static int initialized = 0;
 
-static void init_registry(void) {
+void init_registry(void) {
     if (initialized)
         return;
 

@@ -39,6 +39,7 @@ struct solver_ops_s {
     void (*cleanup)(void);
 };
 
+void                init_registry(void);
 void                solver_register(const solver_ops_t *ops);
 const solver_ops_t *solver_lookup(const char *puzzle_name);
 solve_list_t       *solve_puzzle(const char *puzzle_name, const char *state_str, const config_t *cfg);
