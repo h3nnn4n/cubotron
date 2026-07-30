@@ -24,20 +24,45 @@
 #ifndef _DEFINITIONS
 #define _DEFINITIONS
 
-#include "moves.h"
-#include "puzzle_types.h"
-
+#define N_CORNER_ORIENTATIONS     2187
 #define N_EDGE_ORIENTATIONS       2048
 #define N_SLICES                  495
 #define N_SORTED_SLICES           11880
 #define N_SORTED_SLICES_PHASE2    24
+#define N_PARITY                  2
+#define N_CORNER_PERMUTATIONS     40320
 #define N_UD6_PHASE1_PERMUTATIONS 665280
 #define N_UD6_PHASE2_PERMUTATIONS 20160
-#define N_UD7_PHASE1_PERMUTATIONS 3991680
-#define N_UD7_PHASE2_PERMUTATIONS 40320
+#define N_UD7_PHASE1_PERMUTATIONS 3991680 // 791 * 5040 + 5040 or 12 * 11 * 10 * 9 * 8 * 7 * 6
+#define N_UD7_PHASE2_PERMUTATIONS 40320   // 7 * 5040 + 5040
 
-#define N_EDGES    12
+#define N_CORNERS 8
+#define N_EDGES   12
+
+#define N_MOVES 18
+
+#define N_COLORS   6
 #define N_FACELETS 54
+
+typedef enum {
+    U = 0,
+    R = 1,
+    F = 2,
+    D = 3,
+    L = 4,
+    B = 5,
+} color_t;
+
+typedef enum {
+    URF = 0,
+    UFL = 1,
+    ULB = 2,
+    UBR = 3,
+    DFR = 4,
+    DLF = 5,
+    DBL = 6,
+    DRB = 7,
+} corner_t;
 
 typedef enum {
     UR = 0,
@@ -53,6 +78,28 @@ typedef enum {
     BL = 10,
     BR = 11,
 } edge_t;
+
+typedef enum {
+    MOVE_U1   = 0,
+    MOVE_U2   = 1,
+    MOVE_U3   = 2,
+    MOVE_R1   = 3,
+    MOVE_R2   = 4,
+    MOVE_R3   = 5,
+    MOVE_F1   = 6,
+    MOVE_F2   = 7,
+    MOVE_F3   = 8,
+    MOVE_D1   = 9,
+    MOVE_D2   = 10,
+    MOVE_D3   = 11,
+    MOVE_L1   = 12,
+    MOVE_L2   = 13,
+    MOVE_L3   = 14,
+    MOVE_B1   = 15,
+    MOVE_B2   = 16,
+    MOVE_B3   = 17,
+    MOVE_NULL = 18,
+} move_t;
 
 typedef enum {
     U1 = 0,
@@ -111,4 +158,4 @@ typedef enum {
     B9 = 53,
 } facelet_t;
 
-#endif
+#endif /* end of include guard */

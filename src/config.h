@@ -28,7 +28,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "moves.h"
+#include "definitions.h"
 
 typedef struct {
     int do_benchmark_fast;

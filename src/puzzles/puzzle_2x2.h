@@ -24,9 +24,8 @@
 #ifndef _PUZZLE_2X2
 #define _PUZZLE_2X2
 
-#include "moves.h"
+#include "definitions.h"
 #include "puzzle.h"
-#include "puzzle_types.h"
 
 #define N_FACELETS_2X2 24
 
