@@ -41,6 +41,7 @@ void init_config() {
     config.die             = false;
     config.solutions_found = 0;
 
+    config.puzzle_type        = "3x3";
     config.compare_against    = NULL;
     config.compare_benchmarks = NULL;
 
