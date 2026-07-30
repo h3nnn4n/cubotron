@@ -41,11 +41,11 @@ case "$1" in
         ;;
 
     cpplint)
-        run_cmd "cpplint --filter=-build/include_subdir,-readability/nolint,-whitespace/line_length,-whitespace/comments,-readability/casting,-build/header_guard,-runtime/arrays src/*.c"
+        run_cmd "cpplint --filter=-build/include_subdir,-readability/nolint,-whitespace/line_length,-whitespace/comments,-readability/casting,-build/header_guard,-runtime/arrays src/*.c src/puzzles/*.c src/solvers/*.c"
         ;;
 
     cppcheck)
-        run_cmd "cppcheck --enable=all --suppress=unusedFunction --suppress=missingIncludeSystem --suppress=staticFunction --suppress=nullPointerOutOfMemory --suppress=nullPointerOutOfResources --suppress=constParameterCallback --suppress=normalCheckLevelMaxBranches --suppress=unmatchedSuppression --std=c11 --language=c --error-exitcode=1 src/*.c"
+        run_cmd "cppcheck --enable=all --suppress=unusedFunction --suppress=missingIncludeSystem --suppress=staticFunction --suppress=nullPointerOutOfMemory --suppress=nullPointerOutOfResources --suppress=constParameterCallback --suppress=normalCheckLevelMaxBranches --suppress=unmatchedSuppression --std=c11 --language=c --error-exitcode=1 src/*.c src/puzzles/*.c src/solvers/*.c"
         ;;
 
     clang-format)
