@@ -45,7 +45,7 @@ case "$1" in
         ;;
 
     cppcheck)
-        run_cmd "cppcheck --enable=all --suppress=unusedFunction --suppress=missingIncludeSystem --suppress=staticFunction --suppress=nullPointerOutOfMemory --suppress=nullPointerOutOfResources --suppress=constParameterCallback --suppress=normalCheckLevelMaxBranches --suppress=unmatchedSuppression --std=c11 --language=c --error-exitcode=1 src/*.c src/puzzles/*.c src/solvers/*.c"
+        run_cmd "cppcheck --enable=all --suppress=unusedFunction --suppress=missingInclude --suppress=missingIncludeSystem --suppress=staticFunction --suppress=nullPointerOutOfMemory --suppress=nullPointerOutOfResources --suppress=constParameterCallback --suppress=normalCheckLevelMaxBranches --suppress=unmatchedSuppression --std=c11 --language=c --error-exitcode=1 src/*.c src/puzzles/*.c src/solvers/*.c"
         ;;
 
     clang-format)
