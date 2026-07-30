@@ -34,6 +34,7 @@ case "$1" in
 
     solve-2x2)
         run_cmd "make; [ -d cache ] || ./cubotron --rebuild-tables; ./cubotron --puzzle 2x2 --solve UUUURRRRFFFFDDDDLLLLBBBB"
+        run_cmd "make; ./cubotron --puzzle 2x2 --solve-scramble \"U R F U' R' F'\" --max-depth=27"
         ;;
 
     solve-samples)

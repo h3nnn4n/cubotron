@@ -292,8 +292,12 @@ void print_help(void) {
     printf("Cubotron - A fast Rubik's cube solver\n\n");
     printf("Usage: cubotron [options]\n\n");
     printf("Solve modes:\n");
-    printf("  --solve <facelets>        Solve a cube from a 54-character facelet string\n");
+    printf("  --solve <facelets>        Solve a cube from a facelet string\n");
     printf("  --solve-scramble <moves>  Solve a cube from a scramble move sequence\n\n");
+    printf("Puzzle options:\n");
+    printf("  --puzzle <type>            Puzzle type (default: 3x3, choices: 3x3, 2x2)\n");
+    printf("  --list-puzzles            List available puzzle types\n");
+    printf("  --list-solvers            List available solvers\n\n");
     printf("Solver options:\n");
     printf("  --max-depth <n>            Maximum solution length (default: 22, max: 29)\n");
     printf("  --n-solutions <n>          Number of solutions to find (default: 1, -1 = all)\n");
@@ -307,10 +311,11 @@ void print_help(void) {
     printf("  --rebuild-tables           Rebuild move and pruning tables from scratch\n");
     printf("  --help                     Show this help message\n\n");
     printf("Facelet format:\n");
-    printf("  9 characters per face in order: U1-U9, R1-R9, F1-F9, D1-D9,\n");
-    printf("  L1-L9, B1-B9 (where U=up, R=right, F=front, D=down, L=left, B=back)\n\n");
-    printf("Example:\n");
+    printf("  54 characters for 3x3 (U1-U9, R1-R9, F1-F9, D1-D9, L1-L9, B1-B9)\n");
+    printf("  24 characters for 2x2 (U1-U4, R1-R4, F1-F4, D1-D4, L1-L4, B1-B4)\n\n");
+    printf("Examples:\n");
     printf("  cubotron --solve DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL\n");
+    printf("  cubotron --puzzle 2x2 --solve UUUURRRRFFFFDDDDLLLLBBBB\n");
     printf("  cubotron --solve-scramble \"U R2 F D' L B\"\n");
     printf("  cubotron --benchmark-fast\n");
     printf("  cubotron --benchmark-fast --compare-against results/fast_baseline.json\n");

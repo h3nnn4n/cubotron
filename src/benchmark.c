@@ -25,6 +25,7 @@
 
 #include <assert.h>
 #include <entropy.h>
+#include <math.h>
 #include <pcg_variants.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -38,8 +39,10 @@
 #include "facelets.h"
 #include "move_tables.h"
 #include "pruning.h"
+#include "puzzle.h"
 #include "sample_facelets.h"
 #include "solve.h"
+#include "solver.h"
 #include "utils.h"
 
 #define n_scramble_moves 50
@@ -346,3 +349,104 @@ void compare_benchmark_files(const char *file1, const char *file2) {
 void run_benchmark_fast() { run_benchmark_internal("fast", 500, 5000); }
 
 void run_benchmark_slow() { run_benchmark_internal("slow", 1000, 30000); }
+
+static const move_t moves_2x2_bench[9] = {MOVE_U1, MOVE_U2, MOVE_U3, MOVE_R1, MOVE_R2,
+                                          MOVE_R3, MOVE_F1, MOVE_F2, MOVE_F3};
+
+void run_benchmark_2x2() {
+    printf("=== 2x2 Benchmark ===\n\n");
+
+    uint64_t seeds[2];
+    entropy_getbytes((void *)seeds, sizeof(seeds));
+    pcg32_srandom(seeds[0], seeds[1]);
+
+    init_registry();
+
+    puzzle_t *puzzle = puzzle_create("2x2");
+
+    // warmup: 500ms
+    int      warmup_count = 0;
+    uint64_t warmup_start = get_microseconds();
+    while (get_microseconds() - warmup_start < 500000) {
+        puzzle->ops->reset(puzzle->state);
+        int n_moves = pcg32_boundedrand(7) + 4;
+        for (int i = 0; i < n_moves; i++)
+            puzzle->ops->apply_move(puzzle->state, moves_2x2_bench[pcg32_boundedrand(9)]);
+        char buf[128];
+        puzzle->ops->to_string(puzzle->state, buf, sizeof(buf));
+        solve_list_t *s = solve_puzzle("2x2", buf, get_config());
+        if (s)
+            destroy_solve_list(s);
+        warmup_count++;
+    }
+    printf("  Completed %d warmup solves\n\n", warmup_count);
+
+    // benchmark: 5s
+    int     max_samples = 100000;
+    double *times       = malloc(max_samples * sizeof(double));
+    int    *lengths     = malloc(max_samples * sizeof(int));
+    int     n_samples   = 0;
+
+    uint64_t bench_start = get_microseconds();
+    while (get_microseconds() - bench_start < 5000000 && n_samples < max_samples) {
+        puzzle->ops->reset(puzzle->state);
+        int n_moves = pcg32_boundedrand(7) + 4;
+        for (int i = 0; i < n_moves; i++)
+            puzzle->ops->apply_move(puzzle->state, moves_2x2_bench[pcg32_boundedrand(9)]);
+
+        char buf[128];
+        puzzle->ops->to_string(puzzle->state, buf, sizeof(buf));
+
+        uint64_t      t0 = get_microseconds();
+        solve_list_t *s  = solve_puzzle("2x2", buf, get_config());
+        uint64_t      t1 = get_microseconds();
+
+        times[n_samples] = (t1 - t0) / 1000.0;
+
+        if (s && s->solution) {
+            int len = 0;
+            while (s->solution[len] != MOVE_NULL)
+                len++;
+            lengths[n_samples] = len;
+            destroy_solve_list(s);
+        } else {
+            lengths[n_samples] = -1;
+        }
+        n_samples++;
+    }
+
+    puzzle_destroy(puzzle);
+
+    printf("  Completed %d benchmark solves\n\n", n_samples);
+
+    double sum_t = 0, min_t = times[0], max_t = times[0];
+    for (int i = 0; i < n_samples; i++) {
+        sum_t += times[i];
+        if (times[i] < min_t)
+            min_t = times[i];
+        if (times[i] > max_t)
+            max_t = times[i];
+    }
+    double avg_t = sum_t / n_samples;
+    double var_t = 0;
+    for (int i = 0; i < n_samples; i++)
+        var_t += (times[i] - avg_t) * (times[i] - avg_t);
+    double std_t = sqrt(var_t / n_samples);
+
+    int sum_l = 0, min_l = lengths[0], max_l = lengths[0];
+    for (int i = 0; i < n_samples; i++) {
+        sum_l += lengths[i];
+        if (lengths[i] < min_l)
+            min_l = lengths[i];
+        if (lengths[i] > max_l)
+            max_l = lengths[i];
+    }
+    double avg_l = (double)sum_l / n_samples;
+
+    printf("  Solve time (ms): avg=%.3f  std=%.3f  min=%.3f  max=%.3f\n", avg_t, std_t, min_t, max_t);
+    printf("  Solution length: avg=%.1f  min=%d  max=%d\n", avg_l, min_l, max_l);
+    printf("  Solves per second: %.0f\n", n_samples / 5.0);
+
+    free(times);
+    free(lengths);
+}

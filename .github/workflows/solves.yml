@@ -36,5 +36,8 @@ jobs:
       - name: Run Solver
         run: ./solve_samples.sh
 
-      - name: Run 2x2 Solver
+      - name: Run 2x2 Solver (samples)
         run: ./solve_samples.sh
+
+      - name: Run 2x2 Solver (scramble)
+        run: ./cubotron --puzzle 2x2 --solve-scramble "U R F U' R' F'" --max-depth=27
