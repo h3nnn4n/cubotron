@@ -273,6 +273,18 @@ static void solve_2x2_search(solver_2x2_ctx_t *ctx, solve_list_t *solves, solve_
 
     uint64_t start_time = get_microseconds();
 
+    if (is_2x2_solved(&ctx->initial)) {
+        move_t *solution = (move_t *)malloc(sizeof(move_t) * 2);
+        solution[0]      = ctx->prep_move;
+        solution[1]      = MOVE_NULL;
+
+        solves->solution = solution;
+        solves->stats    = stats;
+
+        get_config()->die = true;
+        return;
+    }
+
     for (int allowed_depth = 1; allowed_depth <= max_depth; allowed_depth++) {
         int pivot = 0;
 
@@ -291,8 +303,11 @@ static void solve_2x2_search(solver_2x2_ctx_t *ctx, solve_list_t *solves, solve_
                 ctx->move_stack[pivot]    = -1;
                 pivot--;
 
-                if (pivot < 0)
+                if (pivot < 0) {
                     break;
+                } else if (pivot == 0) {
+                    ctx->cube_stack[0] = ctx->initial;
+                }
 
                 continue;
             }
@@ -317,12 +332,18 @@ static void solve_2x2_search(solver_2x2_ctx_t *ctx, solve_list_t *solves, solve_
                 uint64_t end_time = get_microseconds();
                 stats->wall_time  = (float)(end_time - start_time) / 1000000.0f;
 
-                move_t *solution = (move_t *)malloc(sizeof(move_t) * (MAX_2X2_DEPTH + 1));
+                int found_len = pivot + 1;
 
-                for (int i = 0; i <= pivot; i++)
-                    solution[i] = moves_2x2[ctx->move_stack[i]];
+                move_t *solution = (move_t *)malloc(sizeof(move_t) * (found_len + 2));
+                int     idx      = 0;
 
-                solution[pivot + 1] = MOVE_NULL;
+                if (ctx->prep_move != MOVE_NULL)
+                    solution[idx++] = ctx->prep_move;
+
+                for (int i = 0; i < found_len; i++)
+                    solution[idx++] = moves_2x2[ctx->move_stack[i]];
+
+                solution[idx] = MOVE_NULL;
 
                 solves->solution = solution;
                 solves->stats    = stats;
@@ -427,28 +448,36 @@ static solve_list_t *solve_2x2(const puzzle_t *puzzle, const config_t *config) {
     for (int i = 0; i < n_threads; i++)
         pthread_join(threads[i], NULL);
 
-    solve_list_t *solves  = NULL;
-    solve_list_t *current = NULL;
-    int           is_winner[MAX_THREADS_2X2];
+    solve_list_t *solves       = NULL;
+    int           shortest_len = MAX_2X2_DEPTH + 1;
+    int           winner_idx   = -1;
+
+    for (int i = 0; i < n_threads; i++) {
+        solve_list_t *ts = thread_contexts[i].solves;
+
+        if (ts->solution != NULL && ts->solution[0] != MOVE_NULL) {
+            int len = 0;
+            while (ts->solution[len] != MOVE_NULL)
+                len++;
+
+            if (len < shortest_len) {
+                shortest_len = len;
+                winner_idx   = i;
+            }
+        }
+    }
+
+    int is_winner[MAX_THREADS_2X2];
 
     for (int i = 0; i < n_threads; i++) {
         is_winner[i] = 0;
 
         solve_list_t *ts = thread_contexts[i].solves;
 
-        if (ts->solution != NULL) {
-            is_winner[i]       = 1;
-            solve_list_t *node = ts;
-
-            node->next = NULL;
-
-            if (solves == NULL) {
-                solves  = node;
-                current = solves;
-            } else {
-                current->next = node;
-                current       = node;
-            }
+        if (i == winner_idx) {
+            is_winner[i] = 1;
+            solves       = ts;
+            solves->next = NULL;
         } else {
             ts->stats = NULL;
             destroy_solve_list(ts);
