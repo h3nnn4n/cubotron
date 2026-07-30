@@ -15,3 +15,5 @@ main.plist
 
 benchmarks/results/*
 !benchmarks/results/.gitkeep
+
+*.md
