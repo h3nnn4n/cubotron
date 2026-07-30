@@ -26,7 +26,7 @@
 
 #include <stddef.h>
 
-#include "definitions.h"
+#include "moves.h"
 
 typedef struct puzzle_ops_s puzzle_ops_t;
 typedef struct puzzle_s     puzzle_t;
