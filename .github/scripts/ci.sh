@@ -32,6 +32,10 @@ case "$1" in
         run_cmd "make; ./cubotron --solve DUDUUUDBUFRFRRBRDUBLLUFDUBFBDDFDLUFFRBLFLFBRRLLBRBDRLL --max-depth=27 --n-solutions=2 --move-blacklist='U U2 U'"
         ;;
 
+    solve-2x2)
+        run_cmd "make; [ -d cache ] || ./cubotron --rebuild-tables; ./cubotron --puzzle 2x2 --solve UUUURRRRFFFFDDDDLLLLBBBB"
+        ;;
+
     solve-samples)
         run_cmd "make; ./solve_samples.sh"
         ;;
@@ -79,6 +83,7 @@ case "$1" in
         "$0" build
         "$0" test
         "$0" solve
+        "$0" solve-2x2
         "$0" solve-samples
         "$0" benchmark
         "$0" lint-all
@@ -89,7 +94,7 @@ case "$1" in
         ;;
 
     *)
-        echo "Usage: $0 {build|test|solve|solve-samples|benchmark|cpplint|cppcheck|clang-format|format|heapcheck-solve|heapcheck-solve-blacklist|heapcheck-benchmark|lint-all|all}"
+        echo "Usage: $0 {build|test|solve|solve-2x2|solve-samples|benchmark|cpplint|cppcheck|clang-format|format|heapcheck-solve|heapcheck-solve-blacklist|heapcheck-benchmark|lint-all|all}"
         exit 1
         ;;
 esac

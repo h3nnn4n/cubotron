@@ -35,3 +35,6 @@ jobs:
 
       - name: Run Solver
         run: ./solve_samples.sh
+
+      - name: Run 2x2 Solver
+        run: ./solve_samples.sh
