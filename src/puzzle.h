@@ -29,20 +29,20 @@
 #include "definitions.h"
 
 typedef struct puzzle_ops_s puzzle_ops_t;
-typedef struct puzzle_s puzzle_t;
+typedef struct puzzle_s     puzzle_t;
 
 struct puzzle_ops_s {
     const char *name;
-    int        n_moves;
-    size_t     state_size;
+    int         n_moves;
+    size_t      state_size;
 
-    void  (*reset)(void *state);
-    int   (*is_solved)(const void *state);
-    void  (*apply_move)(void *state, move_t move);
-    void  (*copy)(void *dst, const void *src);
+    void (*reset)(void *state);
+    int (*is_solved)(const void *state);
+    void (*apply_move)(void *state, move_t move);
+    void (*copy)(void *dst, const void *src);
 
-    int   (*from_string)(void *state, const char *str);
-    void  (*to_string)(const void *state, char *buf, size_t bufsz);
+    int (*from_string)(void *state, const char *str);
+    void (*to_string)(const void *state, char *buf, size_t bufsz);
 };
 
 struct puzzle_s {

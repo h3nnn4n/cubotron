@@ -31,18 +31,16 @@
 typedef struct solver_ops_s solver_ops_t;
 
 struct solver_ops_s {
-    const char    *name;
-    const char    *puzzle_name;
+    const char *name;
+    const char *puzzle_name;
 
-    void          (*init)(void);
+    void (*init)(void);
     solve_list_t *(*solve)(const puzzle_t *puzzle, const config_t *cfg);
-    void          (*cleanup)(void);
+    void (*cleanup)(void);
 };
 
-void                 solver_register(const solver_ops_t *ops);
-const solver_ops_t  *solver_lookup(const char *puzzle_name);
-solve_list_t        *solve_puzzle(const char *puzzle_name,
-                                  const char *state_str,
-                                  const config_t *cfg);
+void                solver_register(const solver_ops_t *ops);
+const solver_ops_t *solver_lookup(const char *puzzle_name);
+solve_list_t       *solve_puzzle(const char *puzzle_name, const char *state_str, const config_t *cfg);
 
 #endif
