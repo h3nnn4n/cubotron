@@ -24,7 +24,7 @@
 #ifndef _SOLUTION
 #define _SOLUTION
 
-#include "definitions.h"
+#include "puzzle_types.h"
 #include "stats.h"
 
 typedef struct solve_list_s solve_list_t;
