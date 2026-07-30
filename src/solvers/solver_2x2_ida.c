@@ -278,6 +278,9 @@ static void solve_2x2_search(solver_2x2_ctx_t *ctx, solve_list_t *solves, solve_
         solution[0]      = ctx->prep_move;
         solution[1]      = MOVE_NULL;
 
+        stats->solution_length = ctx->prep_move != MOVE_NULL ? 1 : 0;
+        stats->phase1_depth    = 1;
+
         solves->solution = solution;
         solves->stats    = stats;
 
@@ -296,7 +299,10 @@ static void solve_2x2_search(solver_2x2_ctx_t *ctx, solve_list_t *solves, solve_
                 return;
             }
 
-            ctx->move_stack[pivot]++;
+            do {
+                ctx->move_stack[pivot]++;
+            } while (ctx->move_stack[pivot] < N_MOVES_2X2 &&
+                     config->move_black_list[moves_2x2[ctx->move_stack[pivot]]] != MOVE_NULL);
 
             if (ctx->move_stack[pivot] >= N_MOVES_2X2) {
                 ctx->pruning_stack[pivot] = -1;
@@ -332,7 +338,9 @@ static void solve_2x2_search(solver_2x2_ctx_t *ctx, solve_list_t *solves, solve_
                 uint64_t end_time = get_microseconds();
                 stats->wall_time  = (float)(end_time - start_time) / 1000000.0f;
 
-                int found_len = pivot + 1;
+                int found_len          = pivot + 1;
+                stats->phase1_depth    = found_len;
+                stats->solution_length = found_len + (ctx->prep_move != MOVE_NULL ? 1 : 0);
 
                 move_t *solution = (move_t *)malloc(sizeof(move_t) * (found_len + 2));
                 int     idx      = 0;
