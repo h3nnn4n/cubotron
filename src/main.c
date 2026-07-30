@@ -28,12 +28,12 @@
 
 #include "benchmark.h"
 #include "config.h"
-#include "coord_cube.h"
-#include "cubie_cube.h"
-#include "facelets.h"
+#include "definitions.h"
 #include "mem_utils.h"
 #include "move_tables.h"
 #include "pruning.h"
+#include "puzzle.h"
+#include "solution.h"
 #include "solve.h"
 #include "solver.h"
 #include "stats.h"
@@ -210,15 +210,19 @@ int main(int argc, char **argv) {
         solve_list_t *solution = NULL;
 
         if (config->scramble_moves != NULL) {
-            coord_cube_t *cube = get_coord_cube();
+            puzzle_t *p = puzzle_create(config->puzzle_type);
             printf("Scramble moves: ");
             for (int i = 0; config->scramble_moves[i] != MOVE_NULL; i++) {
                 printf("%s ", move_to_str(config->scramble_moves[i]));
-                coord_apply_move(cube, config->scramble_moves[i]);
+                p->ops->apply_move(p->state, config->scramble_moves[i]);
             }
             printf("\n");
 
-            solution = solve_single(cube);
+            char buf[1024];
+            p->ops->to_string(p->state, buf, sizeof(buf));
+            puzzle_destroy(p);
+
+            solution = solve_puzzle(config->puzzle_type, buf, config);
         } else {
             solution = solve_puzzle(config->puzzle_type, facelets_to_solve, config);
         }
