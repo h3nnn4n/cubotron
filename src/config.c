@@ -30,6 +30,7 @@ static config_t config = {0};
 void init_config() {
     config.do_benchmark_fast = 0;
     config.do_benchmark_slow = 0;
+    config.do_benchmark_2x2  = 0;
     config.do_solve          = 0;
     config.rebuild_tables    = 0;
     config.max_depth         = 25;

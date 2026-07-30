@@ -28,6 +28,7 @@
 
 void run_benchmark_fast();
 void run_benchmark_slow();
+void run_benchmark_2x2();
 
 void print_benchmark_results(const benchmark_result_t *result);
 void print_benchmark_comparison(const benchmark_result_t *current, const benchmark_result_t *previous);

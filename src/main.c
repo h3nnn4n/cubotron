@@ -49,6 +49,7 @@ int main(int argc, char **argv) {
 
     struct option long_options[] = {{"benchmark-fast", no_argument, &config->do_benchmark_fast, 1},
                                     {"benchmark-slow", no_argument, &config->do_benchmark_slow, 1},
+                                    {"benchmark-2x2", no_argument, &config->do_benchmark_2x2, 1},
                                     {"rebuild-tables", no_argument, &config->rebuild_tables, 1},
                                     {"solve", required_argument, 0, 's'},
                                     {"solve-scramble", required_argument, 0, 'c'},
@@ -207,7 +208,7 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    if (!config->do_benchmark_fast && !config->do_benchmark_slow && !config->do_solve &&
+    if (!config->do_benchmark_fast && !config->do_benchmark_slow && !config->do_benchmark_2x2 && !config->do_solve &&
         config->compare_benchmarks == NULL) {
         print_help();
         return 0;
@@ -224,6 +225,8 @@ int main(int argc, char **argv) {
         run_benchmark_fast();
     } else if (config->do_benchmark_slow) {
         run_benchmark_slow();
+    } else if (config->do_benchmark_2x2) {
+        run_benchmark_2x2();
     } else if (config->do_solve) {
         solve_list_t *solution = NULL;
 
