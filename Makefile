@@ -9,6 +9,8 @@ TESTDIR = $(abspath $(CURDIR)/test)
 OPTIONS =
 
 INCLUDES = -Isrc \
+           -Isrc/puzzles \
+           -Isrc/solvers \
            -Ideps/Unity/src \
            -Ideps/pcg-c/include \
            -Ideps/pcg-c/extras
@@ -30,6 +32,8 @@ override CFLAGS += -Wall -Wextra -Wshadow -pedantic -Werror -std=gnu11 $(OPTIMIZ
 CC = gcc
 
 C_FILES := $(wildcard src/*.c) \
+           $(wildcard src/puzzles/*.c) \
+           $(wildcard src/solvers/*.c) \
            $(wildcard deps/pcg-c/extras/*.c)
 C_FILES_TEST := $(wildcard test/*.c)
 C_FILES_TEST_DEPS := $(wildcard deps/Unity/src/*.c)

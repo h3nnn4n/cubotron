@@ -14,7 +14,7 @@ if [ "$1" = "--check" ]; then
     echo "Checking formatting..."
 
     all_good=true
-    for file in src/*.c src/*.h; do
+    for file in src/*.c src/*.h src/puzzles/*.c src/puzzles/*.h src/solvers/*.c src/solvers/*.h; do
         if [ -f "$file" ]; then
             formatted=$($CLANG_FORMAT --assume-filename=file.c "$file")
             if ! diff -q <(echo "$formatted") "$file" > /dev/null 2>&1; then
@@ -33,7 +33,7 @@ if [ "$1" = "--check" ]; then
     fi
 else
     echo "Formatting files..."
-    $CLANG_FORMAT -i --assume-filename=file.c src/*.c
-    $CLANG_FORMAT -i --assume-filename=file.c src/*.h
+    $CLANG_FORMAT -i --assume-filename=file.c src/*.c src/puzzles/*.c src/solvers/*.c
+    $CLANG_FORMAT -i --assume-filename=file.c src/*.h src/puzzles/*.h src/solvers/*.h
     echo "Formatting complete!"
 fi
