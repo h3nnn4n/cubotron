@@ -36,22 +36,22 @@
 #include "stats.h"
 #include "utils.h"
 
-#define N_CORNER_ORIENTATION_2X2 2187
-#define N_CORNER_PERMUTATION_2X2 40320
-#define MAX_2X2_DEPTH            15
-#define N_MOVES_2X2              9
-#define MAX_THREADS_2X2          9
+#define N_CORNER_ORIENTATION 2187
+#define N_CORNER_PERMUTATION 40320
+#define MAX_DEPTH            15
+#define N_MOVES_2X2          9
+#define MAX_THREADS          9
 
 typedef struct {
     int corner_orientation;
     int corner_permutation;
-} coord_2x2_t;
+} coord_t;
 
-static const move_t moves_2x2[N_MOVES_2X2] = {MOVE_U1, MOVE_U2, MOVE_U3, MOVE_R1, MOVE_R2,
-                                              MOVE_R3, MOVE_F1, MOVE_F2, MOVE_F3};
+static const move_t moves[N_MOVES_2X2] = {MOVE_U1, MOVE_U2, MOVE_U3, MOVE_R1, MOVE_R2,
+                                          MOVE_R3, MOVE_F1, MOVE_F2, MOVE_F3};
 
-static int  corner_orientation_move_table[N_CORNER_ORIENTATION_2X2][N_MOVES_2X2];
-static int  corner_permutation_move_table[N_CORNER_PERMUTATION_2X2][N_MOVES_2X2];
+static int  corner_orientation_move_table[N_CORNER_ORIENTATION][N_MOVES_2X2];
+static int  corner_permutation_move_table[N_CORNER_PERMUTATION][N_MOVES_2X2];
 static int *corner_orientation_pruning = NULL;
 static int *corner_permutation_pruning = NULL;
 static int  tables_built               = 0;
@@ -120,7 +120,7 @@ static void decode_corner_permutation(cube_2x2_t *cube, int v) {
 
 // ---- move application on cube_2x2_t ----
 
-static cube_2x2_t move_cubes_2x2[N_MOVES_2X2];
+static cube_2x2_t move_cubes[N_MOVES_2X2];
 
 static const corner_t *face_corner_permutation[6] = {corner_permutation_U, corner_permutation_R, corner_permutation_F,
                                                      corner_permutation_D, corner_permutation_L, corner_permutation_B};
@@ -128,7 +128,7 @@ static const corner_t *face_corner_permutation[6] = {corner_permutation_U, corne
 static const int *face_corner_orientation[6] = {corner_orientation_U, corner_orientation_R, corner_orientation_F,
                                                 corner_orientation_D, corner_orientation_L, corner_orientation_B};
 
-static void compose_cube_2x2(cube_2x2_t *dst, const cube_2x2_t *src) {
+static void compose_cube(cube_2x2_t *dst, const cube_2x2_t *src) {
     cube_2x2_t result;
 
     for (int i = 0; i < 8; i++) {
@@ -156,10 +156,10 @@ static void build_move_cubes(void) {
             if (turn == 0) {
                 cube = base;
             } else {
-                compose_cube_2x2(&cube, &base);
+                compose_cube(&cube, &base);
             }
 
-            move_cubes_2x2[idx] = cube;
+            move_cubes[idx] = cube;
             idx++;
         }
     }
@@ -170,12 +170,12 @@ static void build_move_cubes(void) {
 static void build_corner_orientation_move_table(void) {
     cube_2x2_t cube;
 
-    for (int state = 0; state < N_CORNER_ORIENTATION_2X2; state++) {
+    for (int state = 0; state < N_CORNER_ORIENTATION; state++) {
         decode_corner_orientation(&cube, state);
 
         for (int m = 0; m < N_MOVES_2X2; m++) {
             cube_2x2_t next = cube;
-            compose_cube_2x2(&next, &move_cubes_2x2[m]);
+            compose_cube(&next, &move_cubes[m]);
             corner_orientation_move_table[state][m] = encode_corner_orientation(&next);
         }
     }
@@ -184,12 +184,12 @@ static void build_corner_orientation_move_table(void) {
 static void build_corner_permutation_move_table(void) {
     cube_2x2_t cube;
 
-    for (int state = 0; state < N_CORNER_PERMUTATION_2X2; state++) {
+    for (int state = 0; state < N_CORNER_PERMUTATION; state++) {
         decode_corner_permutation(&cube, state);
 
         for (int m = 0; m < N_MOVES_2X2; m++) {
             cube_2x2_t next = cube;
-            compose_cube_2x2(&next, &move_cubes_2x2[m]);
+            compose_cube(&next, &move_cubes[m]);
             corner_permutation_move_table[state][m] = encode_corner_permutation(&next);
         }
     }
@@ -230,23 +230,23 @@ static int *build_pruning_table(int n_states, int (*move_table)[N_MOVES_2X2]) {
 // ---- IDA* search ----
 
 typedef struct {
-    coord_2x2_t cube_stack[MAX_2X2_DEPTH];
-    int         move_stack[MAX_2X2_DEPTH];
-    int         pruning_stack[MAX_2X2_DEPTH];
+    coord_t cube_stack[MAX_DEPTH];
+    int     move_stack[MAX_DEPTH];
+    int     pruning_stack[MAX_DEPTH];
 
-    coord_2x2_t initial;
-    move_t      prep_move;
-} solver_2x2_ctx_t;
+    coord_t initial;
+    move_t  prep_move;
+} solver_ctx_t;
 
 typedef struct {
-    solver_2x2_ctx_t *ctx;
-    solve_list_t     *solves;
-    solve_stats_t    *stats;
-} thread_ctx_2x2_t;
+    solver_ctx_t  *ctx;
+    solve_list_t  *solves;
+    solve_stats_t *stats;
+} thread_ctx_t;
 
 static int is_duplicated_or_undoes_move_2x2(int move_idx, int prev_idx) {
-    move_t m  = moves_2x2[move_idx];
-    move_t pm = moves_2x2[prev_idx];
+    move_t m  = moves[move_idx];
+    move_t pm = moves[prev_idx];
 
     if (m == pm)
         return 1;
@@ -260,20 +260,18 @@ static int is_duplicated_or_undoes_move_2x2(int move_idx, int prev_idx) {
     return 1;
 }
 
-static int is_2x2_solved(const coord_2x2_t *state) {
-    return state->corner_orientation == 0 && state->corner_permutation == 0;
-}
+static int is_solved(const coord_t *state) { return state->corner_orientation == 0 && state->corner_permutation == 0; }
 
-static void solve_2x2_search(solver_2x2_ctx_t *ctx, solve_list_t *solves, solve_stats_t *stats) {
+static void search(solver_ctx_t *ctx, solve_list_t *solves, solve_stats_t *stats) {
     const config_t *config    = get_config();
     int             max_depth = config->max_depth;
 
-    if (max_depth > MAX_2X2_DEPTH)
-        max_depth = MAX_2X2_DEPTH;
+    if (max_depth > MAX_DEPTH)
+        max_depth = MAX_DEPTH;
 
     uint64_t start_time = get_microseconds();
 
-    if (is_2x2_solved(&ctx->initial)) {
+    if (is_solved(&ctx->initial)) {
         move_t *solution = (move_t *)malloc(sizeof(move_t) * 2);
         solution[0]      = ctx->prep_move;
         solution[1]      = MOVE_NULL;
@@ -302,7 +300,7 @@ static void solve_2x2_search(solver_2x2_ctx_t *ctx, solve_list_t *solves, solve_
             do {
                 ctx->move_stack[pivot]++;
             } while (ctx->move_stack[pivot] < N_MOVES_2X2 &&
-                     config->move_black_list[moves_2x2[ctx->move_stack[pivot]]] != MOVE_NULL);
+                     config->move_black_list[moves[ctx->move_stack[pivot]]] != MOVE_NULL);
 
             if (ctx->move_stack[pivot] >= N_MOVES_2X2) {
                 ctx->pruning_stack[pivot] = -1;
@@ -321,8 +319,8 @@ static void solve_2x2_search(solver_2x2_ctx_t *ctx, solve_list_t *solves, solve_
             if (pivot > 0 && is_duplicated_or_undoes_move_2x2(ctx->move_stack[pivot], ctx->move_stack[pivot - 1]))
                 continue;
 
-            coord_2x2_t *cur      = &ctx->cube_stack[pivot];
-            int          move_idx = ctx->move_stack[pivot];
+            coord_t *cur      = &ctx->cube_stack[pivot];
+            int      move_idx = ctx->move_stack[pivot];
 
             cur->corner_orientation = corner_orientation_move_table[cur->corner_orientation][move_idx];
             cur->corner_permutation = corner_permutation_move_table[cur->corner_permutation][move_idx];
@@ -334,7 +332,7 @@ static void solve_2x2_search(solver_2x2_ctx_t *ctx, solve_list_t *solves, solve_
 
             stats->total_moves++;
 
-            if (is_2x2_solved(cur)) {
+            if (is_solved(cur)) {
                 uint64_t end_time = get_microseconds();
                 stats->wall_time  = (float)(end_time - start_time) / 1000000.0f;
 
@@ -349,7 +347,7 @@ static void solve_2x2_search(solver_2x2_ctx_t *ctx, solve_list_t *solves, solve_
                     solution[idx++] = ctx->prep_move;
 
                 for (int i = 0; i < found_len; i++)
-                    solution[idx++] = moves_2x2[ctx->move_stack[i]];
+                    solution[idx++] = moves[ctx->move_stack[i]];
 
                 solution[idx] = MOVE_NULL;
 
@@ -376,8 +374,8 @@ static void solve_2x2_search(solver_2x2_ctx_t *ctx, solve_list_t *solves, solve_
     finalize_solve_stats(stats, start_time, start_time, 0, 0);
 }
 
-static void *solve_2x2_thread(void *arg) {
-    thread_ctx_2x2_t *tc = (thread_ctx_2x2_t *)arg;
+static void *solve_thread(void *arg) {
+    thread_ctx_t *tc = (thread_ctx_t *)arg;
 
     if (tc->ctx->prep_move != MOVE_NULL) {
         int move_idx = tc->ctx->prep_move == MOVE_U1   ? 0
@@ -397,14 +395,14 @@ static void *solve_2x2_thread(void *arg) {
         tc->ctx->move_stack[0] = -1;
     }
 
-    solve_2x2_search(tc->ctx, tc->solves, tc->stats);
+    search(tc->ctx, tc->solves, tc->stats);
 
     return tc->solves;
 }
 
-static solve_list_t *solve_2x2(const puzzle_t *puzzle, const config_t *config) {
+static solve_list_t *solve(const puzzle_t *puzzle, const config_t *config) {
     const cube_2x2_t *cubie = (const cube_2x2_t *)puzzle->state;
-    coord_2x2_t       initial;
+    coord_t           initial;
 
     initial.corner_orientation = encode_corner_orientation(cubie);
     initial.corner_permutation = encode_corner_permutation(cubie);
@@ -428,17 +426,17 @@ static solve_list_t *solve_2x2(const puzzle_t *puzzle, const config_t *config) {
     get_config()->die = false;
     atomic_store(&get_config()->solutions_found, 0);
 
-    int              n_threads = N_MOVES_2X2 < config->thread_count ? N_MOVES_2X2 : config->thread_count;
-    solver_2x2_ctx_t contexts[MAX_THREADS_2X2];
-    thread_ctx_2x2_t thread_contexts[MAX_THREADS_2X2];
-    solve_stats_t   *all_stats[MAX_THREADS_2X2];
-    pthread_t        threads[MAX_THREADS_2X2];
+    int            n_threads = N_MOVES_2X2 < config->thread_count ? N_MOVES_2X2 : config->thread_count;
+    solver_ctx_t   contexts[MAX_THREADS];
+    thread_ctx_t   thread_contexts[MAX_THREADS];
+    solve_stats_t *all_stats[MAX_THREADS];
+    pthread_t      threads[MAX_THREADS];
 
     for (int i = 0; i < n_threads; i++) {
         contexts[i].initial   = initial;
-        contexts[i].prep_move = moves_2x2[i];
+        contexts[i].prep_move = moves[i];
 
-        for (int j = 0; j < MAX_2X2_DEPTH; j++) {
+        for (int j = 0; j < MAX_DEPTH; j++) {
             contexts[i].move_stack[j]    = -1;
             contexts[i].pruning_stack[j] = -1;
         }
@@ -451,13 +449,13 @@ static solve_list_t *solve_2x2(const puzzle_t *puzzle, const config_t *config) {
     }
 
     for (int i = 0; i < n_threads; i++)
-        pthread_create(&threads[i], NULL, solve_2x2_thread, &thread_contexts[i]);
+        pthread_create(&threads[i], NULL, solve_thread, &thread_contexts[i]);
 
     for (int i = 0; i < n_threads; i++)
         pthread_join(threads[i], NULL);
 
     solve_list_t *solves       = NULL;
-    int           shortest_len = MAX_2X2_DEPTH + 1;
+    int           shortest_len = MAX_DEPTH + 1;
     int           winner_idx   = -1;
 
     for (int i = 0; i < n_threads; i++) {
@@ -475,7 +473,7 @@ static solve_list_t *solve_2x2(const puzzle_t *puzzle, const config_t *config) {
         }
     }
 
-    int is_winner[MAX_THREADS_2X2];
+    int is_winner[MAX_THREADS];
 
     for (int i = 0; i < n_threads; i++) {
         is_winner[i] = 0;
@@ -493,14 +491,14 @@ static solve_list_t *solve_2x2(const puzzle_t *puzzle, const config_t *config) {
     }
 
     if (solves != NULL) {
-        int all_lengths[MAX_2X2_DEPTH] = {0};
-        int n_lengths                  = 0;
+        int all_lengths[MAX_DEPTH] = {0};
+        int n_lengths              = 0;
 
         for (const solve_list_t *n = solves; n != NULL && n->solution != NULL; n = n->next) {
             int len = 0;
             while (n->solution[len] != MOVE_NULL)
                 len++;
-            if (n_lengths < MAX_2X2_DEPTH)
+            if (n_lengths < MAX_DEPTH)
                 all_lengths[n_lengths++] = len;
         }
 
@@ -515,7 +513,7 @@ static solve_list_t *solve_2x2(const puzzle_t *puzzle, const config_t *config) {
     return solves;
 }
 
-static void solver_2x2_init(void) {
+static void init(void) {
     if (tables_built)
         return;
 
@@ -524,26 +522,26 @@ static void solver_2x2_init(void) {
     build_corner_permutation_move_table();
 
     int loaded_orientation = pruning_table_cache_load("pruning_tables", "2x2_corner_orientation",
-                                                      &corner_orientation_pruning, N_CORNER_ORIENTATION_2X2);
+                                                      &corner_orientation_pruning, N_CORNER_ORIENTATION);
     int loaded_permutation = pruning_table_cache_load("pruning_tables", "2x2_corner_permutation",
-                                                      &corner_permutation_pruning, N_CORNER_PERMUTATION_2X2);
+                                                      &corner_permutation_pruning, N_CORNER_PERMUTATION);
 
     if (!loaded_orientation) {
-        corner_orientation_pruning = build_pruning_table(N_CORNER_ORIENTATION_2X2, corner_orientation_move_table);
+        corner_orientation_pruning = build_pruning_table(N_CORNER_ORIENTATION, corner_orientation_move_table);
         pruning_table_cache_store("pruning_tables", "2x2_corner_orientation", corner_orientation_pruning,
-                                  N_CORNER_ORIENTATION_2X2);
+                                  N_CORNER_ORIENTATION);
     }
 
     if (!loaded_permutation) {
-        corner_permutation_pruning = build_pruning_table(N_CORNER_PERMUTATION_2X2, corner_permutation_move_table);
+        corner_permutation_pruning = build_pruning_table(N_CORNER_PERMUTATION, corner_permutation_move_table);
         pruning_table_cache_store("pruning_tables", "2x2_corner_permutation", corner_permutation_pruning,
-                                  N_CORNER_PERMUTATION_2X2);
+                                  N_CORNER_PERMUTATION);
     }
 
     tables_built = 1;
 }
 
-static void solver_2x2_cleanup(void) {
+static void cleanup(void) {
     if (corner_orientation_pruning != NULL) {
         free(corner_orientation_pruning);
         corner_orientation_pruning = NULL;
@@ -561,7 +559,7 @@ const solver_ops_t solver_2x2_ida_ops = {
     .name        = "ida-star",
     .puzzle_name = "2x2",
 
-    .init    = solver_2x2_init,
-    .solve   = solve_2x2,
-    .cleanup = solver_2x2_cleanup,
+    .init    = init,
+    .solve   = solve,
+    .cleanup = cleanup,
 };
