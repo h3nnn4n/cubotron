@@ -32,7 +32,7 @@
 #include "puzzle_3x3.h"
 #include "utils.h"
 
-static void puzzle_3x3_reset(void *state) {
+static void reset(void *state) {
     cube_cubie_t *cube = (cube_cubie_t *)state;
 
     for (int i = 0; i < N_CORNERS; i++) {
@@ -46,13 +46,13 @@ static void puzzle_3x3_reset(void *state) {
     }
 }
 
-static int puzzle_3x3_is_solved(const void *state) { return is_cubie_solved((const cube_cubie_t *)state); }
+static int is_solved(const void *state) { return is_cubie_solved((const cube_cubie_t *)state); }
 
-static void puzzle_3x3_apply_move(void *state, move_t move) { cubie_apply_move((cube_cubie_t *)state, move); }
+static void apply_move(void *state, move_t move) { cubie_apply_move((cube_cubie_t *)state, move); }
 
-static void puzzle_3x3_copy(void *dst, const void *src) { memcpy(dst, src, sizeof(cube_cubie_t)); }
+static void copy(void *dst, const void *src) { memcpy(dst, src, sizeof(cube_cubie_t)); }
 
-static int puzzle_3x3_from_string(void *state, const char *str) {
+static int from_string(void *state, const char *str) {
     cube_cubie_t *tmp = build_cubie_cube_from_str((char *)str);
     memcpy(state, tmp, sizeof(cube_cubie_t));
     free(tmp);
@@ -60,7 +60,7 @@ static int puzzle_3x3_from_string(void *state, const char *str) {
     return 1;
 }
 
-static void puzzle_3x3_to_string(const void *state, char *buf, size_t bufsz) {
+static void to_string(const void *state, char *buf, size_t bufsz) {
     const cube_cubie_t *cube = (const cube_cubie_t *)state;
     color_t             facelet_cube[N_FACELETS];
 
@@ -111,10 +111,10 @@ const puzzle_ops_t puzzle_3x3_ops = {
     .n_moves    = N_MOVES,
     .state_size = sizeof(cube_cubie_t),
 
-    .reset       = puzzle_3x3_reset,
-    .is_solved   = puzzle_3x3_is_solved,
-    .apply_move  = puzzle_3x3_apply_move,
-    .copy        = puzzle_3x3_copy,
-    .from_string = puzzle_3x3_from_string,
-    .to_string   = puzzle_3x3_to_string,
+    .reset       = reset,
+    .is_solved   = is_solved,
+    .apply_move  = apply_move,
+    .copy        = copy,
+    .from_string = from_string,
+    .to_string   = to_string,
 };
