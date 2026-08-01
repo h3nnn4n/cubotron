@@ -29,7 +29,7 @@
 #include "pruning.h"
 #include "solve.h"
 
-static void solver_3x3_init(void) {
+static void init(void) {
     build_move_tables();
     build_pruning_tables();
 }
@@ -44,13 +44,13 @@ static solve_list_t *solver_3x3_solve(const puzzle_t *puzzle, const config_t *co
     return solution;
 }
 
-static void solver_3x3_cleanup(void) { purge_cubie_move_table(); }
+static void cleanup(void) { purge_cubie_move_table(); }
 
 const solver_ops_t solver_3x3_kociemba_ops = {
     .name        = "kociemba",
     .puzzle_name = "3x3",
 
-    .init    = solver_3x3_init,
+    .init    = init,
     .solve   = solver_3x3_solve,
-    .cleanup = solver_3x3_cleanup,
+    .cleanup = cleanup,
 };
