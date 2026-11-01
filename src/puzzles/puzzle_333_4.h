@@ -24,12 +24,16 @@
 #ifndef _PUZZLE_333_4
 #define _PUZZLE_333_4
 
+#include <stdint.h>
+
 #include "cubie_cube.h"
 #include "puzzle.h"
 
 typedef struct {
     cube_cubie_t base;
-    // TODO: 333_4 extra state goes here
+
+    // 6 x 4 = 24
+    uint_fast16_t centers;
 } cube_333_4_t;
 
 extern const puzzle_ops_t puzzle_333_4_ops;

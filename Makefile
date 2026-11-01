@@ -4,6 +4,7 @@ TARGET = cubotron
 BUILDDIR = $(abspath $(CURDIR)/build)
 
 TEST_TARGETS := $(basename $(foreach src,$(wildcard test/test_*.c), $(BUILDDIR)/$(src)))
+UNIT_TEST_TARGETS := $(filter-out %/test_benchmark, $(TEST_TARGETS))
 TESTDIR = $(abspath $(CURDIR)/test)
 
 OPTIONS =
@@ -91,8 +92,8 @@ run: $(TARGET)
 gdb: clean debug_prepare $(TARGET)
 	gdb $(CURDIR)/$(TARGET)
 
-test: pcg $(TEST_TARGETS)
-	@for var in $(TEST_TARGETS); do \
+test: pcg $(UNIT_TEST_TARGETS)
+	@for var in $(UNIT_TEST_TARGETS); do \
 		echo $(ECHOFLAGS) "[RUN]\t$$var"; \
 		$$var || exit $$?; \
 	done; \

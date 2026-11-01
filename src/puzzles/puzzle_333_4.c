@@ -21,7 +21,9 @@
  *
  */
 
+#include <assert.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -31,6 +33,22 @@
 #include "facelets.h"
 #include "puzzle_333_4.h"
 #include "utils.h"
+
+edge_t   edge_permutation_U[]   = {UB, UR, UF, UL, DR, DF, DL, DB, FR, FL, BL, BR};
+
+edge_t   edge_permutation_R[]   = {FR, UF, UL, UB, BR, DF, DL, DB, DR, FL, BL, UR};
+
+edge_t   edge_permutation_F[]   = {UR, FL, UL, UB, DR, FR, DL, DB, UF, DF, BL, BR};
+
+edge_t   edge_permutation_D[]   = {UR, UF, UL, UB, DF, DL, DB, DR, FR, FL, BL, BR};
+
+edge_t   edge_permutation_L[]   = {UR, UF, BL, UB, DR, DF, FL, DB, FR, UL, DL, BR};
+
+edge_t   edge_permutation_B[]   = {UR, UF, UL, BR, DR, DF, DL, BL, FR, FL, UB, DB};
+
+static void build_3334_move_table() {
+
+}
 
 static void reset(void *state) {
     cube_333_4_t *cube = (cube_333_4_t *)state;
@@ -45,25 +63,44 @@ static void reset(void *state) {
         cube->base.edge_orientations[i] = 0;
     }
 
-    // TODO: 333_4 extras reset
+    cube->centers = 0;
 }
 
 static int is_solved(const void *state) {
     const cube_333_4_t *cube = (const cube_333_4_t *)state;
 
-    // TODO: 333_4 extras is_solved
-    return is_cubie_solved(&cube->base);
+    return is_cubie_solved(&cube->base) && cube->centers == 0;
+}
+
+static bool is_333_4_valid(cube_333_4_t *cube) {
+    bool centers_valid = cube->centers < 24;
+
+    return centers_valid && is_valid(&cube->base);
 }
 
 static void apply_move(void *state, move_t move) {
+    assert(state != NULL);
+    if (move == MOVE_NULL)
+        return;
+
     cube_333_4_t *cube = (cube_333_4_t *)state;
+
+    assert(cube != NULL);
+    assert(move>= 0 && move< N_MOVES);
+    assert(is_333_4_valid(cube));
 
     cubie_apply_move(&cube->base, move);
 
-    // TODO: 333_4 extras apply_move
+    /*assert(move_table_centers != NULL);*/
+
+    /*multiply_cube_cubie(cube, move_table_centers[move]);*/
+
+    assert(is_333_4_valid(cube));
 }
 
-static void copy(void *dst, const void *src) { memcpy(dst, src, sizeof(cube_333_4_t)); }
+static void copy(void *dst, const void *src) {
+    memcpy(dst, src, sizeof(cube_333_4_t));
+}
 
 static int from_string(void *state, const char *str) {
     cube_333_4_t *tmp = (cube_333_4_t *)build_cubie_cube_from_str((char *)str);
